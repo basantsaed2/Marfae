@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { usePost } from "@/Hooks/UsePost";
 
 const LoginAdmin = () => {
-  const { postData, loadingPost, response } = usePost({ url: `https://bcknd.sea-go.org/api/village/login` });
+  const { postData, loadingPost, response } = usePost({ url: `` });
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -28,25 +28,26 @@ const LoginAdmin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!emailOrUsername || !password) {
-      toast.error("Email/Username and password are required");
-      return;
-    }
-    const body = new FormData();
-    body.append("email", emailOrUsername);
-    body.append("password", password);
-    postData(body, "Login successful!");
+          navigate("/");
+    // if (!emailOrUsername || !password) {
+    //   toast.error("Email/Username and password are required");
+    //   return;
+    // }
+    // const body = new FormData();
+    // body.append("email", emailOrUsername);
+    // body.append("password", password);
+    // postData(body, "Login successful!");
   };
 
-  useEffect(() => {
-    if (!loadingPost && response) {
-      dispatch(setUser(response?.data));
-      localStorage.setItem("user", JSON.stringify(response?.data));
-      localStorage.setItem("token", response?.data.token);
-      const redirectTo = new URLSearchParams(location.search).get("redirect");
-      navigate(redirectTo || "/");
-    }
-  }, [response, loadingPost, navigate, dispatch]);
+  // useEffect(() => {
+  //   if (!loadingPost && response) {
+  //     dispatch(setUser(response?.data));
+  //     localStorage.setItem("user", JSON.stringify(response?.data));
+  //     localStorage.setItem("token", response?.data.token);
+  //     const redirectTo = new URLSearchParams(location.search).get("redirect");
+  //     navigate(redirectTo || "/");
+  //   }
+  // }, [response, loadingPost, navigate, dispatch]);
 
   return (
     <div
