@@ -30,18 +30,18 @@ const UserManagment = () => {
     if (dataUser && dataUser.users) {
       const formatted = dataUser?.users?.map((u) => ({
         id: u.id,
-        name: u.first_name + last_name || "—",
-        img: u.image_link ? (
-          <img
-            src={u.image}
-            alt={u.first_name}
-            className="w-12 h-12 object-cover rounded-md"
-          />
-        ) : (
-          <Avatar className="w-12 h-12">
-            <AvatarFallback>{u.first_name?.charAt(0)}</AvatarFallback>
-          </Avatar>
-        ),
+        name: u.first_name + u.last_name || "—",
+        // img: u.image_link ? (
+        //   <img
+        //     src={u.image}
+        //     alt={u.first_name}
+        //     className="w-12 h-12 object-cover rounded-md"
+        //   />
+        // ) : (
+        //   <Avatar className="w-12 h-12">
+        //     <AvatarFallback>{u.first_name?.charAt(0)}</AvatarFallback>
+        //   </Avatar>
+        // ),
         phone: u.phone || "—",
         email: u.email || "—",
         specialization: u.specialization || "—",
@@ -53,7 +53,7 @@ const UserManagment = () => {
   }, [dataUser]);
 
   const Columns = [
-    { key: "img", label: "Image" },
+    // { key: "img", label: "Image" },
     { key: "name", label: "Name" },
     { key: "phone", label: "Phone" },
     { key: "email", label: "Email" },
