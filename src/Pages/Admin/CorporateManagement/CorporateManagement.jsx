@@ -46,8 +46,16 @@ const CorporateManagement = () => {
                 phone: c.phone || "—",
                 type: c.type || "—",
                 specializations: Array.isArray(c.company_specializations)
-                    ? c.company_specializations.map((s) => s.name || s).join(", ") || "—"
-                    : "—",
+                    ? c.company_specializations.map((s) => ({
+                        id: s.specialization_id,
+                        name: s.specialization?.name || "—",
+                    }))
+                    : [], // Store for editing
+                specializationsDisplay: Array.isArray(c.company_specializations)
+                    ? c.company_specializations
+                        .map((s) => s.specialization?.name || "—")
+                        .join(", ") || "—"
+                    : "—", // For display
                 location_link: c.location_link || "—",
                 description: c.description || "—",
                 facebook_link: c.facebook_link || "—",
@@ -70,7 +78,7 @@ const CorporateManagement = () => {
         { key: "email", label: "Email" },
         { key: "phone", label: "Phone" },
         { key: "type", label: "Type" },
-        { key: "specializations", label: "Specializations" },
+        { key: "specializationsDisplay", label: "Specializations" },
         { key: "status", label: "Status" },
         // {
         //     key: "details",
