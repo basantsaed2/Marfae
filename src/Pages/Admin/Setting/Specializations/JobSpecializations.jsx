@@ -14,7 +14,7 @@ const JobSpecialization = () => {
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
 
-    const [countries, setCountries] = useState([]);
+    const [specializations, setSpecializations] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,7 +28,7 @@ const JobSpecialization = () => {
                 specialization: u.name || "—",
                 status: u.status === "active" ? "Active" : "Inactive",
             }));
-            setCountries(formatted);
+            setSpecializations(formatted);
         }
     }, [dataSpecialization]);
 
@@ -53,7 +53,7 @@ const JobSpecialization = () => {
         );
         if (success) {
             setIsDeleteOpen(false);
-            setCountries((prev) => prev.filter((item) => item.id !== selectedRow.id));
+            setSpecializations((prev) => prev.filter((item) => item.id !== selectedRow.id));
             setSelectedRow(null);
         }
 
@@ -74,7 +74,7 @@ const JobSpecialization = () => {
                 <FullPageLoader />
             ) : (
                 <Table
-                    data={countries}
+                    data={specializations}
                     columns={Columns}
                     statusKey="status"
                     filterKeys={["specialization"]}

@@ -20,6 +20,7 @@ import JobCategory from "./Pages/Admin/Setting/JobCategory/JobCategory";
 import AddJobCategory from "./Pages/Admin/Setting/JobCategory/AddJobCategory";
 import JobSpecialization from "./Pages/Admin/Setting/Specializations/JobSpecializations";
 import AddJobSpecialization from "./Pages/Admin/Setting/Specializations/AddJobSpecializations";
+import AddUser from "./Pages/Admin/UserManagment/AddUser";
 
 const router = createBrowserRouter([
   // ✅ صفحات تسجيل الدخول و auth layout
@@ -55,7 +56,10 @@ const router = createBrowserRouter([
       },
       {
         path: "users",
-        element: <UserManagement />,
+        children: [
+          { index: true, element: <UserManagement /> },
+          { path: "add", element: <AddUser /> },
+        ],
       },
       {
         path: "jobs",

@@ -2,52 +2,186 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Add from '@/components/AddFieldSection';
 import { ArrowLeft } from 'lucide-react';
+import { usePost } from '@/Hooks/UsePost';
+import { useChangeState } from '@/Hooks/useChangeState';
+import { useGet } from '@/Hooks/UseGet';
+import { toast } from 'react-toastify';
 
 const AddCorporate = ({ lang = 'en' }) => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addCompany` });
+    const { changeState, loadingChange, responseChange } = useChangeState();
+    const { refetch: refetchSpecialization, loading: loadingSpecialization, data: dataSpecialization } = useGet({ url: `${apiUrl}/admin/getSpecializations` });
+
+    const [specializations, setSpecializations] = useState([]);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
     const location = useLocation();
     const navigate = useNavigate();
     const { state } = location;
-    const initialCorporateData = state?.corporateData || null;
+    const initialItemData = state?.companyDetails || null;
 
-    const isEditMode = !!initialCorporateData;
-    const title = isEditMode ? 'Edit Company Information' : 'Company Information';
-
-    const fields = [
-        { name: 'companyLogo', type: 'file', placeholder: 'Select image from your device' },
-        { name: 'companyName', type: 'input', placeholder: 'Name of company or organization' },
-        { name: 'email', type: 'input', placeholder: 'Email', inputType: 'email' },
-        { name: 'specializations', type: 'input', placeholder: 'Specializations' },
-        { name: 'location', type: 'input', placeholder: 'Location (optional)' },
-        { name: 'phoneNumber', type: 'input', placeholder: 'Phone number', inputType: 'tel' },
-        { name: 'description', type: 'textarea', placeholder: 'Company description' },
-        { name: 'twitter', type: 'input', placeholder: 'Twitter', inputType: 'url' },
-        { name: 'facebook', type: 'input', placeholder: 'Facebook', inputType: 'url' },
-        { name: 'linkedin', type: 'input', placeholder: 'LinkedIn', inputType: 'url' },
-    ];
-
-    const [values, setValues] = useState({});
+    // Determine if we're in "edit" mode based on whether companyDetails is provided
+    const isEditMode = !!initialItemData;
+    const title = isEditMode ? 'Edit Company' : 'Add Company';
 
     useEffect(() => {
-        if (initialCorporateData) {
-            setValues(initialCorporateData);
+        refetchSpecialization();
+    }, [refetchSpecialization]);
+
+    useEffect(() => {
+        if (dataSpecialization && dataSpecialization.specializations) {
+            const formatted = dataSpecialization?.specializations?.map((u) => ({
+                label: u.name || "—",
+                value: u.id.toString() || "", // Ensure ID is a string
+            }));
+            setSpecializations(formatted);
         }
-    }, [initialCorporateData]);
+    }, [dataSpecialization]);
+
+    // Define the fields for the form based on provided JSON structure
+    const fields = [
+        { name: 'name', type: 'input', placeholder: 'Company Name *' },
+        { name: 'email', type: 'input', placeholder: 'Email *', typeInput: 'email' },
+        { name: 'phone', type: 'input', placeholder: 'Phone *', typeInput: 'tel' },
+        { name: 'location_link', type: 'input', placeholder: 'Location (e.g., Google Maps URL)' },
+        { name: 'description', type: 'textarea', placeholder: 'Tell us about your company...' },
+        { name: 'twitter_link', type: 'input', placeholder: 'Twitter URL' },
+        { name: 'facebook_link', type: 'input', placeholder: 'Facebook URL' },
+        { name: 'linkedin_link', type: 'input', placeholder: 'LinkedIn URL' },
+        { name: 'site_link', type: 'input', placeholder: 'Website URL' },
+        {
+            name: 'specializations',
+            type: 'multi-select',
+            placeholder: 'Choose specializations',
+            options: specializations,
+            multiple: true, // Allow multiple selections
+        },
+        { name: 'type', type: 'input', placeholder: 'Company Type' },
+        { type: 'file', placeholder: 'Upload Logo', name: 'image', accept: 'image/*' },
+    ];
+
+    // State to manage form values
+    const [values, setValues] = useState({});
+
+    // Set initial values when companyDetails is provided
+    useEffect(() => {
+        if (initialItemData) {
+            setValues({
+                id: initialItemData.id || '',
+                name: initialItemData.name || '',
+                email: initialItemData.email || '',
+                phone: initialItemData.phone || '',
+                location_link: initialItemData.location_link || '',
+                description: initialItemData.description || '',
+                twitter_link: initialItemData.twitter_link || '',
+                facebook_link: initialItemData.facebook_link || '',
+                linkedin_link: initialItemData.linkedin_link || '',
+                site_link: initialItemData.site_link || '',
+                specializations: initialItemData.specializations || [],
+                type: initialItemData.type || '',
+                image: initialItemData.image || '',
+            });
+        }
+    }, [initialItemData]);
 
     const handleChange = (lang, name, value) => {
         setValues((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = () => {
-        console.log('Submitted:', values);
-        navigate('/companies'); // Adjust the navigation path as needed
+    const handleSubmit = async () => {
+        // Validate required fields
+        if (!values.name || !values.email || !values.phone || !values.description) {
+            toast.error('Please fill in all required fields');
+            return;
+        }
+
+        if (isEditMode) {
+            // Edit mode: Use changeState (PUT request)
+            const data = {
+                id: values.id,
+                name: values.name,
+                email: values.email,
+                phone: values.phone,
+                location_link: values.location_link || '',
+                description: values.description,
+                twitter_link: values.twitter_link || '',
+                facebook_link: values.facebook_link || '',
+                linkedin_link: values.linkedin_link || '',
+                site_link: values.site_link || '',
+                specializations: values.specializations || [],
+                type: values.type || '',
+            };
+            await changeState(
+                `${apiUrl}/admin/editCompany/${values.id}`,
+                'Company Updated Successfully!',
+                data
+            );
+        } else {
+            // Add mode: Use postData (POST request)
+            const body = new FormData();
+            body.append('name', values.name || '');
+            body.append('email', values.email || '');
+            body.append('phone', values.phone || '');
+            body.append('location_link', values.location_link || '');
+            body.append('description', values.description || '');
+            body.append('twitter_link', values.twitter_link || '');
+            body.append('facebook_link', values.facebook_link || '');
+            body.append('linkedin_link', values.linkedin_link || '');
+            body.append('site_link', values.site_link || '');
+            values.specializations.forEach((id) => {
+                body.append('specializations[]', parseInt(id));
+            }); body.append('type', values.type || '');
+            if (values.image && typeof values.image !== 'string') {
+                body.append('image', values.image);
+            }
+
+            await postData(body, 'Company Added Successfully!');
+        }
     };
 
+    // Handle delete confirmation using changeState (PUT request)
+    const handleDeleteConfirm = async () => {
+        if (!initialItemData) return;
+
+        const success = await changeState(
+            `${apiUrl}/admin/deleteCompany/${initialItemData.id}`,
+            `${initialItemData.name} Deleted Successfully.`,
+            { id: initialItemData.id, isDeleted: true } // Assuming the API expects a soft delete flag
+        );
+
+        if (success) {
+            setIsDeleteOpen(false);
+            navigate(-1); // Navigate back after deletion
+        }
+    };
+
+    useEffect(() => {
+        if ((!loadingChange && responseChange) || (!loadingPost && postResponse)) {
+            navigate(-1);
+        }
+    }, [responseChange, postResponse, navigate]);
+
     const handleReset = () => {
-        setValues(initialCorporateData || {});
+        setValues(initialItemData ? {
+            id: initialItemData.id || '',
+            name: initialItemData.name || '',
+            email: initialItemData.email || '',
+            phone: initialItemData.phone || '',
+            location_link: initialItemData.location_link || '',
+            description: initialItemData.description || '',
+            twitter_link: initialItemData.twitter_link || '',
+            facebook_link: initialItemData.facebook_link || '',
+            linkedin_link: initialItemData.linkedin_link || '',
+            site_link: initialItemData.site_link || '',
+            specializations: initialItemData.specializations || [],
+            type: initialItemData.type || '',
+            image: initialItemData.image || '',
+        } : {});
     };
 
     const handleBack = () => {
-        navigate(-1);
+        navigate(-1); // Navigate to the previous page
     };
 
     return (
@@ -71,11 +205,13 @@ const AddCorporate = ({ lang = 'en' }) => {
                     onChange={handleChange}
                 />
             </div>
+
             <div className="mt-6 flex justify-end gap-4">
                 <button
                     type="button"
                     onClick={handleReset}
                     className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400"
+                    disabled={loadingPost || loadingChange}
                 >
                     Reset
                 </button>
@@ -83,10 +219,12 @@ const AddCorporate = ({ lang = 'en' }) => {
                     type="button"
                     onClick={handleSubmit}
                     className="px-4 py-2 bg-bg-secondary text-white rounded-md hover:bg-bg-secondary/90"
+                    disabled={loadingPost || loadingChange}
                 >
-                    {isEditMode ? 'Save Changes' : 'Add to System'}
+                    {loadingPost || loadingChange ? 'Submitting...' : isEditMode ? 'Update' : 'Submit'}
                 </button>
             </div>
+
         </div>
     );
 };
