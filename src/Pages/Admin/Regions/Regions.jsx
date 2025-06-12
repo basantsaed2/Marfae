@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGet } from '@/Hooks/UseGet';
-import { useDelete } from '@/Hooks/UseDelete';
+import { useDelete } from '@/Hooks/useDelete';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DeleteDialog from '@/components/DeleteDialog'; // Import DeleteDialog
 import FullPageLoader from "@/components/Loading";
