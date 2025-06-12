@@ -419,17 +419,17 @@ function Table({
 
   const filteredData = data
     ? data.filter((item) => {
-        const matchesSearch = item[columns[0].key]
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase());
-        const matchesFilters = filterKeys.every((key) => {
-          const filterValue = selectedFilters[key];
-          const title = titles?.[key] || key.charAt(0).toUpperCase() + key.slice(1);
-          if (filterValue === title) return true;
-          return item[key]?.trim() === filterValue;
-        });
-        return matchesSearch && matchesFilters;
-      })
+      const matchesSearch = item[columns[0].key]
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesFilters = filterKeys.every((key) => {
+        const filterValue = selectedFilters[key];
+        const title = titles?.[key] || key.charAt(0).toUpperCase() + key.slice(1);
+        if (filterValue === title) return true;
+        return item[key]?.trim() === filterValue;
+      });
+      return matchesSearch && matchesFilters;
+    })
     : [];
 
   return (
@@ -573,13 +573,13 @@ function Table({
                       <span
                         className={cn(
                           "px-2 py-1 rounded-full",
-                          item[col.key] === "Activated"
+                          item[col.key] === "Activated" || item[col.key] === "Active"
                             ? "bg-green-200 text-green-800"
-                            : item[col.key] === "Suspended"
-                            ? "bg-red-200 text-red-800"
-                            : item[col.key] === "Waiting for activation"
-                            ? "bg-yellow-200 text-yellow-800"
-                            : "bg-gray-200 text-gray-800"
+                            : item[col.key] === "Suspended" || item[col.key] === "Inactive"
+                              ? "bg-red-200 text-red-800"
+                              : item[col.key] === "Waiting for activation"
+                                ? "bg-yellow-200 text-yellow-800"
+                                : "bg-gray-200 text-gray-800"
                         )}
                       >
                         {item[col.key]}
@@ -591,12 +591,14 @@ function Table({
                 ))}
                 <TableCell className="p-4">
                   <div className="flex space-x-2">
-                    <button
-                      onClick={() => onView && onView(item)}
-                      className="text-blue-500"
-                    >
-                      👁️
-                    </button>
+                    {onView &&
+                      <button
+                        onClick={() => onView && onView(item)}
+                        className="text-blue-500"
+                      >
+                        👁️
+                      </button>
+                    }
                     <button
                       onClick={() => onEdit && onEdit(item)}
                       className="text-blue-500"

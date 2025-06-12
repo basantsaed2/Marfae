@@ -12,6 +12,14 @@ import JobsManagment from "./Pages/Admin/JobsManagment/JobsManagment";
 import AddJob from "./Pages/Admin/JobsManagment/AddJob";
 import CorporateManagement from "./Pages/Admin/CorporateManagement/CorporateManagement";
 import AddCorporate from "./Pages/Admin/CorporateManagement/AddCorporate";
+import Regions from "./Pages/Admin/Regions/Regions";
+import AddCountry from "./Pages/Admin/Regions/AddCountry";
+import AddCity from "./Pages/Admin/Regions/AddCity";
+import AddZone from "./Pages/Admin/Regions/AddZone";
+import JobCategory from "./Pages/Admin/Setting/JobCategory/JobCategory";
+import AddJobCategory from "./Pages/Admin/Setting/JobCategory/AddJobCategory";
+import JobSpecialization from "./Pages/Admin/Setting/Specializations/JobSpecializations";
+import AddJobSpecialization from "./Pages/Admin/Setting/Specializations/AddJobSpecializations";
 
 const router = createBrowserRouter([
   // ✅ صفحات تسجيل الدخول و auth layout
@@ -61,6 +69,29 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <CorporateManagement /> },
           { path: "add", element: <AddCorporate /> },
+        ],
+      },
+      {
+        path: "regions",
+        children: [
+          { index: true, element: <Regions /> },
+          { path: "add_country", element: <AddCountry /> },
+          { path: "add_city", element: <AddCity /> },
+          { path: "add_zone", element: <AddZone /> },
+        ],
+      },
+       {
+        path: "job_category",
+        children: [
+          { index: true, element: <JobCategory /> },
+          { path: "add", element: <AddJobCategory /> },
+        ],
+      },
+      {
+        path: "specialization",
+        children: [
+          { index: true, element: <JobSpecialization /> },
+          { path: "add", element: <AddJobSpecialization /> },
         ],
       },
 

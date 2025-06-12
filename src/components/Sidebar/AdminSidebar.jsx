@@ -1,9 +1,10 @@
-// src/components/Sidebar/AdminSidebar.jsx
 import { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
-import { HiOutlineUsers ,HiOutlineOfficeBuilding } from "react-icons/hi";
+import { HiOutlineUsers, HiOutlineOfficeBuilding ,HiOutlineUserCircle} from "react-icons/hi";
 import { CiLocationOn } from "react-icons/ci";
+import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight } from "lucide-react";
+import { BiCategory } from "react-icons/bi";
 
 import {
     Sidebar,
@@ -17,14 +18,21 @@ import {
 } from "@/components/ui/sidebar";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BriefcaseBusiness } from "lucide-react";
 
 const navItems = [
-    { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-20" size={20} /> },
-    { label: "User Managment", to: "/users", icon: <HiOutlineUsers className="stroke-2" size={20} /> },
+    { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
+    { label: "User Management", to: "/users", icon: <HiOutlineUsers className="stroke-2" size={20} /> },
     { label: "Corporate Management", to: "/corporate", icon: <HiOutlineOfficeBuilding className="stroke-2" size={20} /> },
     { label: "Job Management", to: "/jobs", icon: <BriefcaseBusiness className="stroke-2" size={20} /> },
-    { label: "Governorates and Regions", to: "/governorates", icon: <CiLocationOn className="stroke-1" size={20} /> },
+    { label: "Governorates and Regions", to: "/regions", icon: <CiLocationOn className="stroke-1" size={20} /> },
+    {
+        label: "Settings",
+        icon: <Cog className="stroke-2" size={20} />,
+        subItems: [
+            { label: "Job Category", to: "/job_category", icon: <BiCategory size={20} /> },
+            { label: "Job Specialization", to: "/specialization", icon: <HiOutlineUserCircle className="stroke-1" size={20} /> },
+        ],
+    },
 ];
 
 export function AdminSidebar() {
@@ -32,7 +40,7 @@ export function AdminSidebar() {
     const { i18n } = useTranslation();
     const isRTL = i18n.dir() === "rtl";
     const user = useSelector((state) => state.auth.user);
-    const villageName = user?.village?.village?.name || "SEA GO";
+    const villageName = user?.village?.village?.name || "Marfae";
     const villageImage = user?.village?.village?.image_link || null;
 
     const [expandedItems, setExpandedItems] = useState({});
@@ -108,8 +116,8 @@ export function AdminSidebar() {
                                             <Link to={item.to}>
                                                 <SidebarMenuButton
                                                     isActive={isActive}
-                                                    className={`flex bg-bgsidebar justify-between items-center gap-3 p-2 text-white transition-all duration-200 text-base font-medium
-                            ${isActive ? "shadow-md  bg-bgsidebar" : " bg-white hover:bg-white hover:text-teal-600"}`}
+                                                    className={`flex bg-bgsidebar justify-between items-center gap-3 p-2 text-bg-primary transition-all duration-200 text-base font-medium
+                            ${isActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                                 >
                                                     <div className="flex items-center gap-3 text-bg-primary">
                                                         {item.icon}
@@ -121,12 +129,12 @@ export function AdminSidebar() {
                                             <SidebarMenuButton
                                                 onClick={() => toggleExpand(item.label)}
                                                 isActive={isActive}
-                                                className={`flex justify-between items-center gap-3 !p-4 text-white transition-all duration-200 text-base font-medium
-                          ${isActive ? "bg-white text-teal-600 shadow-md" : "hover:bg-white hover:text-teal-600"}`}
+                                                className={`flex justify-between items-center gap-3 !p-2 text-bg-primary transition-all duration-200 text-base font-medium
+                          ${isActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     {item.icon}
-                                                    <span className="text-base">{item.label}</span>
+                                                    <span className="text-base text-textsidebar">{item.label}</span>
                                                 </div>
                                                 {item.subItems && (
                                                     <span>{isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}</span>
@@ -135,18 +143,18 @@ export function AdminSidebar() {
                                         )}
 
                                         {item.subItems && isExpanded && (
-                                            <div className="!ml-6 !mt-1 flex flex-col gap-1">
+                                            <div className="!ml-6 !mt-3 flex flex-col gap-1">
                                                 {item.subItems.map((subItem) => {
                                                     const isSubActive = location.pathname.startsWith(subItem.to);
                                                     return (
                                                         <Link to={subItem.to} key={subItem.label}>
                                                             <SidebarMenuButton
                                                                 isActive={isSubActive}
-                                                                className={`flex justify-start items-center gap-3 !px-4 !py-2 text-white transition-all duration-200 text-base
-                                  ${isSubActive ? "bg-white text-teal-600 shadow-md" : "hover:bg-white hover:text-teal-600"}`}
+                                                                className={`flex justify-start items-center gap-3 !px-4 !py-2 text-bg-primary transition-all duration-200 text-base
+                                  ${isSubActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                                             >
                                                                 {subItem.icon}
-                                                                <span className="text-base">{subItem.label}</span>
+                                                                <span className="text-base text-textsidebar">{subItem.label}</span>
                                                             </SidebarMenuButton>
                                                         </Link>
                                                     );

@@ -25,7 +25,7 @@ export const usePost = ({ url, login = false, type = false }) => {
 
                      const response = await axios.post(url, data, config);
 
-                     if (response.status === 200 || response.status === 201) {
+                     if (response.status === 200 || response.status === 201 ) {
                             { name ? toast.success(name) : '' }   
                             setResponse(response);
                      }
