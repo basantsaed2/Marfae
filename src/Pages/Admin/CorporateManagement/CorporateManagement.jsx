@@ -42,7 +42,7 @@ const CorporateManagement = () => {
                 //         <AvatarFallback>{c.name?.charAt(0)}</AvatarFallback>
                 //     </Avatar>
                 // ),
-                 email: c.email || "—",
+                email: c.email || "—",
                 phone: c.phone || "—",
                 type: c.type || "—",
                 specializations: Array.isArray(c.company_specializations)
@@ -54,7 +54,7 @@ const CorporateManagement = () => {
                 twitter_link: c.twitter_link || "—",
                 linkedin_link: c.linkedin_link || "—",
                 site_link: c.site_link || "—",
-                status: c.status || "—",
+                status: c.status === "active" ? "Active" : "Inactive",
                 start_date: c.start_date || "—",
                 end_date: c.end_date || "—",
                 user_id: c.user_id || "—",
@@ -72,22 +72,22 @@ const CorporateManagement = () => {
         { key: "type", label: "Type" },
         { key: "specializations", label: "Specializations" },
         { key: "status", label: "Status" },
-        {
-            key: "details",
-            label: "Details",
-            render: (item) => (
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                        setSelectedRow(item);
-                        setIsDetailsOpen(true);
-                    }}
-                >
-                    <Info className="h-4 w-4 mr-2" /> View
-                </Button>
-            ),
-        },
+        // {
+        //     key: "details",
+        //     label: "Details",
+        //     render: (item) => (
+        //         <Button
+        //             variant="outline"
+        //             size="sm"
+        //             onClick={() => {
+        //                 setSelectedRow(item);
+        //                 setIsDetailsOpen(true);
+        //             }}
+        //         >
+        //             <Info className="h-4 w-4 mr-2" /> View
+        //         </Button>
+        //     ),
+        // },
     ];
 
     const handleEdit = (item) => navigate(`add`, { state: { companyDetails: item } });
@@ -97,7 +97,7 @@ const CorporateManagement = () => {
         setIsDeleteOpen(true);
     };
 
-     const handleDeleteConfirm = async () => {
+    const handleDeleteConfirm = async () => {
         if (!selectedRow) return;
 
         const success = await deleteData(
@@ -128,6 +128,7 @@ const CorporateManagement = () => {
                 <Table
                     data={companies}
                     columns={Columns}
+                    statusKey="status"
                     filterKeys={["name"]} // Exclude image_link from filtering
                     titles={{ name: "Company Name" }}
                     onEdit={(item) => handleEdit({ ...item })}
