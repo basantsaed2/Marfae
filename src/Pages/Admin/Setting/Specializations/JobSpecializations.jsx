@@ -3,7 +3,7 @@ import { Table} from '@/components/ui/table';
 import { Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGet } from '@/Hooks/UseGet';
-import { useDelete } from '@/Hooks/UseDelete';
+import { useDelete } from '@/Hooks/useDelete';
 import DeleteDialog from '@/components/DeleteDialog'; // Import DeleteDialog
 import FullPageLoader from "@/components/Loading";
 
