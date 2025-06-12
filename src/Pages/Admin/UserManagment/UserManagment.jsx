@@ -14,7 +14,7 @@ import { useChangeState } from "@/Hooks/useChangeState";
 const UserManagment = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const { refetch: refetchUser, loading: loadingUser, data: dataUser } = useGet({ url: `${apiUrl}/admin/getUsers` });
-  const {loadingChange , changeState } = useChangeState();
+  const { loadingChange, changeState } = useChangeState();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
@@ -31,6 +31,8 @@ const UserManagment = () => {
       const formatted = dataUser?.users?.map((u) => ({
         id: u.id,
         name: u.first_name + u.last_name || "—",
+        first_name: u.first_name || "—",
+        last_name: u.last_name|| "—",
         // img: u.image_link ? (
         //   <img
         //     src={u.image}
