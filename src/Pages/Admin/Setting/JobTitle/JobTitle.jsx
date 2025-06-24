@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+import { Table } from '@/components/ui/table';
 import { Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGet } from '@/Hooks/UseGet';
 import { useDelete } from '@/Hooks/useDelete';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DeleteDialog from '@/components/DeleteDialog'; // Import DeleteDialog
 import FullPageLoader from "@/components/Loading";
 
-const JobCategory = () => {
+const JobTitle = () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
-    const { refetch: refetchCategory, loading: loadingCategory, data: dataCategory } = useGet({ url: `${apiUrl}/admin/getJobCategories` });
+    const { refetch: refetchJobTitle, loading: loadingJobTitle, data: dataJobTitle } = useGet({ url: `${apiUrl}/admin/getJobTitles` });
     const { deleteData, loadingDelete } = useDelete();
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
@@ -21,22 +19,24 @@ const JobCategory = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        refetchCategory();
-    }, [refetchCategory]);
+        refetchJobTitle();
+    }, [refetchJobTitle]);
 
     useEffect(() => {
-        if (dataCategory && dataCategory.jobCategories) {
-            const formatted = dataCategory?.jobCategories?.map((u) => ({
+        if (dataJobTitle && dataJobTitle.job_tittles) {
+            const formatted = dataJobTitle?.job_tittles?.map((u) => ({
                 id: u.id,
-                category: u.name || "—",
+                JobTitle: u.name || "—",
+                description: u.description || "—",
                 status: u.status === "active" ? "Active" : "Inactive",
             }));
             setCountries(formatted);
         }
-    }, [dataCategory]);
+    }, [dataJobTitle]);
 
     const Columns = [
-        { key: "category", label: "Job Category" },
+        { key: "JobTitle", label: "Job Title" },
+        { key: "description", label: "Job Description" },
         { key: "status", label: "Status" },
     ];
 
@@ -51,8 +51,8 @@ const JobCategory = () => {
         if (!selectedRow) return;
 
         const success = await deleteData(
-            `${apiUrl}/admin/deleteJobCategory/${selectedRow.id}`,
-            `${selectedRow.category} Deleted Successfully.`
+            `${apiUrl}/admin/deleteJobTittle/${selectedRow.id}`,
+            `${selectedRow.JobTitle} Deleted Successfully.`
         );
         if (success) {
             setIsDeleteOpen(false);
@@ -65,24 +65,24 @@ const JobCategory = () => {
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl text-bg-primary font-bold">Job Category</h2>
+                <h2 className="text-2xl text-bg-primary font-bold">Job Title</h2>
                 <Link
                     to="add"
                     className="flex justify-center items-center px-4 py-1 rounded-md text-base bg-bg-secondary font-semibold text-white hover:bg-bg-secondary/90"
                 >
-                    <Plus className="mr-2 h-4 w-4 text-white" /> Add Job Category
+                    <Plus className="mr-2 h-4 w-4 text-white" /> Add Job Title
                 </Link>
             </div>
-            {loadingCategory ? (
+            {loadingJobTitle ? (
                 <FullPageLoader />
             ) : (
                 <Table
                     data={countries}
                     columns={Columns}
                     statusKey="status"
-                    filterKeys={["category","status"]}
-                    titles={{ category: "Category" }}
-                    onEdit={(item) => handleEdit({ ...item, type: 'category' })}
+                    filterKeys={["JobTitle", "status"]}
+                    titles={{ JobTitle: "Job Title" }}
+                    onEdit={(item) => handleEdit({ ...item, type: 'JobTitle' })}
                     onDelete={handleDelete}
                     className="w-full bg-white rounded-lg shadow-md p-6"
                 />
@@ -91,11 +91,11 @@ const JobCategory = () => {
                 open={isDeleteOpen}
                 onOpenChange={setIsDeleteOpen}
                 onDelete={handleDeleteConfirm}
-                name={selectedRow?.category}
+                name={selectedRow?.JobTitle}
                 isLoading={loadingDelete}
             />
         </div>
     );
 };
 
-export default JobCategory;
+export default JobTitle;

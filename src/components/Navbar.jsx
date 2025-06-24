@@ -31,20 +31,20 @@ export default function Navbar({ className }) {
 
   const { totalMaintenance, totalProblems } = useSelector((state) => state.notifications);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
-  const { data: notificationData, loading: notificationLoading } = useGet({
-    url: `${apiUrl}/notifications?maintenance=${totalMaintenance}&problem_report=${totalProblems}`,
-    pollInterval: 10 * 60 * 1000,
-  });
+  // const { data: notificationData, loading: notificationLoading } = useGet({
+  //   url: `${apiUrl}/notifications?maintenance=${totalMaintenance}&problem_report=${totalProblems}`,
+  //   pollInterval: 10 * 60 * 1000,
+  // });
 
-  const newMaintenanceCount = Math.max(
-    0,
-    notificationData?.new_maintenance - notificationData?.maintenance_notification || 0
-  );
-  const newProblemCount = Math.max(
-    0,
-    notificationData?.new_problem_report - notificationData?.problem_report_notification || 0
-  );
-  const totalNotifications = newMaintenanceCount + newProblemCount;
+  // const newMaintenanceCount = Math.max(
+  //   0,
+  //   notificationData?.new_maintenance - notificationData?.maintenance_notification || 0
+  // );
+  // const newProblemCount = Math.max(
+  //   0,
+  //   notificationData?.new_problem_report - notificationData?.problem_report_notification || 0
+  // );
+  // const totalNotifications = newMaintenanceCount + newProblemCount;
 
   const handleLogout = () => {
     localStorage.removeItem("user");

@@ -34,7 +34,7 @@ const ControlPanel = () => {
     });
 
     const { refetch: refetchHomeList, loading: loadingHomeList, data: HomeListData } = useGet({
-        url: `${apiUrl}/home`,
+        url: `${apiUrl}/employeer/homePage`,
     });
     const { t } = useTranslation();
 

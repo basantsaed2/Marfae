@@ -5,9 +5,9 @@ import { ArrowLeft } from 'lucide-react';
 import { usePost } from '@/Hooks/UsePost';
 import { useChangeState } from '@/Hooks/useChangeState';
 
-const AddJobCategory = ({ lang = 'en' }) => {
+const AddCompanyType = ({ lang = 'en' }) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
-    const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addJobCategory` });
+    const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addCompanyType` });
     const { changeState, loadingChange, responseChange } = useChangeState();
 
     const location = useLocation();
@@ -17,11 +17,11 @@ const AddJobCategory = ({ lang = 'en' }) => {
 
     // Determine if we're in "edit" mode based on whether itemData is provided
     const isEditMode = !!initialItemData;
-    const title = isEditMode ? 'Edit Job Category' : 'Add Job Category';
+    const title = isEditMode ? 'Edit Company Type' : 'Add Company Type';
 
     // Define the fields for the form
     const fields = [
-        { name: 'category', type: 'input', placeholder: 'Job Category Name' },
+        { name: 'CompanyType', type: 'input', placeholder: 'Company Type Name' },
         {
             type: "switch",
             name: "status",
@@ -41,7 +41,7 @@ const AddJobCategory = ({ lang = 'en' }) => {
             console.log("initialItemData", initialItemData)
             setValues({
                 id: initialItemData.id || '',
-                category: initialItemData.category || '',
+                CompanyType: initialItemData.CompanyType || '',
                 status: initialItemData.status  === "Active" ? "active" : "inactive",
             });
         }
@@ -56,20 +56,20 @@ const AddJobCategory = ({ lang = 'en' }) => {
             // Edit mode: Use changeState (PUT request)
             const data = {
                 id: values.id || "",
-                name: values.category || "",
+                name: values.CompanyType || "",
                 status: values.status || "inactive",
             };
             await changeState(
-                `${apiUrl}/admin/editJobCategory/${values.id}`,
-                "Job Category Updated Successfully!",
+                `${apiUrl}/admin/editCompanyType/${values.id}`,
+                "Company Type Updated Successfully!",
                 data
             );
         } else {
             // Add mode: Use postData (POST request)
             const body = new FormData();
-            body.append("name", values.category || "");
+            body.append("name", values.CompanyType || "");
             body.append("status", values.status || "inactive");
-            await postData(body, "Job Category Added Successfully!");
+            await postData(body, "Company Type Added Successfully!");
         }
     };
 
@@ -82,7 +82,7 @@ const AddJobCategory = ({ lang = 'en' }) => {
     const handleReset = () => {
         setValues(initialItemData ? {
             id: initialItemData.id || '',
-            category: initialItemData.category || '',
+            CompanyType: initialItemData.CompanyType || '',
             status: initialItemData.status === "Active" ? "active" : "inactive",
         } : {});
     };
@@ -134,4 +134,4 @@ const AddJobCategory = ({ lang = 'en' }) => {
     );
 };
 
-export default AddJobCategory;
+export default AddCompanyType;

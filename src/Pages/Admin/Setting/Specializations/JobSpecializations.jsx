@@ -77,7 +77,7 @@ const JobSpecialization = () => {
                     data={specializations}
                     columns={Columns}
                     statusKey="status"
-                    filterKeys={["specialization"]}
+                    filterKeys={["specialization","status"]}
                     titles={{ specialization: "Specialization" }}
                     onEdit={(item) => handleEdit({ ...item, type: 'specialization' })}
                     onDelete={handleDelete}

@@ -21,6 +21,10 @@ import AddJobCategory from "./Pages/Admin/Setting/JobCategory/AddJobCategory";
 import JobSpecialization from "./Pages/Admin/Setting/Specializations/JobSpecializations";
 import AddJobSpecialization from "./Pages/Admin/Setting/Specializations/AddJobSpecializations";
 import AddUser from "./Pages/Admin/UserManagment/AddUser";
+import CompanyType from "./Pages/Admin/Setting/CompanyType/CompanyType";
+import AddCompanyType from "./Pages/Admin/Setting/CompanyType/AddCompanyType";
+import JobTitle from "./Pages/Admin/Setting/JobTitle/JobTitle";
+import AddJobTitle from "./Pages/Admin/Setting/JobTitle/AddJobTitle";
 
 const router = createBrowserRouter([
   // ✅ صفحات تسجيل الدخول و auth layout
@@ -84,7 +88,7 @@ const router = createBrowserRouter([
           { path: "add_zone", element: <AddZone /> },
         ],
       },
-       {
+      {
         path: "job_category",
         children: [
           { index: true, element: <JobCategory /> },
@@ -98,7 +102,20 @@ const router = createBrowserRouter([
           { path: "add", element: <AddJobSpecialization /> },
         ],
       },
-
+      {
+        path: "company_type",
+        children: [
+          { index: true, element: <CompanyType /> },
+          { path: "add", element: <AddCompanyType /> },
+        ],
+      },
+       {
+        path: "job_title",
+        children: [
+          { index: true, element: <JobTitle /> },
+          { path: "add", element: <AddJobTitle /> },
+        ],
+      },
       {
         path: "*",
         element: <NotFound />,

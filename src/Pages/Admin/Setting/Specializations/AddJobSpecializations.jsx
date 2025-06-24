@@ -57,7 +57,7 @@ const AddJobSpecialization = ({ lang = 'en' }) => {
             const data = {
                 id: values.id || "",
                 name: values.specialization || "",
-                status: values.status || 0,
+                status: values.status || "inactive",
             };
             await changeState(
                 `${apiUrl}/admin/editSpecialization/${values.id}`,
@@ -68,7 +68,7 @@ const AddJobSpecialization = ({ lang = 'en' }) => {
             // Add mode: Use postData (POST request)
             const body = new FormData();
             body.append("name", values.specialization || "");
-            body.append("status", values.status);
+            body.append("status", values.status || "inactive");
             await postData(body, "Specialization Added Successfully!");
         }
     };

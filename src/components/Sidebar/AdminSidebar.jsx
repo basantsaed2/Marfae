@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
-import { HiOutlineUsers, HiOutlineOfficeBuilding ,HiOutlineUserCircle} from "react-icons/hi";
+import { HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineUserCircle } from "react-icons/hi";
 import { CiLocationOn } from "react-icons/ci";
 import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight } from "lucide-react";
 import { BiCategory } from "react-icons/bi";
@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/sidebar";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { LuGrid2X2Plus } from "react-icons/lu";
+import { PiSubtitlesLight } from "react-icons/pi";
 
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
@@ -31,6 +33,8 @@ const navItems = [
         subItems: [
             { label: "Job Category", to: "/job_category", icon: <BiCategory size={20} /> },
             { label: "Job Specialization", to: "/specialization", icon: <HiOutlineUserCircle className="stroke-1" size={20} /> },
+            { label: "Company Type", to: "/company_type", icon: <LuGrid2X2Plus className="stroke-1" size={20} /> },
+            { label: "Job Title", to: "/job_title", icon: <PiSubtitlesLight className="stroke-1" size={20} /> },
         ],
     },
 ];

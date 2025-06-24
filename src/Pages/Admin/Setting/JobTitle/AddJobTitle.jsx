@@ -5,9 +5,9 @@ import { ArrowLeft } from 'lucide-react';
 import { usePost } from '@/Hooks/UsePost';
 import { useChangeState } from '@/Hooks/useChangeState';
 
-const AddJobCategory = ({ lang = 'en' }) => {
+const AddJobTitle = ({ lang = 'en' }) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
-    const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addJobCategory` });
+    const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addJobTittle` });
     const { changeState, loadingChange, responseChange } = useChangeState();
 
     const location = useLocation();
@@ -17,11 +17,12 @@ const AddJobCategory = ({ lang = 'en' }) => {
 
     // Determine if we're in "edit" mode based on whether itemData is provided
     const isEditMode = !!initialItemData;
-    const title = isEditMode ? 'Edit Job Category' : 'Add Job Category';
+    const title = isEditMode ? 'Edit Job Title' : 'Add Job Title';
 
     // Define the fields for the form
     const fields = [
-        { name: 'category', type: 'input', placeholder: 'Job Category Name' },
+        { name: 'JobTitle', type: 'input', placeholder: 'Job Title' },
+        { name: 'description', type: 'input', placeholder: 'Job Description' },
         {
             type: "switch",
             name: "status",
@@ -41,8 +42,9 @@ const AddJobCategory = ({ lang = 'en' }) => {
             console.log("initialItemData", initialItemData)
             setValues({
                 id: initialItemData.id || '',
-                category: initialItemData.category || '',
-                status: initialItemData.status  === "Active" ? "active" : "inactive",
+                JobTitle: initialItemData.JobTitle || '',
+                description: initialItemData.description || '',
+                status: initialItemData.status === "Active" ? "active" : "inactive",
             });
         }
     }, [initialItemData]);
@@ -56,20 +58,22 @@ const AddJobCategory = ({ lang = 'en' }) => {
             // Edit mode: Use changeState (PUT request)
             const data = {
                 id: values.id || "",
-                name: values.category || "",
+                name: values.JobTitle || "",
+                description: values.description || "",
                 status: values.status || "inactive",
             };
             await changeState(
-                `${apiUrl}/admin/editJobCategory/${values.id}`,
-                "Job Category Updated Successfully!",
+                `${apiUrl}/admin/editJobTittle/${values.id}`,
+                "Job Title Updated Successfully!",
                 data
             );
         } else {
             // Add mode: Use postData (POST request)
             const body = new FormData();
-            body.append("name", values.category || "");
+            body.append("name", values.JobTitle || "");
+            body.append("description", values.description || "");
             body.append("status", values.status || "inactive");
-            await postData(body, "Job Category Added Successfully!");
+            await postData(body, "Job Title Added Successfully!");
         }
     };
 
@@ -82,7 +86,8 @@ const AddJobCategory = ({ lang = 'en' }) => {
     const handleReset = () => {
         setValues(initialItemData ? {
             id: initialItemData.id || '',
-            category: initialItemData.category || '',
+            JobTitle: initialItemData.JobTitle || '',
+            description: initialItemData.description || '',
             status: initialItemData.status === "Active" ? "active" : "inactive",
         } : {});
     };
@@ -134,4 +139,4 @@ const AddJobCategory = ({ lang = 'en' }) => {
     );
 };
 
-export default AddJobCategory;
+export default AddJobTitle;
