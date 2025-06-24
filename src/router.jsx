@@ -25,8 +25,10 @@ import CompanyType from "./Pages/Admin/Setting/CompanyType/CompanyType";
 import AddCompanyType from "./Pages/Admin/Setting/CompanyType/AddCompanyType";
 import JobTitle from "./Pages/Admin/Setting/JobTitle/JobTitle";
 import AddJobTitle from "./Pages/Admin/Setting/JobTitle/AddJobTitle";
-import Drug from "./Pages/Admin/Setting/Drugs/Drug";
-import AddDrug from "./Pages/Admin/Setting/Drugs/AddDrug";
+import Drug from "./Pages/Admin/DrugsManagment/Drugs/Drug";
+import AddDrug from "./Pages/Admin/DrugsManagment/Drugs/AddDrug";
+import DrugCategory from "./Pages/Admin/DrugsManagment/DrugCategory/DrugCategory";
+import AddDrugCategory from "./Pages/Admin/DrugsManagment/DrugCategory/AddDrugCategory";
 
 const router = createBrowserRouter([
   // ✅ صفحات تسجيل الدخول و auth layout
@@ -68,20 +70,6 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "jobs",
-        children: [
-          { index: true, element: <JobsManagment /> },
-          { path: "add", element: <AddJob /> },
-        ],
-      },
-      {
-        path: "companies",
-        children: [
-          { index: true, element: <CorporateManagement /> },
-          { path: "add", element: <AddCorporate /> },
-        ],
-      },
-      {
         path: "regions",
         children: [
           { index: true, element: <Regions /> },
@@ -90,39 +78,86 @@ const router = createBrowserRouter([
           { path: "add_zone", element: <AddZone /> },
         ],
       },
+
+      // {
+      //   path: "specialization",
+      //   children: [
+      //     { index: true, element: <JobSpecialization /> },
+      //     { path: "add", element: <AddJobSpecialization /> },
+      //   ],
+      // },
+
       {
-        path: "job_category",
+        path: "job_management",
         children: [
-          { index: true, element: <JobCategory /> },
-          { path: "add", element: <AddJobCategory /> },
+          {
+            path: "jobs",
+            children: [
+              { index: true, element: <JobsManagment /> },
+              { path: "add", element: <AddJob /> },
+            ],
+          },
+          {
+            path: "job_category",
+            children: [
+              { index: true, element: <JobCategory /> },
+              { path: "add", element: <AddJobCategory /> },
+            ],
+          },
+          {
+            path: "job_specialization",
+            children: [
+              { index: true, element: <JobSpecialization /> },
+              { path: "add", element: <AddJobSpecialization /> },
+            ],
+          },
+          {
+            path: "job_title",
+            children: [
+              { index: true, element: <JobTitle /> },
+              { path: "add", element: <AddJobTitle /> },
+            ],
+          },
         ],
       },
+
       {
-        path: "specialization",
+        path: "company_management",
         children: [
-          { index: true, element: <JobSpecialization /> },
-          { path: "add", element: <AddJobSpecialization /> },
+          {
+            path: "companies",
+            children: [
+              { index: true, element: <CorporateManagement /> },
+              { path: "add", element: <AddCorporate /> },
+            ],
+          },
+          {
+            path: "company_type",
+            children: [
+              { index: true, element: <CompanyType /> },
+              { path: "add", element: <AddCompanyType /> },
+            ],
+          },
         ],
       },
+
       {
-        path: "company_type",
+        path: "drug_management",
         children: [
-          { index: true, element: <CompanyType /> },
-          { path: "add", element: <AddCompanyType /> },
-        ],
-      },
-      {
-        path: "job_title",
-        children: [
-          { index: true, element: <JobTitle /> },
-          { path: "add", element: <AddJobTitle /> },
-        ],
-      },
-      {
-        path: "drugs",
-        children: [
-          { index: true, element: <Drug /> },
-          { path: "add", element: <AddDrug /> },
+          {
+            path: "drugs",
+            children: [
+              { index: true, element: <Drug /> },
+              { path: "add", element: <AddDrug /> },
+            ],
+          },
+          {
+            path: "drug_category",
+            children: [
+              { index: true, element: <DrugCategory /> },
+              { path: "add", element: <AddDrugCategory /> },
+            ],
+          },
         ],
       },
       {
