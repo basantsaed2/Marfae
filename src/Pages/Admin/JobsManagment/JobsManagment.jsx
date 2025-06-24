@@ -78,7 +78,7 @@ const JobManagement = () => {
         { key: "city", label: "City" },
         { key: "zone", label: "Zone" },
         { key: "type", label: "Type" },
-        { key: "level", label: "Level" },
+        { key: "level", label: "Experience" },
         { key: "status", label: "Status" },
         // {
         //   key: "details",

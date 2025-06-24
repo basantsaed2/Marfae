@@ -12,6 +12,7 @@ const AddJob = ({ lang = 'en' }) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const { refetch: refetchCompanies, loading: loadingCompanies, data: dataCompanies } = useGet({ url: `${apiUrl}/admin/getCompanies` });
     const { refetch: refetchCategory, loading: loadingCategory, data: dataCategory } = useGet({ url: `${apiUrl}/admin/getJobCategories` });
+    const { refetch: refetchJobTitle, loading: loadingJobTitle, data: dataJobTitle } = useGet({ url: `${apiUrl}/admin/getActiveJobTittles` });
     const { refetch: refetchCity, loading: loadingCity, data: dataCity } = useGet({ url: `${apiUrl}/admin/getCities` });
     const { refetch: refetchZone, loading: loadingZone, data: dataZone } = useGet({ url: `${apiUrl}/admin/getZones` });
     const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addJob` });
@@ -27,15 +28,17 @@ const AddJob = ({ lang = 'en' }) => {
 
     const [companies, setCompanies] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [jobTitles, setJobTitles] = useState([]);
     const [cities, setCities] = useState([]);
     const [zones, setZones] = useState([]);
 
     useEffect(() => {
         refetchCompanies();
         refetchCategory();
+        refetchJobTitle();
         refetchCity();
         refetchZone();
-    }, [refetchCompanies, refetchCategory, refetchCity, refetchZone]);
+    }, [refetchCompanies, refetchCategory, refetchJobTitle, refetchCity, refetchZone]);
 
     useEffect(() => {
         if (dataCompanies && dataCompanies.companies) {
@@ -56,6 +59,16 @@ const AddJob = ({ lang = 'en' }) => {
             setCategories(formatted);
         }
     }, [dataCategory]);
+
+    useEffect(() => {
+        if (dataJobTitle && dataJobTitle.job_tittles) {
+            const formatted = dataJobTitle.job_tittles.map((u) => ({
+                label: u.name || "—",
+                value: u.id.toString(),
+            }));
+            setJobTitles(formatted);
+        }
+    }, [dataJobTitle]);
 
     useEffect(() => {
         if (dataCity && dataCity.cities) {
@@ -103,9 +116,10 @@ const AddJob = ({ lang = 'en' }) => {
             options: zones,
         },
         {
-            name: 'title',
-            type: 'input',
-            placeholder: 'Job Title *',
+            name: 'jobTitle',
+            type: 'select',
+            placeholder: 'Select Job Title *',
+            options: jobTitles,
         },
         {
             name: 'description',
@@ -138,24 +152,21 @@ const AddJob = ({ lang = 'en' }) => {
         {
             name: 'level',
             type: 'select',
-            placeholder: 'Job Level *',
+            placeholder: 'Job Experience *',
             options: [
-                { label: 'Entry Level', value: 'entry_level' },
-                { label: 'Intermediate', value: 'intermediate' },
-                { label: 'Advanced', value: 'advanced' },
-                { label: 'Expert', value: 'expert' },
+                { label: 'Fresh', value: 'fresh' },
+                { label: 'Junior', value: 'junior' },
+                { label: 'Mid', value: 'mid' },
+                { label: '+1 Year', value: '+1 year' },
+                { label: '+2 Years', value: '+2 years' },
+                { label: '+3 Years', value: '+3 years' },
+                { label: 'Senior', value: 'senior' },
             ],
         },
         {
-            name: 'min_expected_salary',
+            name: 'expected_salary',
             type: 'input',
-            placeholder: 'Minimum Expected Salary *',
-            typeInput: 'number',
-        },
-        {
-            name: 'max_expected_salary',
-            type: 'input',
-            placeholder: 'Maximum Expected Salary *',
+            placeholder: 'Expected Salary *',
             typeInput: 'number',
         },
         {
@@ -189,15 +200,14 @@ const AddJob = ({ lang = 'en' }) => {
                 job_category_id: initialItemData.job_category_id?.toString() || '',
                 city_id: initialItemData.city_id?.toString() || '',
                 zone_id: initialItemData.zone_id?.toString() || '',
-                title: initialItemData.title || '',
+                jobTitle: initialItemData.jobTitle || '',
                 description: initialItemData.description || '',
                 qualifications: initialItemData.qualifications || '',
                 image: initialItemData.image || '',
                 type: initialItemData.type || '',
                 level: initialItemData.level || '',
                 status: initialItemData.status || '',
-                min_expected_salary: initialItemData.min_expected_salary?.toString() || '',
-                max_expected_salary: initialItemData.max_expected_salary?.toString() || '',
+                expected_salary: initialItemData.expected_salary?.toString() || '',
                 expire_date: initialItemData.expire_date || '',
                 location_link: initialItemData.location_link || '',
             });
@@ -215,22 +225,16 @@ const AddJob = ({ lang = 'en' }) => {
             !values.job_category_id ||
             !values.city_id ||
             !values.zone_id ||
-            !values.title ||
+            !values.jobTitle ||
             !values.description ||
             !values.qualifications ||
             !values.type ||
             !values.level ||
             !values.status ||
-            !values.min_expected_salary ||
-            !values.max_expected_salary ||
+            !values.expected_salary ||
             !values.expire_date
         ) {
             toast.error('Please fill in all required fields');
-            return;
-        }
-
-        if (parseFloat(values.min_expected_salary) > parseFloat(values.max_expected_salary)) {
-            toast.error('Minimum salary cannot be greater than maximum salary');
             return;
         }
 
@@ -242,14 +246,13 @@ const AddJob = ({ lang = 'en' }) => {
                 job_category_id: parseInt(values.job_category_id),
                 city_id: parseInt(values.city_id),
                 zone_id: parseInt(values.zone_id),
-                title: values.title,
+                job_titel_id: values.jobTitle,
                 description: values.description,
                 qualifications: values.qualifications,
                 type: values.type,
                 level: values.level,
                 status: values.status,
-                min_expected_salary: parseFloat(values.min_expected_salary),
-                max_expected_salary: parseFloat(values.max_expected_salary),
+                expected_salary: parseFloat(values.expected_salary),
                 expire_date: values.expire_date,
                 location_link: values.location_link || '',
             };
@@ -265,7 +268,7 @@ const AddJob = ({ lang = 'en' }) => {
             body.append('job_category_id', values.job_category_id);
             body.append('city_id', values.city_id);
             body.append('zone_id', values.zone_id);
-            body.append('title', values.title);
+            body.append('job_titel_id', values.jobTitle);
             body.append('description', values.description);
             body.append('qualifications', values.qualifications);
             if (values.image && typeof values.image !== 'string') {
@@ -274,8 +277,7 @@ const AddJob = ({ lang = 'en' }) => {
             body.append('type', values.type);
             body.append('level', values.level);
             body.append('status', values.status);
-            body.append('min_expected_salary', values.min_expected_salary);
-            body.append('max_expected_salary', values.max_expected_salary);
+            body.append('expected_salary', values.expected_salary);
             body.append('expire_date', values.expire_date);
             body.append('location_link', values.location_link || '');
 
@@ -296,15 +298,14 @@ const AddJob = ({ lang = 'en' }) => {
             job_category_id: initialItemData.job_category_id?.toString() || '',
             city_id: initialItemData.city_id?.toString() || '',
             zone_id: initialItemData.zone_id?.toString() || '',
-            title: initialItemData.title || '',
+            jobTitle: initialItemData.jobTitle || '',
             description: initialItemData.description || '',
             qualifications: initialItemData.qualifications || '',
             image: initialItemData.image || '',
             type: initialItemData.type || '',
             level: initialItemData.level || '',
             status: initialItemData.status || '',
-            min_expected_salary: initialItemData.min_expected_salary?.toString() || '',
-            max_expected_salary: initialItemData.max_expected_salary?.toString() || '',
+            expected_salary: initialItemData.expected_salary?.toString() || '',
             expire_date: initialItemData.expire_date || '',
             location_link: initialItemData.location_link || '',
         } : {});
@@ -314,7 +315,7 @@ const AddJob = ({ lang = 'en' }) => {
         navigate(-1);
     };
 
-    if (loadingCompanies || loadingCategory || loadingCity || loadingZone) {
+    if (loadingCompanies || loadingJobTitle ||  loadingCategory || loadingCity || loadingZone) {
         return <FullPageLoader />;
     }
 

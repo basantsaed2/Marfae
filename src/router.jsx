@@ -75,7 +75,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "company",
+        path: "companies",
         children: [
           { index: true, element: <CorporateManagement /> },
           { path: "add", element: <AddCorporate /> },

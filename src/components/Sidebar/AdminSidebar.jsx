@@ -21,12 +21,22 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { LuGrid2X2Plus } from "react-icons/lu";
 import { PiSubtitlesLight } from "react-icons/pi";
+import { LiaPillsSolid } from "react-icons/lia";
+
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
     { label: "User Management", to: "/users", icon: <HiOutlineUsers className="stroke-2" size={20} /> },
-    { label: "Company Management", to: "/company", icon: <HiOutlineOfficeBuilding className="stroke-2" size={20} /> },
+    { label: "Company Management", to: "/companies", icon: <HiOutlineOfficeBuilding className="stroke-2" size={20} /> },
     { label: "Job Management", to: "/jobs", icon: <BriefcaseBusiness className="stroke-2" size={20} /> },
     { label: "Governorates and Regions", to: "/regions", icon: <CiLocationOn className="stroke-1" size={20} /> },
+    {
+        label: "Drugs Management",
+        icon: <LiaPillsSolid size={20} />,
+        subItems: [
+            { label: "Drugs Category", to: "/drug_category", icon: <BiCategory size={20} /> },
+            { label: "Drugs", to: "/drugs", icon: <GiPill className="stroke-1" size={20} /> },
+        ],
+    },
     {
         label: "Settings",
         icon: <Cog className="stroke-2" size={20} />,
@@ -35,7 +45,6 @@ const navItems = [
             { label: "Job Specialization", to: "/specialization", icon: <HiOutlineUserCircle className="stroke-1" size={20} /> },
             { label: "Company Type", to: "/company_type", icon: <LuGrid2X2Plus className="stroke-1" size={20} /> },
             { label: "Job Title", to: "/job_title", icon: <PiSubtitlesLight className="stroke-1" size={20} /> },
-            { label: "Drugs", to: "/drugs", icon: <GiPill className="stroke-1" size={20} /> },
         ],
     },
 ];
@@ -121,7 +130,7 @@ export function AdminSidebar() {
                                             <Link to={item.to}>
                                                 <SidebarMenuButton
                                                     isActive={isActive}
-                                                    className={`flex bg-bgsidebar justify-between items-center gap-3 p-2 text-bg-primary transition-all duration-200 text-base font-medium
+                                                    className={`flex cursor-pointer bg-bgsidebar justify-between items-center gap-3 p-2 text-bg-primary transition-all duration-200 text-base font-medium
                             ${isActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                                 >
                                                     <div className="flex items-center gap-3 text-bg-primary">
@@ -134,7 +143,7 @@ export function AdminSidebar() {
                                             <SidebarMenuButton
                                                 onClick={() => toggleExpand(item.label)}
                                                 isActive={isActive}
-                                                className={`flex justify-between items-center gap-3 !p-2 text-bg-primary transition-all duration-200 text-base font-medium
+                                                className={`flex cursor-pointer justify-between items-center gap-3 !p-2 text-bg-primary transition-all duration-200 text-base font-medium
                           ${isActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                             >
                                                 <div className="flex items-center gap-3">
@@ -155,7 +164,7 @@ export function AdminSidebar() {
                                                         <Link to={subItem.to} key={subItem.label}>
                                                             <SidebarMenuButton
                                                                 isActive={isSubActive}
-                                                                className={`flex justify-start items-center gap-3 !px-4 !py-2 text-bg-primary transition-all duration-200 text-base
+                                                                className={`flex cursor-pointer justify-start items-center gap-3 !px-4 !py-2 text-bg-primary transition-all duration-200 text-base
                                   ${isSubActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                                             >
                                                                 {subItem.icon}

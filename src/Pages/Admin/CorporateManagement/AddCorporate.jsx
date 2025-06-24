@@ -12,8 +12,10 @@ const AddCorporate = ({ lang = 'en' }) => {
     const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addCompany` });
     const { changeState, loadingChange, responseChange } = useChangeState();
     const { refetch: refetchSpecialization, loading: loadingSpecialization, data: dataSpecialization } = useGet({ url: `${apiUrl}/admin/getSpecializations` });
+    const { refetch: refetchCompanyType, loading: loadingCompanyType, data: dataCompanyType } = useGet({ url: `${apiUrl}/admin/getActiveCompanyTypes` });
 
     const [specializations, setSpecializations] = useState([]);
+    const [companyType, setCompanyType] = useState([]);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
     const location = useLocation();
@@ -27,7 +29,8 @@ const AddCorporate = ({ lang = 'en' }) => {
 
     useEffect(() => {
         refetchSpecialization();
-    }, [refetchSpecialization]);
+        refetchCompanyType();
+    }, [refetchSpecialization, refetchCompanyType]);
 
     useEffect(() => {
         if (dataSpecialization && dataSpecialization.specializations) {
@@ -38,6 +41,16 @@ const AddCorporate = ({ lang = 'en' }) => {
             setSpecializations(formatted);
         }
     }, [dataSpecialization]);
+
+    useEffect(() => {
+        if (dataCompanyType && dataCompanyType.company_types) {
+            const formatted = dataCompanyType?.company_types?.map((u) => ({
+                label: u.name || "—",
+                value: u.id.toString() || "", // Ensure ID is a string
+            }));
+            setCompanyType(formatted);
+        }
+    }, [dataCompanyType]);
 
     // Define the fields for the form based on provided JSON structure
     const fields = [
@@ -57,7 +70,13 @@ const AddCorporate = ({ lang = 'en' }) => {
             options: specializations,
             multiple: true, // Allow multiple selections
         },
-        { name: 'type', type: 'input', placeholder: 'Company Type' },
+        {
+            name: 'companyType',
+            type: 'select',
+            placeholder: 'Choose Company Type',
+            options: companyType,
+            multiple: true, // Allow multiple selections
+        },
         { type: 'file', placeholder: 'Upload Logo', name: 'image', accept: 'image/*' },
     ];
 
@@ -79,7 +98,7 @@ const AddCorporate = ({ lang = 'en' }) => {
                 linkedin_link: initialItemData.linkedin_link || '',
                 site_link: initialItemData.site_link || '',
                 specializations: initialItemData.specializations || [],
-                type: initialItemData.type || '',
+                companyType: initialItemData.companyType || [],
                 image: initialItemData.image || '',
             });
         }
@@ -110,7 +129,7 @@ const AddCorporate = ({ lang = 'en' }) => {
                 linkedin_link: values.linkedin_link || '',
                 site_link: values.site_link || '',
                 specializations: values.specializations || [],
-                type: values.type || '',
+                type: values.companyType || '',
             };
             await changeState(
                 `${apiUrl}/admin/editCompany/${values.id}`,
@@ -131,28 +150,12 @@ const AddCorporate = ({ lang = 'en' }) => {
             body.append('site_link', values.site_link || '');
             values.specializations.forEach((id) => {
                 body.append('specializations[]', parseInt(id));
-            }); body.append('type', values.type || '');
+            }); body.append('type', values.companyType || '');
             if (values.image && typeof values.image !== 'string') {
                 body.append('image', values.image);
             }
 
             await postData(body, 'Company Added Successfully!');
-        }
-    };
-
-    // Handle delete confirmation using changeState (PUT request)
-    const handleDeleteConfirm = async () => {
-        if (!initialItemData) return;
-
-        const success = await changeState(
-            `${apiUrl}/admin/deleteCompany/${initialItemData.id}`,
-            `${initialItemData.name} Deleted Successfully.`,
-            { id: initialItemData.id, isDeleted: true } // Assuming the API expects a soft delete flag
-        );
-
-        if (success) {
-            setIsDeleteOpen(false);
-            navigate(-1); // Navigate back after deletion
         }
     };
 
@@ -175,7 +178,7 @@ const AddCorporate = ({ lang = 'en' }) => {
             linkedin_link: initialItemData.linkedin_link || '',
             site_link: initialItemData.site_link || '',
             specializations: initialItemData.specializations || [],
-            type: initialItemData.type || '',
+            companyType: initialItemData.companyType || '',
             image: initialItemData.image || '',
         } : {});
     };
