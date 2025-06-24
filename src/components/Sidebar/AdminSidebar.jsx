@@ -3,8 +3,9 @@ import { useLocation, Link } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 import { HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineUserCircle } from "react-icons/hi";
 import { CiLocationOn } from "react-icons/ci";
-import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight } from "lucide-react";
+import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight, Pill } from "lucide-react";
 import { BiCategory } from "react-icons/bi";
+import { GiPill } from "react-icons/gi";
 
 import {
     Sidebar,
@@ -20,11 +21,10 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { LuGrid2X2Plus } from "react-icons/lu";
 import { PiSubtitlesLight } from "react-icons/pi";
-
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
     { label: "User Management", to: "/users", icon: <HiOutlineUsers className="stroke-2" size={20} /> },
-    { label: "Corporate Management", to: "/corporate", icon: <HiOutlineOfficeBuilding className="stroke-2" size={20} /> },
+    { label: "Company Management", to: "/company", icon: <HiOutlineOfficeBuilding className="stroke-2" size={20} /> },
     { label: "Job Management", to: "/jobs", icon: <BriefcaseBusiness className="stroke-2" size={20} /> },
     { label: "Governorates and Regions", to: "/regions", icon: <CiLocationOn className="stroke-1" size={20} /> },
     {
@@ -35,6 +35,7 @@ const navItems = [
             { label: "Job Specialization", to: "/specialization", icon: <HiOutlineUserCircle className="stroke-1" size={20} /> },
             { label: "Company Type", to: "/company_type", icon: <LuGrid2X2Plus className="stroke-1" size={20} /> },
             { label: "Job Title", to: "/job_title", icon: <PiSubtitlesLight className="stroke-1" size={20} /> },
+            { label: "Drugs", to: "/drugs", icon: <GiPill className="stroke-1" size={20} /> },
         ],
     },
 ];

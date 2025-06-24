@@ -25,6 +25,8 @@ import CompanyType from "./Pages/Admin/Setting/CompanyType/CompanyType";
 import AddCompanyType from "./Pages/Admin/Setting/CompanyType/AddCompanyType";
 import JobTitle from "./Pages/Admin/Setting/JobTitle/JobTitle";
 import AddJobTitle from "./Pages/Admin/Setting/JobTitle/AddJobTitle";
+import Drug from "./Pages/Admin/Setting/Drugs/Drug";
+import AddDrug from "./Pages/Admin/Setting/Drugs/AddDrug";
 
 const router = createBrowserRouter([
   // ✅ صفحات تسجيل الدخول و auth layout
@@ -73,7 +75,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "corporate",
+        path: "company",
         children: [
           { index: true, element: <CorporateManagement /> },
           { path: "add", element: <AddCorporate /> },
@@ -109,11 +111,18 @@ const router = createBrowserRouter([
           { path: "add", element: <AddCompanyType /> },
         ],
       },
-       {
+      {
         path: "job_title",
         children: [
           { index: true, element: <JobTitle /> },
           { path: "add", element: <AddJobTitle /> },
+        ],
+      },
+      {
+        path: "drugs",
+        children: [
+          { index: true, element: <Drug /> },
+          { path: "add", element: <AddDrug /> },
         ],
       },
       {
