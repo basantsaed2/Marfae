@@ -29,6 +29,8 @@ import Drug from "./Pages/Admin/DrugsManagment/Drugs/Drug";
 import AddDrug from "./Pages/Admin/DrugsManagment/Drugs/AddDrug";
 import DrugCategory from "./Pages/Admin/DrugsManagment/DrugCategory/DrugCategory";
 import AddDrugCategory from "./Pages/Admin/DrugsManagment/DrugCategory/AddDrugCategory";
+import Plans from "./Pages/Admin/Plans/Plans";
+import AddPlans from "./Pages/Admin/Plans/AddPlans";
 
 const router = createBrowserRouter([
   // ✅ صفحات تسجيل الدخول و auth layout
@@ -76,6 +78,14 @@ const router = createBrowserRouter([
           { path: "add_country", element: <AddCountry /> },
           { path: "add_city", element: <AddCity /> },
           { path: "add_zone", element: <AddZone /> },
+        ],
+      },
+
+       {
+        path: "plans",
+        children: [
+          { index: true, element: <Plans /> },
+          { path: "add", element: <AddPlans /> },
         ],
       },
 

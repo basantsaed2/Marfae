@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const JobManagement = () => {
-    const apiUrl = 'https://backMarfea.marfaa-alex.com/api';
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const { refetch: refetchJobs, loading: loadingJobs, data: dataJobs } = useGet({ url: `${apiUrl}/admin/getJobs` });
     const { deleteData, loadingDelete } = useDelete();
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);

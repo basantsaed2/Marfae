@@ -191,7 +191,7 @@ import { useLocation, Link } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 import { HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineUserCircle } from "react-icons/hi";
 import { CiLocationOn } from "react-icons/ci";
-import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight } from "lucide-react";
+import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight ,SquareChartGantt } from "lucide-react";
 import { BiCategory } from "react-icons/bi";
 import { GiPill } from "react-icons/gi";
 import {
@@ -213,6 +213,7 @@ import { LiaPillsSolid } from "react-icons/lia";
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
     { label: "User Management", to: "/users", icon: <HiOutlineUsers className="stroke-2" size={20} /> },
+    { label: "Plans", to: "/plans", icon: <SquareChartGantt className="stroke-2" size={20} /> },
     { label: "Governorates and Regions", to: "/regions", icon: <CiLocationOn className="stroke-1" size={20} /> },
     {
         label: "Job Management",

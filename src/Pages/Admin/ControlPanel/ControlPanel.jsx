@@ -24,17 +24,14 @@ const ControlPanel = () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const isLoading = useSelector((state) => state.loader.isLoading);
     const [homeStats, setHomeStats] = useState({
-        units_count: 0,
-        maintenance_request_count: 0,
-        problem_report_count: 0,
-        rents_count: 0,
-        users_beach: 0,
-        users_pool: 0,
-        visits_village: 0
+        totalActiveJobs: 0,
+        totalCompanies: 0,
+        totalPendingEmployeerRequests: 0,
+        totalUsers: 0
     });
 
     const { refetch: refetchHomeList, loading: loadingHomeList, data: HomeListData } = useGet({
-        url: `${apiUrl}/employeer/homePage`,
+        url: `${apiUrl}/admin/homePage`,
     });
     const { t } = useTranslation();
 
@@ -67,7 +64,7 @@ const ControlPanel = () => {
                     </div>
                     <div className="!p-2">
                         <div className="">{t("Total Jobs")}</div>
-                        <div className="text-3xl font-bold">{homeStats.units_count}</div>
+                        <div className="text-3xl font-bold">{homeStats.totalActiveJobs}</div>
                     </div>
                 </Link>
 
@@ -77,7 +74,7 @@ const ControlPanel = () => {
                     </div>
                     <div className="!p-2">
                         <div className="">{t("Total Requests")}</div>
-                        <div className="text-3xl font-bold">{homeStats.units_count}</div>
+                        <div className="text-3xl font-bold">{homeStats.totalPendingEmployeerRequests}</div>
                     </div>
                 </Link>
 
@@ -87,7 +84,7 @@ const ControlPanel = () => {
                     </div>
                     <div className="!p-2">
                         <div className="">{t("Total Users")}</div>
-                        <div className="text-3xl font-bold">{homeStats.units_count}</div>
+                        <div className="text-3xl font-bold">{homeStats.totalUsers}</div>
                     </div>
                 </Link>
 
@@ -96,18 +93,8 @@ const ControlPanel = () => {
                         <HiOutlineOfficeBuilding className="text-2xl text-white" />
                     </div>
                     <div className="!p-2">
-                        <div className="">{t("Certified Companies")}</div>
-                        <div className="text-3xl font-bold">{homeStats.units_count}</div>
-                    </div>
-                </Link>
-
-                <Link to={"wallet"} className="bg-white items-center gap-4 text-bg-primary py-4 px-6 rounded-2xl shadow flex">
-                    <div className="!p-4 flex items-center justify-center bg-bg-secondary rounded-md">
-                        <HiOutlineUsers className="text-2xl text-white" />
-                    </div>
-                    <div className="!p-2">
-                        <div className="font-bold text-xl">{t("Your Wallet")}</div>
-                        <div className="text-3xl font-bold">{homeStats.units_count}</div>
+                        <div className="">{t("Total Companies")}</div>
+                        <div className="text-3xl font-bold">{homeStats.totalCompanies}</div>
                     </div>
                 </Link>
 
