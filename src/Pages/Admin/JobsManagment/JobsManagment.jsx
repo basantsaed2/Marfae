@@ -103,8 +103,8 @@ const JobManagement = () => {
                     data={jobs}
                     columns={Columns}
                     statusKey="status"
-                    filterKeys={["title", "company", "job_category"]}
-                    titles={{ title: "Job Title" }}
+                    // filterKeys={["title", "company", "job_category"]}
+                    // titles={{ title: "Job Title" }}
                     onEdit={(item) => handleEdit({ ...item })}
                     onDelete={handleDelete}
                     className="w-full bg-white rounded-lg shadow-md p-6"

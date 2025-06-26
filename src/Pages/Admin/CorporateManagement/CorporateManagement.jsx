@@ -137,8 +137,8 @@ const CorporateManagement = () => {
                     data={companies}
                     columns={Columns}
                     statusKey="status"
-                    filterKeys={["name"]} // Exclude image_link from filtering
-                    titles={{ name: "Company Name" }}
+                    // filterKeys={["name"]} // Exclude image_link from filtering
+                    // titles={{ name: "Company Name" }}
                     onEdit={(item) => handleEdit({ ...item })}
                     onDelete={handleDelete}
                     className="w-full bg-white rounded-lg shadow-md p-6"

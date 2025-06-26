@@ -200,8 +200,8 @@ const Requests = () => {
                 data={pendingRequests}
                 columns={PendingColumns}
                 filterKeys={filterKeys}
-                titles={titles}
-                statusKey="email_verified"
+                // titles={titles}
+                // statusKey="email_verified"
                 onEdit={handleEdit}
                 renderActionCell={renderActionCell}
                 actionsButtons={false} // unEnable action buttons for pending requests
@@ -213,8 +213,8 @@ const Requests = () => {
                 data={approvedRequests}
                 columns={Columns}
                 filterKeys={filterKeys}
-                titles={titles}
-                statusKey="email_verified"
+                // titles={titles}
+                // statusKey="email_verified"
                 onEdit={handleEdit}
                 actionsButtons={false} // unEnable action buttons for pending requests
               />
@@ -225,8 +225,8 @@ const Requests = () => {
                 data={rejectedRequests}
                 columns={Columns}
                 filterKeys={filterKeys}
-                titles={titles}
-                statusKey="email_verified"
+                // titles={titles}
+                // statusKey="email_verified"
                 onEdit={handleEdit}
                 actionsButtons={false} // unEnable action buttons for pending requests
               />

@@ -80,8 +80,8 @@ const JobTitle = () => {
                     data={countries}
                     columns={Columns}
                     statusKey="status"
-                    filterKeys={["JobTitle", "status"]}
-                    titles={{ JobTitle: "Job Title" }}
+                    filterKeys={["status"]}
+                    // titles={{ JobTitle: "Job Title" }}
                     onEdit={(item) => handleEdit({ ...item, type: 'JobTitle' })}
                     onDelete={handleDelete}
                     className="w-full bg-white rounded-lg shadow-md p-6"

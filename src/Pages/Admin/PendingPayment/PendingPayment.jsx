@@ -258,8 +258,8 @@ const PendingPayment = () => {
                                 data={pendingRequests}
                                 columns={PendingColumns}
                                 filterKeys={filterKeys}
-                                titles={titles}
-                                statusKey="email_verified"
+                                // titles={titles}
+                                // statusKey="email_verified"
                                 onEdit={handleEdit}
                                 renderActionCell={(item) => renderActionCell(item, 'pending')}
                                 renderReceiptCell={renderReceiptCell}
@@ -272,8 +272,8 @@ const PendingPayment = () => {
                                 data={approvedRequests}
                                 columns={Columns}
                                 filterKeys={filterKeys}
-                                titles={titles}
-                                statusKey="email_verified"
+                                // titles={titles}
+                                // statusKey="email_verified"
                                 onEdit={handleEdit}
                                 renderReceiptCell={renderReceiptCell}
                                 actionsButtons={false}
@@ -285,8 +285,8 @@ const PendingPayment = () => {
                                 data={rejectedRequests}
                                 columns={RejectedColumns}
                                 filterKeys={filterKeys}
-                                titles={titles}
-                                statusKey="email_verified"
+                                // titles={titles}
+                                // statusKey="email_verified"
                                 onEdit={handleEdit}
                                 renderActionCell={(item) => renderActionCell(item, 'rejected')}
                                 renderReceiptCell={renderReceiptCell}

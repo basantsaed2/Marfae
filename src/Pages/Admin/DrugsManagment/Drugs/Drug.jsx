@@ -82,8 +82,8 @@ const Drug = () => {
           data={countries}
           columns={Columns}
           statusKey="status"
-          filterKeys={["name"]}
-          titles={{ name: "Drug Name" }}
+          // filterKeys={["name"]}
+          // titles={{ name: "Drug Name" }}
           onEdit={(item) => handleEdit({ ...item })}
           onDelete={handleDelete}
           className="w-full bg-white rounded-lg shadow-md p-6"
