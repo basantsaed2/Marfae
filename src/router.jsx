@@ -31,6 +31,9 @@ import DrugCategory from "./Pages/Admin/DrugsManagment/DrugCategory/DrugCategory
 import AddDrugCategory from "./Pages/Admin/DrugsManagment/DrugCategory/AddDrugCategory";
 import Plans from "./Pages/Admin/Plans/Plans";
 import AddPlans from "./Pages/Admin/Plans/AddPlans";
+import Requests from "./Pages/Admin/Requests/Request";
+import PaymentMethod from "./Pages/Admin/PaymentMethod/PaymentMethod";
+import AddPaymentMethod from "./Pages/Admin/PaymentMethod/AddPaymentMethod";
 
 const router = createBrowserRouter([
   // ✅ صفحات تسجيل الدخول و auth layout
@@ -72,6 +75,12 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: "requests",
+        children: [
+          { index: true, element: <Requests /> },
+        ],
+      },
+      {
         path: "regions",
         children: [
           { index: true, element: <Regions /> },
@@ -81,7 +90,7 @@ const router = createBrowserRouter([
         ],
       },
 
-       {
+      {
         path: "plans",
         children: [
           { index: true, element: <Plans /> },
@@ -166,6 +175,18 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <DrugCategory /> },
               { path: "add", element: <AddDrugCategory /> },
+            ],
+          },
+        ],
+      },
+      {
+        path: "setting",
+        children: [
+          {
+            path: "payment_method",
+            children: [
+              { index: true, element: <PaymentMethod /> },
+              { path: "add", element: <AddPaymentMethod /> },
             ],
           },
         ],

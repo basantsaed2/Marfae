@@ -191,7 +191,7 @@ import { useLocation, Link } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 import { HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineUserCircle } from "react-icons/hi";
 import { CiLocationOn } from "react-icons/ci";
-import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight ,SquareChartGantt } from "lucide-react";
+import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight, SquareChartGantt } from "lucide-react";
 import { BiCategory } from "react-icons/bi";
 import { GiPill } from "react-icons/gi";
 import {
@@ -209,10 +209,12 @@ import { useSelector } from "react-redux";
 import { LuGrid2X2Plus } from "react-icons/lu";
 import { PiSubtitlesLight } from "react-icons/pi";
 import { LiaPillsSolid } from "react-icons/lia";
+import { RiSecurePaymentFill } from "react-icons/ri";
 
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
     { label: "User Management", to: "/users", icon: <HiOutlineUsers className="stroke-2" size={20} /> },
+    { label: "Requests", to: "/requests", icon: <HiOutlineUsers className="stroke-2" size={20} /> },
     { label: "Plans", to: "/plans", icon: <SquareChartGantt className="stroke-2" size={20} /> },
     { label: "Governorates and Regions", to: "/regions", icon: <CiLocationOn className="stroke-1" size={20} /> },
     {
@@ -242,15 +244,13 @@ const navItems = [
             { label: "Drugs Category", to: "/drug_management/drug_category", icon: <BiCategory size={20} /> },
         ],
     },
-    // {
-    //     label: "Settings",
-    //     icon: <Cog className="stroke-2" size={20} />,
-    //     subItems: [
-    //         { label: "Job Category", to: "/job_category", icon: <BiCategory size={20} /> },
-    //         { label: "Job Specialization", to: "/specialization", icon: <HiOutlineUserCircle className="stroke-1" size={20} /> },
-    //         { label: "Job Title", to: "/job_title", icon: <PiSubtitlesLight className="stroke-1" size={20} /> },
-    //     ],
-    // },
+    {
+        label: "Settings",
+        icon: <Cog className="stroke-2" size={20} />,
+        subItems: [
+            { label: "Payment Method", to: "/setting/payment_method", icon: <RiSecurePaymentFill size={20} /> },
+        ],
+    },
 ];
 
 export function AdminSidebar() {
@@ -296,7 +296,7 @@ export function AdminSidebar() {
             className="bg-white border-none sm:border-none overflow-x-hidden h-full shadow-lg transition-all duration-300 font-cairo"
         >
             <SidebarContent
-                className="bg-white !p-2 text-white border-none overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                className="bg-white p-2 text-white border-none overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                 style={{
                     msOverflowStyle: "none",
                     scrollbarWidth: "none",
@@ -339,7 +339,7 @@ export function AdminSidebar() {
                                             <Link to={item.to}>
                                                 <SidebarMenuButton
                                                     isActive={isActive}
-                                                    className={`flex cursor-pointer bg-bgsidebar justify-between items-center gap-3 p-2 text-bg-primary transition-all duration-200 text-base font-medium
+                                                    className={`flex cursor-pointer bg-bgsidebar justify-between items-center gap-3 !p-2 text-bg-primary transition-all duration-200 text-base font-medium
                             ${isActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                                 >
                                                     <div className="flex items-center gap-3 text-bg-primary">
@@ -366,7 +366,7 @@ export function AdminSidebar() {
                                         )}
 
                                         {item.subItems && isExpanded && (
-                                            <div className="!ml-6 !mt-3 flex flex-col gap-1">
+                                            <div className="!ml-6 mt-3 flex flex-col gap-1">
                                                 {item.subItems.map((subItem) => {
                                                     const isSubActive = location.pathname.startsWith(subItem.to);
                                                     return (

@@ -569,7 +569,19 @@ function Table({
                 </TableCell>
                 {columns.map((col) => (
                   <TableCell className="" key={col.key}>
-                    {col.key === statusKey ? (
+                    {col.key === "img" ? (
+                      item[col.key] && item[col.key] !== "—" ? (
+                        <img
+                          src={item[col.key]}
+                          alt={item.name}
+                          className="w-12 h-12 object-cover rounded-md"
+                        />
+                      ) : (
+                        <Avatar className="w-12 h-12">
+                          <AvatarFallback>{item.name?.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                      )
+                    ) : col.key === statusKey ? (
                       <span
                         className={cn(
                           "px-2 py-1 rounded-full",
@@ -591,14 +603,14 @@ function Table({
                 ))}
                 <TableCell className="p-4">
                   <div className="flex space-x-2">
-                    {onView &&
+                    {onView && (
                       <button
                         onClick={() => onView && onView(item)}
                         className="text-blue-500"
                       >
                         👁️
                       </button>
-                    }
+                    )}
                     <button
                       onClick={() => onEdit && onEdit(item)}
                       className="text-blue-500"

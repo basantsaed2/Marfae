@@ -9,12 +9,35 @@ export default function Add({ fields, lang, values, onChange }) {
   const commonInputClass =
     "rounded-[15px] border border-gray-300 focus:border-bg-primary focus:ring-bg-primary";
 
-  const handleChange = (name, value) => {
-    if (onChange) {
-      onChange(lang, name, value);
-    }
+  // Function to convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
+  const handleChange = async (name, value) => {
+    if (name === 'image' && value instanceof File) {
+      try {
+        const base64Image = await convertToBase64(value);
+        if (onChange) {
+          onChange(lang, name, base64Image); // Pass base64 string
+        }
+      } catch (error) {
+        console.error('Error converting image to base64:', error);
+        if (onChange) {
+          onChange(lang, name, value); // Fallback to File object
+        }
+      }
+    } else {
+      if (onChange) {
+        onChange(lang, name, value); // Pass other values as-is
+      }
+    }
+  };
   // Separate map fields from other fields
   const mapFields = fields.filter((field) => field.type === "map");
   const otherFields = fields.filter((field) => field.type !== "map");
@@ -79,14 +102,25 @@ export default function Add({ fields, lang, values, onChange }) {
                       />
                     );
 
-                  case "file":
+                 case "file":
                     return (
-                      <div className="space-y-2">
+                      <div className="flex items-center">
+                        {/* Display existing image if available */}
+                        {/* {value && typeof value === "string" && value.startsWith("https") && (
+                          <div className="h-12">
+                            <img
+                              src={value}
+                              alt="Current payment method"
+                              className="w-full h-full object-cover rounded-md"
+                            />
+                          </div>
+                        )} */}
                         <Input
                           id={field.name}
                           type="file"
                           onChange={(e) => handleChange(field.name, e.target.files?.[0])}
                           className={`min-h-[46px] flex items-center text-gray-500 ${commonInputClass} file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200`}
+                          accept={field.accept || "image/*"}
                         />
                       </div>
                     );
