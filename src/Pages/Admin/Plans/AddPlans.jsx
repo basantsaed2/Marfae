@@ -6,19 +6,37 @@ import { usePost } from '@/Hooks/UsePost';
 import { useChangeState } from '@/Hooks/useChangeState';
 import FullPageLoader from '@/components/Loading';
 import { toast } from 'react-toastify';
+import { useGet } from '@/Hooks/UseGet';
 
 const AddPlans = ({ lang = 'en' }) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addPlan` });
     const { changeState, loadingChange, responseChange } = useChangeState();
+    const { refetch: refetchCategory, loading: loadingCategory, data: dataCategory } = useGet({ url: `${apiUrl}/admin/getJobCategories` });
 
     const location = useLocation();
     const navigate = useNavigate();
     const { state } = location;
     const initialItemData = state?.itemData || null;
+    const [categories, setCategories] = useState([]);
 
     const isEditMode = !!initialItemData;
     const title = isEditMode ? 'Edit Plan' : 'Add Plan';
+
+    useEffect(() => {
+        refetchCategory();
+    }, [refetchCategory]);
+
+    useEffect(() => {
+        if (dataCategory && dataCategory.jobCategories) {
+            const formatted = dataCategory?.jobCategories?.map((u) => ({
+                label: u.name || "—",
+                value: u.id.toString() || "", // Ensure ID is a string
+            }));
+            setCategories(formatted);
+        }
+    }, [dataCategory]);
+
 
     const fields = [
         {
@@ -54,6 +72,21 @@ const AddPlans = ({ lang = 'en' }) => {
             ],
         },
         {
+            name: 'categories',
+            type: 'multi-select',
+            placeholder: 'Choose categories',
+            options: categories,
+            multiple: true, // Allow multiple selections
+        },
+        {
+            type: 'switch',
+            name: 'top_picked',
+            placeholder: 'Top Picked CV',
+            returnType: 'string',
+            activeLabel: 'Top Picked',
+            inactiveLabel: 'Not Top Picked',
+        },
+        {
             type: 'switch',
             name: 'status',
             placeholder: 'Status',
@@ -76,6 +109,15 @@ const AddPlans = ({ lang = 'en' }) => {
                 price: initialItemData.price?.toString() || '',
                 price_after_discount: initialItemData.price_after_discount?.toString() || '',
                 type: initialItemData.type || '',
+                // categories: initialItemData.job_categories
+                //     ? initialItemData.job_categories.map(s => s.id.toString())
+                //     : [],
+                categories: Array.isArray(initialItemData.job_categories)
+                    ? initialItemData.job_categories
+                        .filter(s => s && s.id != null) // Ensure s and s.id are defined
+                        .map(s => s.id.toString())
+                    : [],
+                top_picked: initialItemData.top_picked || 0,
                 status: initialItemData.status || 'inactive',
             });
 
@@ -151,6 +193,8 @@ const AddPlans = ({ lang = 'en' }) => {
                 price: parseFloat(values.price),
                 price_after_discount: values.price_after_discount ? parseFloat(values.price_after_discount) : null,
                 type: values.type,
+                job_category_ids: values.categories || [],
+                top_picked: values.top_picked ? 1 : 0,
                 status: values.status,
                 features: featuresObj,
             };
@@ -174,6 +218,10 @@ const AddPlans = ({ lang = 'en' }) => {
                 body.append('price_after_discount', values.price_after_discount);
             }
             body.append('type', values.type);
+            values.categories.forEach((id) => {
+                body.append('job_category_ids[]', parseInt(id));
+            });
+            body.append('top_picked', values.top_picked ? 1 : 0);
             body.append('status', values.status);
 
             // Append features as flat keys
@@ -207,6 +255,7 @@ const AddPlans = ({ lang = 'en' }) => {
             price: initialItemData.price?.toString() || '',
             price_after_discount: initialItemData.price_after_discount?.toString() || '',
             type: initialItemData.type || '',
+            categories: initialItemData.categories || [],
             status: initialItemData.status || 'inactive',
         } : {});
 
@@ -229,7 +278,7 @@ const AddPlans = ({ lang = 'en' }) => {
         navigate(-1);
     };
 
-    if (loadingPost || loadingChange || (isEditMode && !initialItemData)) {
+    if (loadingPost || loadingChange || loadingCategory || (isEditMode && !initialItemData)) {
         return <FullPageLoader />;
     }
 

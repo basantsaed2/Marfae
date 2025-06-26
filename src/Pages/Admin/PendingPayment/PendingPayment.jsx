@@ -31,18 +31,24 @@ const PendingPayment = () => {
     const [modalAction, setModalAction] = useState(null); // 'accept' or 'reject'
     const [selectedItemId, setSelectedItemId] = useState(null);
 
+    // State for receipt image modal
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+    const [selectedReceiptUrl, setSelectedReceiptUrl] = useState(null);
+
     // Common columns for all tables
     const Columns = [
-        { key: "full_name", label: "Name" },
+        { key: "user_name", label: "User Name" },
         { key: "phone", label: "Phone" },
-        { key: "email", label: "Email" },
-        { key: "specialization", label: "Specialization" },
-        { key: "email_verified", label: "Email Verified" },
+        { key: "plan_name", label: "Plan" },
+        { key: "plan_price", label: "Price" },
+        { key: "company", label: "Company" },
+        { key: "payment_method", label: "Payment Method" },
     ];
 
-    // Columns for pending table with action
+    // Columns for pending table with action and receipt
     const PendingColumns = [
         ...Columns,
+        { key: "receipt", label: "Receipt" },
         { key: "action", label: "Action" },
     ];
 
@@ -53,14 +59,16 @@ const PendingPayment = () => {
 
     // Format pending data
     useEffect(() => {
-        if (pendingData?.pendingEmployeer && Array.isArray(pendingData.pendingEmployeer)) {
-            const formatted = pendingData.pendingEmployeer.map((u) => ({
+        if (pendingData?.pending_payment_requests && Array.isArray(pendingData.pending_payment_requests)) {
+            const formatted = pendingData.pending_payment_requests.map((u) => ({
                 id: u.id,
-                full_name: u.full_name || `${u.first_name} ${u.last_name}` || "—",
-                phone: u.phone || "—",
-                email: u.email || "—",
-                specialization: u.specialization || "—",
-                email_verified: u.email_verified || "—",
+                user_name: `${u?.empeloyee?.first_name} ${u?.empeloyee.last_name}` || "—",
+                phone: u?.empeloyee.phone || "—",
+                plan_name: u?.plan?.name || "—",
+                plan_price: u?.plan?.price_after_discount || "—",
+                company: u?.company?.name || "—",
+                payment_method: u?.payment_method?.name || "—",
+                receipt: u?.receipt_image_link || "—",
             }));
             setPendingRequests(formatted);
         } else {
@@ -82,6 +90,18 @@ const PendingPayment = () => {
         setModalAction(null);
     };
 
+    // Handle opening the receipt image modal
+    const openImageModal = (receiptUrl) => {
+        setSelectedReceiptUrl(receiptUrl);
+        setIsImageModalOpen(true);
+    };
+
+    // Handle closing the receipt image modal
+    const closeImageModal = () => {
+        setIsImageModalOpen(false);
+        setSelectedReceiptUrl(null);
+    };
+
     // Handle accept/reject actions after confirmation
     const handleAction = async () => {
         if (!selectedItemId || !modalAction) return;
@@ -98,10 +118,8 @@ const PendingPayment = () => {
 
         if (success) {
             setPendingRequests((prev) => prev.filter((item) => item.id !== selectedItemId));
-            modalAction === 'accept' ? refetchApproved() : refetchRejected();
+            closeConfirmationModal();
         }
-
-        closeConfirmationModal();
     };
 
     // Handle edit action
@@ -129,12 +147,28 @@ const PendingPayment = () => {
         </div>
     );
 
+    // Render receipt cell with View link
+    const renderReceiptCell = (item) => (
+        <div>
+            {item.receipt && item.receipt !== "—" ? (
+                <button
+                    onClick={() => openImageModal(item.receipt)}
+                    className="text-blue-600 hover:underline"
+                >
+                    View
+                </button>
+            ) : (
+                "—"
+            )}
+        </div>
+    );
+
     // Filter keys for table filtering
-    const filterKeys = ["email_verified"];
+    const filterKeys = ["payment_method"];
 
     // Titles for filter placeholders
     const titles = {
-        email_verified: "All Email Statuses",
+        payment_method: "Payment Method",
     };
 
     return (
@@ -155,7 +189,8 @@ const PendingPayment = () => {
                         statusKey="email_verified"
                         onEdit={handleEdit}
                         renderActionCell={renderActionCell}
-                        actionsButtons={false} // unEnable action buttons for pending requests
+                        renderReceiptCell={renderReceiptCell} // Add custom render for receipt
+                        actionsButtons={false}
                     />
 
                     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -166,7 +201,7 @@ const PendingPayment = () => {
                                 </DialogTitle>
                             </DialogHeader>
                             <p>
-                                Are you sure you want to {modalAction === 'accept' ? 'accept' : 'reject'} this employer?
+                                Are you sure you want to {modalAction === 'accept' ? 'accept' : 'reject'} this Pending Payment?
                             </p>
                             <DialogFooter>
                                 <Button
@@ -184,6 +219,35 @@ const PendingPayment = () => {
                                         } text-white`}
                                 >
                                     Confirm
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+                    <Dialog open={isImageModalOpen} onOpenChange={setIsImageModalOpen}>
+                        <DialogContent className="bg-white max-w-3xl">
+                            <DialogHeader>
+                                <DialogTitle>Receipt Image</DialogTitle>
+                            </DialogHeader>
+                            <div className="flex justify-center">
+                                {selectedReceiptUrl && selectedReceiptUrl !== "—" ? (
+                                    <img
+                                        src={selectedReceiptUrl}
+                                        alt="Receipt"
+                                        className="max-w-full max-h-[70vh] object-contain"
+                                        onError={(e) => (e.target.src = "/placeholder-image.png")} // Fallback for invalid URLs
+                                    />
+                                ) : (
+                                    <p className="text-gray-500">No receipt image available</p>
+                                )}
+                            </div>
+                            <DialogFooter>
+                                <Button
+                                    variant="outline"
+                                    onClick={closeImageModal}
+                                    className="bg-gray-300 text-black hover:bg-gray-400"
+                                >
+                                    Close
                                 </Button>
                             </DialogFooter>
                         </DialogContent>

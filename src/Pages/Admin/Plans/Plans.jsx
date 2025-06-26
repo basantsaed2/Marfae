@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from '@/components/ui/button';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Star } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGet } from '@/Hooks/UseGet';
 import { useDelete } from '@/Hooks/useDelete';
@@ -32,7 +32,14 @@ const Plans = () => {
                 type: plan.type,
                 features: plan.features,
                 created_at: plan.created_at,
-                updated_at: plan.updated_at
+                updated_at: plan.updated_at,
+                top_picked: plan.top_picked,
+                job_categories: Array.isArray(plan.job_categories)
+                    ? plan.job_categories.map((s) => ({
+                        id: s?.id,
+                        name: s?.name || "—",
+                    }))
+                    : [],
             }));
             setPlans(formatted);
         }
@@ -62,13 +69,18 @@ const Plans = () => {
 
     const PlanCard = ({ plan }) => (
         <div className="flex flex-col justify-between bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1">
-            <div className="relative">
-                <div className="absolute top-0 right-0 m-4">
+            <div className="flex flex-col">
+                <div className="flex justify-end space-x-2">
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${plan.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                         {plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}
                     </span>
+                    {plan.top_picked === 1 && (
+                        <span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 flex items-center">
+                            <Star className="w-4 h-4 mr-1" /> Top Picked
+                        </span>
+                    )}
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">{plan.name}</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mt-3 mb-2">{plan.name}</h3>
                 <p className="text-gray-600 mb-4 line-clamp-2">{plan.description}</p>
                 <div className="mb-4">
                     <p className="text-3xl font-semibold text-blue-600">{plan.price_after_discount} EGP
@@ -97,6 +109,21 @@ const Plans = () => {
                             ))}
                     </ul>
                 </div>
+                {plan.job_categories.length > 0 && (
+                    <div className="mb-6">
+                        <h4 className="font-semibold text-gray-700 mb-2">Plan Categories:</h4>
+                        <ul className="space-y-2">
+                            {plan.job_categories.map((category, index) => (
+                                <li key={index} className="flex items-center text-gray-600">
+                                    <svg className="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    {category.name || "—"}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
             </div>
             <div className="flex justify-end space-x-3">
                 <Button
