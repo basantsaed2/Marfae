@@ -58,7 +58,7 @@ const ControlPanel = () => {
 
                 {/* Units Number */}
 
-                <Link to={"jobs"} className="bg-white items-center gap-4 text-bg-primary py-4 px-6 rounded-2xl shadow flex">
+                <Link to={"job_management/jobs"} className="bg-white items-center gap-4 text-bg-primary py-4 px-6 rounded-2xl shadow flex">
                     <div className="!p-4 flex items-center justify-center bg-bg-secondary rounded-md">
                         <BriefcaseBusiness className="text-2xl text-white" />
                     </div>
@@ -88,7 +88,7 @@ const ControlPanel = () => {
                     </div>
                 </Link>
 
-                <Link to={"companies"} className="bg-white items-center gap-4 text-bg-primary py-4 px-6 rounded-2xl shadow flex">
+                <Link to={"company_management/companies"} className="bg-white items-center gap-4 text-bg-primary py-4 px-6 rounded-2xl shadow flex">
                     <div className="!p-4 flex items-center justify-center bg-bg-secondary rounded-md">
                         <HiOutlineOfficeBuilding className="text-2xl text-white" />
                     </div>

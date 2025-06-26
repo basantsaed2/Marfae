@@ -39,8 +39,8 @@ const Requests = () => {
   const Columns = [
     { key: "full_name", label: "Name" },
     { key: "phone", label: "Phone" },
+    { key: "company", label: "Company" },
     { key: "email", label: "Email" },
-    { key: "specialization", label: "Specialization" },
     { key: "email_verified", label: "Email Verified" },
   ];
 
@@ -64,6 +64,7 @@ const Requests = () => {
         id: u.id,
         full_name: u.full_name || `${u.first_name} ${u.last_name}` || "—",
         phone: u.phone || "—",
+        company: u.company?.name || "—",
         email: u.email || "—",
         specialization: u.specialization || "—",
         email_verified: u.email_verified || "—",
