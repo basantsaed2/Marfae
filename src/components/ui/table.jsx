@@ -746,7 +746,7 @@ function Table({
   const [searchTerm, setSearchTerm] = React.useState("");
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(0);
-  const rowsPerPage = 5;
+  const rowsPerPage = 15;
 
   // Initialize selectedFilters with default title values for each filterKey
   const initialFilters = React.useMemo(() => {

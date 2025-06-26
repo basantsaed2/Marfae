@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Table} from '@/components/ui/table';
+import { Table } from '@/components/ui/table';
 import { Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGet } from '@/Hooks/UseGet';
 import { useDelete } from '@/Hooks/useDelete';
-import DeleteDialog from '@/components/DeleteDialog'; // Import DeleteDialog
+import DeleteDialog from '@/components/DeleteDialog';
 import FullPageLoader from "@/components/Loading";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useChangeState } from "@/Hooks/useChangeState";
@@ -15,9 +15,7 @@ const Drug = () => {
   const { loadingChange, changeState } = useChangeState();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-
   const [countries, setCountries] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,34 +24,21 @@ const Drug = () => {
 
   useEffect(() => {
     if (dataDrug && dataDrug.drugs) {
-      const formatted = dataDrug?.drugs?.map((u) => ({
-        id: u.id,
+      const formatted = dataDrug.drugs.map((u) => ({
+        id: u.id || "—",
         name: u.name || "—",
-        img: u.image_link ? (
-          <img
-            src={u.image}
-            alt={u.name}
-            className="w-12 h-12 object-cover rounded-md"
-          />
-        ) : (
-          <Avatar className="w-12 h-12">
-            <AvatarFallback>{u.name?.charAt(0)}</AvatarFallback>
-          </Avatar>
-        ),
-        company: u.company || "—",
-        status: u.status === "active" ? "Active" : "Inactive",
+        description: u.description || "—",
+        company: u.company?.name || "—",
+        company_id: u.company_id?.toString() || "—", // Add company_id
       }));
       setCountries(formatted);
     }
   }, [dataDrug]);
 
   const Columns = [
-    // { key: "img", label: "Image" },
-    { key: "name", label: "Name" },
-    { key: "phone", label: "Phone" },
-    { key: "email", label: "Email" },
-    { key: "specialization", label: "Specialization" },
-    { key: "status", label: "Status" },
+    { key: "name", label: "Drug Name" },
+    { key: "company", label: "Company" },
+    { key: "description", label: "Description" },
   ];
 
   const handleEdit = (item) => navigate(`add`, { state: { itemData: item } });
@@ -67,9 +52,9 @@ const Drug = () => {
     if (!selectedRow) return;
 
     const success = await changeState(
-      `${apiUrl}/admin/deleteDrug/${selectedRow.id}`, // URL for the PUT request
-      `${selectedRow.name} Deleted Successfully.`, // Success message
-      {} // Data payload (empty object if no additional data is needed)
+      `${apiUrl}/admin/deleteDrug/${selectedRow.id}`,
+      `${selectedRow.name} Deleted Successfully.`,
+      {}
     );
 
     if (success) {
@@ -99,7 +84,7 @@ const Drug = () => {
           statusKey="status"
           filterKeys={["name"]}
           titles={{ name: "Drug Name" }}
-          onEdit={(item) => handleEdit({ ...item, type: 'name' })}
+          onEdit={(item) => handleEdit({ ...item })}
           onDelete={handleDelete}
           className="w-full bg-white rounded-lg shadow-md p-6"
         />

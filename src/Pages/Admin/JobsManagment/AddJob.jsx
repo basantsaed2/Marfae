@@ -365,7 +365,6 @@
 
 // export default AddJob;
 
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Add from '@/components/AddFieldSection';
@@ -394,7 +393,6 @@ const AddJob = ({ lang = 'en' }) => {
     const isEditMode = !!initialItemData;
     const title = isEditMode ? 'Edit Job' : 'Add Job';
 
-    // Move values state declaration before useEffect hooks
     const [values, setValues] = useState({
         company_id: '',
         job_category_id: '',
@@ -589,10 +587,10 @@ const AddJob = ({ lang = 'en' }) => {
                 job_category_id: initialItemData.job_category_id?.toString() || '',
                 city_id: initialItemData.city_id?.toString() || '',
                 zone_id: initialItemData.zone_id?.toString() || '',
-                jobTitle: initialItemData.jobTitle || '',
+                jobTitle: initialItemData.job_titel_id?.toString() || '',
                 description: initialItemData.description || '',
                 qualifications: initialItemData.qualifications || '',
-                image: initialItemData.image || '',
+                image: initialItemData.image_link || '',
                 type: initialItemData.type || '',
                 level: initialItemData.level || '',
                 status: initialItemData.status || 'inactive',
@@ -606,7 +604,6 @@ const AddJob = ({ lang = 'en' }) => {
     const handleChange = (lang, name, value) => {
         setValues((prev) => {
             const newValues = { ...prev, [name]: value };
-            // Reset zone_id when city_id changes
             if (name === 'city_id' && prev.city_id !== value) {
                 newValues.zone_id = '';
             }
@@ -615,7 +612,6 @@ const AddJob = ({ lang = 'en' }) => {
     };
 
     const handleSubmit = async () => {
-        // Validate required fields
         if (
             !values.company_id ||
             !values.job_category_id ||
@@ -636,7 +632,6 @@ const AddJob = ({ lang = 'en' }) => {
 
         try {
             if (isEditMode) {
-                // Edit mode: Use changeState (PUT request)
                 const data = {
                     id: values.id,
                     company_id: parseInt(values.company_id),
@@ -648,7 +643,7 @@ const AddJob = ({ lang = 'en' }) => {
                     qualifications: values.qualifications,
                     type: values.type,
                     level: values.level,
-                    status: values.status,
+                    status: values.status || 'inactive',
                     expected_salary: parseFloat(values.expected_salary),
                     expire_date: values.expire_date,
                     location_link: values.location_link || '',
@@ -662,7 +657,6 @@ const AddJob = ({ lang = 'en' }) => {
                     data
                 );
             } else {
-                // Add mode: Use postData (POST request)
                 const body = new FormData();
                 body.append('company_id', values.company_id);
                 body.append('job_category_id', values.job_category_id);
@@ -676,7 +670,7 @@ const AddJob = ({ lang = 'en' }) => {
                 }
                 body.append('type', values.type);
                 body.append('level', values.level);
-                body.append('status', values.status);
+                body.append('status', values.status || 'inactive');
                 body.append('expected_salary', values.expected_salary);
                 body.append('expire_date', values.expire_date);
                 body.append('location_link', values.location_link || '');
@@ -701,10 +695,10 @@ const AddJob = ({ lang = 'en' }) => {
             job_category_id: initialItemData.job_category_id?.toString() || '',
             city_id: initialItemData.city_id?.toString() || '',
             zone_id: initialItemData.zone_id?.toString() || '',
-            jobTitle: initialItemData.jobTitle || '',
+            jobTitle: initialItemData.job_titel_id?.toString() || '',
             description: initialItemData.description || '',
             qualifications: initialItemData.qualifications || '',
-            image: initialItemData.image || '',
+            image: initialItemData.image_link || '',
             type: initialItemData.type || '',
             level: initialItemData.level || '',
             status: initialItemData.status || 'inactive',

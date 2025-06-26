@@ -5,6 +5,8 @@ import { ArrowLeft } from 'lucide-react';
 import { usePost } from '@/Hooks/UsePost';
 import { useChangeState } from '@/Hooks/useChangeState';
 import { useGet } from '@/Hooks/UseGet';
+import { toast } from 'react-toastify';
+import FullPageLoader from '@/components/Loading';
 
 const AddDrug = ({ lang = 'en' }) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -12,14 +14,13 @@ const AddDrug = ({ lang = 'en' }) => {
     const { changeState, loadingChange, responseChange } = useChangeState();
     const { refetch: refetchCompany, loading: loadingCompany, data: dataCompany } = useGet({ url: `${apiUrl}/admin/getCompanies` });
 
-    const [Companys, setCompanys] = useState([]);
+    const [Companies, setCompanies] = useState([]); // Renamed from Companys for consistency
 
     const location = useLocation();
     const navigate = useNavigate();
     const { state } = location;
     const initialItemData = state?.itemData || null;
 
-    // Determine if we're in "edit" mode based on whether itemData is provided
     const isEditMode = !!initialItemData;
     const title = isEditMode ? 'Edit Drug' : 'Add Drug';
 
@@ -29,48 +30,42 @@ const AddDrug = ({ lang = 'en' }) => {
 
     useEffect(() => {
         if (dataCompany && dataCompany.companies) {
-            const formatted = dataCompany?.companies?.map((u) => ({
+            const formatted = dataCompany.companies.map((u) => ({
                 label: u.name || "—",
-                value: u.id.toString() || "", // Ensure ID is a string
+                value: u.id.toString() || "",
             }));
-            setCompanys(formatted);
+            setCompanies(formatted);
         }
     }, [dataCompany]);
 
-    // Define the fields for the form based on provided JSON structure
     const fields = [
-        { name: 'name', type: 'input', placeholder: 'Drug Name' },
-        { name: 'description', type: 'input', placeholder: 'Drug Description' },
+        { name: 'name', type: 'input', placeholder: 'Drug Name *' },
+        { name: 'description', type: 'input', placeholder: 'Drug Description *' },
         {
-            name: 'Company',
+            name: 'company_id',
             type: 'select',
-            placeholder: 'Choose the Company',
-            options: Companys,
+            placeholder: 'Choose the Company *',
+            options: Companies,
         },
         { type: 'file', placeholder: 'Image', name: 'image', accept: 'image/*' },
-        {
-            type: 'switch',
-            name: 'status',
-            placeholder: 'Status',
-            returnType: 'string',
-            activeLabel: 'Active',
-            inactiveLabel: 'Inactive',
-        },
     ];
 
-    // State to manage form values
-    const [values, setValues] = useState({});
+    const [values, setValues] = useState({
+        id: '',
+        name: '',
+        description: '',
+        company_id: '',
+        image: null,
+    });
 
-    // Set initial values when itemData is provided
     useEffect(() => {
         if (initialItemData) {
             setValues({
                 id: initialItemData.id || '',
                 name: initialItemData.name || '',
                 description: initialItemData.description || '',
-                Company: initialItemData.Company || '',
-                status: initialItemData.status === 'Active' ? 'active' : 'inactive',
-                image: initialItemData.image || '', // Image URL or file name
+                company_id: initialItemData.company_id?.toString() || '',
+                image: initialItemData.image || '',
             });
         }
     }, [initialItemData]);
@@ -80,32 +75,40 @@ const AddDrug = ({ lang = 'en' }) => {
     };
 
     const handleSubmit = async () => {
-        if (isEditMode) {
-            // Edit mode: Use changeState (PUT request)
-            const data = {
-                id: values.id,
-                name: values.name || '',
-                description: values.description || '',
-                company_id: values.Company || '',
-                status: values.status || 'inactive',
-            };
-            await changeState(
-                `${apiUrl}/admin/editDrug/${values.id}`,
-                'Drug Updated Successfully!',
-                data
-            );
-        } else {
-            // Add mode: Use postData (POST request)
-            const body = new FormData();
-            body.append('name', values.name || '');
-            body.append('description', values.description || '');
-            body.append('company_id', values.Company || '');
-            body.append('status', values.status || 'inactive');
-            if (values.image && typeof values.image !== 'string') {
-                body.append('image', values.image);
-            }
+        // Validate required fields
+        if (!values.name || !values.description || !values.company_id) {
+            toast.error('Please fill in all required fields');
+            return;
+        }
 
-            await postData(body, 'Drug Added Successfully!');
+        try {
+            if (isEditMode) {
+                const data = {
+                    id: values.id,
+                    name: values.name,
+                    description: values.description,
+                    company_id: parseInt(values.company_id),
+                };
+                if (values.image && typeof values.image !== 'string') {
+                    data.image = values.image;
+                }
+                await changeState(
+                    `${apiUrl}/admin/editDrug/${values.id}`,
+                    'Drug Updated Successfully!',
+                    data
+                );
+            } else {
+                const body = new FormData();
+                body.append('name', values.name);
+                body.append('description', values.description);
+                body.append('company_id', values.company_id);
+                if (values.image && typeof values.image !== 'string') {
+                    body.append('image', values.image);
+                }
+                await postData(body, 'Drug Added Successfully!');
+            }
+        } catch (error) {
+            toast.error('Failed to submit drug: ' + error.message);
         }
     };
 
@@ -120,15 +123,24 @@ const AddDrug = ({ lang = 'en' }) => {
             id: initialItemData.id || '',
             name: initialItemData.name || '',
             description: initialItemData.description || '',
-            Company: initialItemData.Company || '',
-            status: initialItemData.status === 'Active' ? 'active' : 'inactive',
+            company_id: initialItemData.company_id?.toString() || '',
             image: initialItemData.image || '',
-        } : {});
+        } : {
+            id: '',
+            name: '',
+            description: '',
+            company_id: '',
+            image: null,
+        });
     };
 
     const handleBack = () => {
-        navigate(-1); // Navigate to the previous page
+        navigate(-1);
     };
+
+    if (loadingCompany) {
+        return <FullPageLoader />;
+    }
 
     return (
         <div className="p-4">
@@ -153,16 +165,6 @@ const AddDrug = ({ lang = 'en' }) => {
             </div>
 
             <div className="mt-6 flex justify-end gap-4">
-                {isEditMode && (
-                    <button
-                        type="button"
-                        onClick={() => setIsDeleteOpen(true)}
-                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                        disabled={loadingPost || loadingChange}
-                    >
-                        Delete
-                    </button>
-                )}
                 <button
                     type="button"
                     onClick={handleReset}
@@ -180,7 +182,6 @@ const AddDrug = ({ lang = 'en' }) => {
                     {loadingPost || loadingChange ? 'Submitting...' : isEditMode ? 'Update' : 'Submit'}
                 </button>
             </div>
-
         </div>
     );
 };

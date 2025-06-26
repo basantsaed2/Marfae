@@ -100,8 +100,8 @@ const UserManagment = () => {
           data={users}
           columns={Columns}
           statusKey="status"
-          filterKeys={["name"]}
-          titles={{ name: "User Name" }}
+          filterKeys={["status"]}
+          titles={{ status: "status" }}
           onEdit={(item) => handleEdit({ ...item, type: 'name' })}
           onDelete={handleDelete}
           className="w-full bg-white rounded-lg shadow-md p-6"
