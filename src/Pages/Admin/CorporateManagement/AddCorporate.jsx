@@ -84,6 +84,7 @@ const AddCorporate = ({ lang = 'en' }) => {
     const [values, setValues] = useState({});
 
     // Set initial values when companyDetails is provided
+    // In AddCorporate.js, modify the useEffect that sets initial values:
     useEffect(() => {
         if (initialItemData) {
             setValues({
@@ -97,8 +98,12 @@ const AddCorporate = ({ lang = 'en' }) => {
                 facebook_link: initialItemData.facebook_link || '',
                 linkedin_link: initialItemData.linkedin_link || '',
                 site_link: initialItemData.site_link || '',
-                specializations: initialItemData.specializations || [],
-                companyType: initialItemData.companyType || [],
+                // Transform specializations array to just IDs
+                specializations: initialItemData.specializations
+                    ? initialItemData.specializations.map(s => s.id.toString())
+                    : [],
+                // Similarly for companyType if needed
+                companyType: initialItemData.companyType || '',
                 image: initialItemData.image || '',
             });
         }
@@ -129,7 +134,7 @@ const AddCorporate = ({ lang = 'en' }) => {
                 linkedin_link: values.linkedin_link || '',
                 site_link: values.site_link || '',
                 specializations: values.specializations || [],
-                type: values.companyType || '',
+                company_type_id: values.companyType || '',
             };
             await changeState(
                 `${apiUrl}/admin/editCompany/${values.id}`,
@@ -150,7 +155,8 @@ const AddCorporate = ({ lang = 'en' }) => {
             body.append('site_link', values.site_link || '');
             values.specializations.forEach((id) => {
                 body.append('specializations[]', parseInt(id));
-            }); body.append('type', values.companyType || '');
+            });
+             body.append('company_type_id', values.companyType || '');
             if (values.image && typeof values.image !== 'string') {
                 body.append('image', values.image);
             }

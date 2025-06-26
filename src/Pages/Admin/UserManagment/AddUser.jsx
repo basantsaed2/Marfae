@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { usePost } from '@/Hooks/UsePost';
 import { useChangeState } from '@/Hooks/useChangeState';
 import { useGet } from '@/Hooks/UseGet';
+import FullPageLoader from '@/components/Loading';
 
 const AddUser = ({ lang = 'en' }) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -29,7 +30,7 @@ const AddUser = ({ lang = 'en' }) => {
 
     useEffect(() => {
         if (dataSpecialization && dataSpecialization.specializations) {
-            const formatted = dataSpecialization?.specializations?.map((u) => ({
+            const formatted = dataSpecialization?.specializations.map((u) => ({
                 label: u.name || "—",
                 value: u.id.toString() || "", // Ensure ID is a string
             }));
@@ -37,18 +38,19 @@ const AddUser = ({ lang = 'en' }) => {
         }
     }, [dataSpecialization]);
 
-    // Define the fields for the form based on provided JSON structure
+    // Define the fields for the form
     const fields = [
         { name: 'first_name', type: 'input', placeholder: 'First Name' },
         { name: 'last_name', type: 'input', placeholder: 'Last Name' },
         { name: 'phone', type: 'input', placeholder: 'Phone' },
         { name: 'email', type: 'input', placeholder: 'Email' },
-        { name: 'password', type: 'input', placeholder: 'Password', disabled: isEditMode }, // Disable password in edit mode
+        { name: 'password', type: 'input', placeholder: 'Password', disabled: isEditMode },
         {
-            name: 'specialization',
-            type: 'select',
-            placeholder: 'Choose the specialization',
+            name: 'specializations',
+            type: 'multi-select',
+            placeholder: 'Choose specializations',
             options: specializations,
+            multiple: true,
         },
         { type: 'file', placeholder: 'Image', name: 'image', accept: 'image/*' },
         {
@@ -73,9 +75,13 @@ const AddUser = ({ lang = 'en' }) => {
                 last_name: initialItemData.last_name || '',
                 phone: initialItemData.phone || '',
                 email: initialItemData.email || '',
-                specialization: initialItemData.specialization || '',
+                specializations: Array.isArray(initialItemData.specializations)
+                    ? initialItemData.specializations
+                        .filter(s => s && s.id != null) // Ensure s and s.id are defined
+                        .map(s => s.id.toString())
+                    : [],
                 status: initialItemData.status === 'Active' ? 'active' : 'inactive',
-                image: initialItemData.image || '', // Image URL or file name
+                image: initialItemData.image || '',
             });
         }
     }, [initialItemData]);
@@ -83,6 +89,12 @@ const AddUser = ({ lang = 'en' }) => {
     const handleChange = (lang, name, value) => {
         setValues((prev) => ({ ...prev, [name]: value }));
     };
+
+    useEffect(() => {
+        if ((!loadingChange && responseChange) || (!loadingPost && postResponse)) {
+            navigate(-1);
+        }
+    }, [responseChange, postResponse, navigate]);
 
     const handleSubmit = async () => {
         if (isEditMode) {
@@ -93,9 +105,14 @@ const AddUser = ({ lang = 'en' }) => {
                 last_name: values.last_name || '',
                 phone: values.phone || '',
                 email: values.email || '',
-                specialization: values.specialization || '',
+                specialization: values.specializations.map(id => parseInt(id)), // Convert to integers
                 status: values.status || 'inactive',
+                image: values.image || '',
             };
+            // Only include image if a new file is selected
+            if (values.image && values.image instanceof File) {
+                data.image = values.image;
+            }
             await changeState(
                 `${apiUrl}/admin/editUser/${values.id}`,
                 'User Updated Successfully!',
@@ -109,21 +126,15 @@ const AddUser = ({ lang = 'en' }) => {
             body.append('phone', values.phone || '');
             body.append('email', values.email || '');
             body.append('password', values.password || '');
-            body.append('specialization', values.specialization || '');
+            // Use specializations[] to match backend expectation
+            values.specializations.forEach((id) => {
+                body.append('specialization[]', parseInt(id));
+            });
             body.append('status', values.status || 'inactive');
-            if (values.image && typeof values.image !== 'string') {
-                body.append('image', values.image);
-            }
-
+            body.append('image', values.image);
             await postData(body, 'User Added Successfully!');
         }
     };
-
-    useEffect(() => {
-        if ((!loadingChange && responseChange) || (!loadingPost && postResponse)) {
-            navigate(-1);
-        }
-    }, [responseChange, postResponse, navigate]);
 
     const handleReset = () => {
         setValues(initialItemData ? {
@@ -132,15 +143,23 @@ const AddUser = ({ lang = 'en' }) => {
             last_name: initialItemData.last_name || '',
             phone: initialItemData.phone || '',
             email: initialItemData.email || '',
-            specialization: initialItemData.specialization || '',
+            specializations: Array.isArray(initialItemData.specializations)
+                ? initialItemData.specializations
+                    .filter(s => s && s.id != null)
+                    .map(s => s.id.toString())
+                : [],
             status: initialItemData.status === 'Active' ? 'active' : 'inactive',
             image: initialItemData.image || '',
         } : {});
     };
 
     const handleBack = () => {
-        navigate(-1); // Navigate to the previous page
+        navigate(-1);
     };
+
+    // if (loadingSpecialization) {
+    //     return <FullPageLoader />;
+    // }
 
     return (
         <div className="p-4">
@@ -165,16 +184,6 @@ const AddUser = ({ lang = 'en' }) => {
             </div>
 
             <div className="mt-6 flex justify-end gap-4">
-                {isEditMode && (
-                    <button
-                        type="button"
-                        onClick={() => setIsDeleteOpen(true)}
-                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                        disabled={loadingPost || loadingChange}
-                    >
-                        Delete
-                    </button>
-                )}
                 <button
                     type="button"
                     onClick={handleReset}
@@ -192,7 +201,6 @@ const AddUser = ({ lang = 'en' }) => {
                     {loadingPost || loadingChange ? 'Submitting...' : isEditMode ? 'Update' : 'Submit'}
                 </button>
             </div>
-
         </div>
     );
 };

@@ -34,6 +34,7 @@ import AddPlans from "./Pages/Admin/Plans/AddPlans";
 import Requests from "./Pages/Admin/Requests/Request";
 import PaymentMethod from "./Pages/Admin/PaymentMethod/PaymentMethod";
 import AddPaymentMethod from "./Pages/Admin/PaymentMethod/AddPaymentMethod";
+import PendingPayment from "./Pages/Admin/PendingPayment/PendingPayment";
 
 const router = createBrowserRouter([
   // ✅ صفحات تسجيل الدخول و auth layout
@@ -81,6 +82,12 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: "pending_payment",
+        children: [
+          { index: true, element: <PendingPayment /> },
+        ],
+      },
+      {
         path: "regions",
         children: [
           { index: true, element: <Regions /> },
@@ -123,13 +130,13 @@ const router = createBrowserRouter([
               { path: "add", element: <AddJobCategory /> },
             ],
           },
-          {
-            path: "job_specialization",
-            children: [
-              { index: true, element: <JobSpecialization /> },
-              { path: "add", element: <AddJobSpecialization /> },
-            ],
-          },
+          // {
+          //   path: "job_specialization",
+          //   children: [
+          //     { index: true, element: <JobSpecialization /> },
+          //     { path: "add", element: <AddJobSpecialization /> },
+          //   ],
+          // },
           {
             path: "job_title",
             children: [
@@ -187,6 +194,13 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <PaymentMethod /> },
               { path: "add", element: <AddPaymentMethod /> },
+            ],
+          },
+          {
+            path: "specialization",
+            children: [
+              { index: true, element: <JobSpecialization /> },
+              { path: "add", element: <AddJobSpecialization /> },
             ],
           },
         ],

@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Table } from '@/components/ui/table';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGet } from '@/Hooks/UseGet';
-import { useDelete } from '@/Hooks/useDelete';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DeleteDialog from '@/components/DeleteDialog'; // Import DeleteDialog
 import FullPageLoader from "@/components/Loading";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useChangeState } from "@/Hooks/useChangeState";
+import { Plus } from 'lucide-react';
 
 const UserManagment = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -18,7 +14,7 @@ const UserManagment = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const [countries, setCountries] = useState([]);
+  const [users, setUsers] = useState([]);
 
   const navigate = useNavigate();
 
@@ -32,34 +28,34 @@ const UserManagment = () => {
         id: u.id,
         name: u.first_name + u.last_name || "—",
         first_name: u.first_name || "—",
-        last_name: u.last_name|| "—",
-        // img: u.image_link ? (
-        //   <img
-        //     src={u.image}
-        //     alt={u.first_name}
-        //     className="w-12 h-12 object-cover rounded-md"
-        //   />
-        // ) : (
-        //   <Avatar className="w-12 h-12">
-        //     <AvatarFallback>{u.first_name?.charAt(0)}</AvatarFallback>
-        //   </Avatar>
-        // ),
+        last_name: u.last_name || "—",
+        img: u.image_link || '',
+        image: u.image || '',
         phone: u.phone || "—",
         email: u.email || "—",
-        specialization: u.specialization || "—",
-
+        specializations: Array.isArray(u.specializations)
+          ? u.specializations.map((s) => ({
+            id: s?.id,
+            name: s?.name || "—",
+          }))
+          : [], // Store for editing
+        specializationsDisplay: Array.isArray(u.specializations)
+          ? u.specializations
+            .map((s) => s.name || "—")
+            .join(", ") || "—"
+          : "—", // For display
         status: u.status === "active" ? "Active" : "Inactive",
       }));
-      setCountries(formatted);
+      setUsers(formatted);
     }
   }, [dataUser]);
 
   const Columns = [
-    // { key: "img", label: "Image" },
+    { key: "img", label: "Image" },
     { key: "name", label: "Name" },
     { key: "phone", label: "Phone" },
     { key: "email", label: "Email" },
-    { key: "specialization", label: "Specialization" },
+    { key: "specializationsDisplay", label: "Specializations" },
     { key: "status", label: "Status" },
   ];
 
@@ -81,7 +77,7 @@ const UserManagment = () => {
 
     if (success) {
       setIsDeleteOpen(false);
-      setCountries((prev) => prev.filter((item) => item.id !== selectedRow.id));
+      setUsers((prev) => prev.filter((item) => item.id !== selectedRow.id));
       setSelectedRow(null);
     }
   };
@@ -101,7 +97,7 @@ const UserManagment = () => {
         <FullPageLoader />
       ) : (
         <Table
-          data={countries}
+          data={users}
           columns={Columns}
           statusKey="status"
           filterKeys={["name"]}
