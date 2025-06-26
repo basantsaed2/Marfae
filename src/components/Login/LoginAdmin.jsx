@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -29,11 +30,11 @@ const LoginAdmin = () => {
           if (bgImage) {
             container.style.setProperty('--bg-image', `url(${bgImage})`);
             container.classList.add('loaded');
-            observer.disconnect(); // Stop observing once loaded
+            observer.disconnect();
           }
         }
       },
-      { rootMargin: '100px' } // Load 100px before entering viewport
+      { rootMargin: '100px' }
     );
     if (containerRef.current) {
       observer.observe(containerRef.current);
@@ -69,13 +70,12 @@ const LoginAdmin = () => {
         localStorage.setItem("token", response?.data.token);
         const redirectTo = new URLSearchParams(location.search).get("redirect");
         navigate(redirectTo || "/");
-      }
-      else {
-        toast.error("Invalid Credentials")
+      } else {
+        toast.error("Invalid Credentials");
         navigate("/login");
       }
     }
-  }, [response, loadingPost, navigate, dispatch]);
+  }, [response, loadingPost, navigate, dispatch, location]);
 
   return (
     <div className="login-container" data-bg-image={image} ref={containerRef}>

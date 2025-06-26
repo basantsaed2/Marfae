@@ -37,22 +37,19 @@ import AddPaymentMethod from "./Pages/Admin/PaymentMethod/AddPaymentMethod";
 import PendingPayment from "./Pages/Admin/PendingPayment/PendingPayment";
 
 const router = createBrowserRouter([
-  // ✅ صفحات تسجيل الدخول و auth layout
   {
     element: <AuthLayout />,
     children: [
       {
         path: "login",
         element: (
-          // <ProtAuth>
-          <LoginAdmin />
-          // </ProtAuth>
+          <ProtAuth>
+            <LoginAdmin />
+          </ProtAuth>
         ),
       },
     ],
   },
-
-  // ✅ الصفحات المحمية داخل MainLayout
   {
     element: (
       <SidebarProvider>
@@ -64,8 +61,8 @@ const router = createBrowserRouter([
         path: "/",
         element: (
           <ProtectedRoute>
-          <ControlPanel />
-         </ProtectedRoute>
+            <ControlPanel />
+          </ProtectedRoute>
         ),
       },
       {
@@ -96,7 +93,6 @@ const router = createBrowserRouter([
           { path: "add_zone", element: <AddZone /> },
         ],
       },
-
       {
         path: "plans",
         children: [
@@ -104,15 +100,6 @@ const router = createBrowserRouter([
           { path: "add", element: <AddPlans /> },
         ],
       },
-
-      // {
-      //   path: "specialization",
-      //   children: [
-      //     { index: true, element: <JobSpecialization /> },
-      //     { path: "add", element: <AddJobSpecialization /> },
-      //   ],
-      // },
-
       {
         path: "job_management",
         children: [
@@ -130,13 +117,6 @@ const router = createBrowserRouter([
               { path: "add", element: <AddJobCategory /> },
             ],
           },
-          // {
-          //   path: "job_specialization",
-          //   children: [
-          //     { index: true, element: <JobSpecialization /> },
-          //     { path: "add", element: <AddJobSpecialization /> },
-          //   ],
-          // },
           {
             path: "job_title",
             children: [
@@ -146,7 +126,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-
       {
         path: "company_management",
         children: [
@@ -166,7 +145,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-
       {
         path: "drug_management",
         children: [
