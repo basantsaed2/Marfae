@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const Requests = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -302,6 +303,7 @@ const Requests = () => {
                 filterKeys={filterKeys}
                 // titles={titles}
                 // statusKey="email_verified"
+                renderActionCell={(item) => renderActionCell(item, 'rejected')}
                 renderReasonCell={renderReasonCell}
                 onEdit={handleEdit}
                 actionsButtons={false} // unEnable action buttons for pending requests
