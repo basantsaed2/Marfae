@@ -3,10 +3,8 @@ import { Table } from '@/components/ui/table';
 import { Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGet } from '@/Hooks/UseGet';
-import { useDelete } from '@/Hooks/useDelete';
 import DeleteDialog from '@/components/DeleteDialog';
 import FullPageLoader from "@/components/Loading";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useChangeState } from "@/Hooks/useChangeState";
 
 const Drug = () => {
@@ -26,9 +24,12 @@ const Drug = () => {
     if (dataDrug && dataDrug.drugs) {
       const formatted = dataDrug.drugs.map((u) => ({
         id: u.id || "—",
+        img: u.image_link || "—",
         name: u.name || "—",
         description: u.description || "—",
         company: u.company?.name || "—",
+        drug_category: u.drug_category?.name || "—",
+        drug_category_id: u.drug_category_id?.toString() || "—", // Add drug_category_id
         company_id: u.company_id?.toString() || "—", // Add company_id
       }));
       setCountries(formatted);
@@ -36,8 +37,10 @@ const Drug = () => {
   }, [dataDrug]);
 
   const Columns = [
+    { key: "img", label: "Drug Image",},
     { key: "name", label: "Drug Name" },
     { key: "company", label: "Company" },
+    { key: "drug_category", label: "Drug Category" },
     { key: "description", label: "Description" },
   ];
 

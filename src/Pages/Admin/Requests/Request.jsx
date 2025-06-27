@@ -34,6 +34,13 @@ const Requests = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState(null); // 'accept' or 'reject'
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState("");
+
+  const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
+  const [selectedReason, setSelectedReason] = useState("");
+
+  const [activeTab, setActiveTab] = useState("pending");
+
 
   // Common columns for all tables
   const Columns = [
@@ -47,6 +54,12 @@ const Requests = () => {
   // Columns for pending table with action
   const PendingColumns = [
     ...Columns,
+    { key: "action", label: "Action" },
+  ];
+
+  const RejectedColumns = [
+    ...Columns,
+    { key: "reason", label: "Reason" },
     { key: "action", label: "Action" },
   ];
 
@@ -82,6 +95,7 @@ const Requests = () => {
         id: u.id,
         full_name: u.full_name || `${u.first_name} ${u.last_name}` || "—",
         phone: u.phone || "—",
+        company: u.company?.name || "—",
         email: u.email || "—",
         specialization: u.specialization || "—",
         email_verified: u.email_verified || "—",
@@ -99,9 +113,11 @@ const Requests = () => {
         id: u.id,
         full_name: u.full_name || `${u.first_name} ${u.last_name}` || "—",
         phone: u.phone || "—",
+        company: u.company?.name || "—",
         email: u.email || "—",
         specialization: u.specialization || "—",
         email_verified: u.email_verified || "—",
+        reason: u?.reject_reason || '—',
       }));
       setRejectedRequests(formatted);
     } else {
@@ -113,14 +129,25 @@ const Requests = () => {
   const openConfirmationModal = (id, action) => {
     setSelectedItemId(id);
     setModalAction(action);
+    setRejectionReason("");
     setIsModalOpen(true);
   };
 
-  // Handle closing the confirmation modal
   const closeConfirmationModal = () => {
     setIsModalOpen(false);
     setSelectedItemId(null);
     setModalAction(null);
+    setRejectionReason("");
+  };
+
+  const openReasonModal = (reason) => {
+    setSelectedReason(reason);
+    setIsReasonModalOpen(true);
+  };
+
+  const closeReasonModal = () => {
+    setIsReasonModalOpen(false);
+    setSelectedReason("");
   };
 
   // Handle accept/reject actions after confirmation
@@ -131,44 +158,92 @@ const Requests = () => {
       ? `${apiUrl}/admin/acceptPendingEmployeer/${selectedItemId}`
       : `${apiUrl}/admin/rejectPendingEmployeer/${selectedItemId}`;
 
+    const payload = modalAction === 'reject' ? { reason: rejectionReason } : {};
+
     const success = await changeState(
       url,
       `${modalAction === 'accept' ? 'Accepted' : 'Rejected'} Successfully.`,
-      {}
+      payload
     );
 
     if (success) {
-      setPendingRequests((prev) => prev.filter((item) => item.id !== selectedItemId));
-      modalAction === 'accept' ? refetchApproved() : refetchRejected();
+      if (modalAction === 'accept') {
+        setPendingRequests((prev) => prev.filter((item) => item.id !== selectedItemId));
+        setRejectedRequests((prev) => prev.filter((item) => item.id !== selectedItemId));
+        refetchApproved();
+      } else {
+        setPendingRequests((prev) => prev.filter((item) => item.id !== selectedItemId));
+        refetchRejected();
+      }
+      closeConfirmationModal();
     }
-
-    closeConfirmationModal();
   };
 
   // Handle edit action
   const handleEdit = (item) => navigate(`add`, { state: { itemData: item } });
 
   // Render action buttons for pending table
-  const renderActionCell = (item) => (
+  const renderActionCell = (item, tab) => (
     <div className="flex gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => openConfirmationModal(item.id, 'accept')}
-        className="bg-green-500 text-white hover:bg-green-600"
-      >
-        Accept
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => openConfirmationModal(item.id, 'reject')}
-        className="bg-red-500 text-white hover:bg-red-600"
-      >
-        Reject
-      </Button>
+      {tab === 'pending' ? (
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => openConfirmationModal(item.id, 'accept')}
+            className="bg-green-500 text-white hover:bg-green-600"
+          >
+            Approve
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => openConfirmationModal(item.id, 'reject')}
+            className="bg-red-500 text-white hover:bg-red-600"
+          >
+            Reject
+          </Button>
+        </>
+      ) : (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => openConfirmationModal(item.id, 'accept')}
+          className="bg-green-500 text-white hover:bg-green-600"
+        >
+          Approve
+        </Button>
+      )}
     </div>
   );
+
+  const renderReasonCell = (item) => (
+    <div>
+      {item.reason && item.reason !== "—" ? (
+        <button
+          onClick={() => openReasonModal(item.reason)}
+          className="text-blue-600 hover:underline"
+        >
+          Details
+        </button>
+      ) : (
+        "—"
+      )}
+    </div>
+  );
+
+  const getTitleText = () => {
+    switch (activeTab) {
+      case "pending":
+        return "Pending Requests";
+      case "approved":
+        return "Approved Requests";
+      case "rejected":
+        return "Rejected Requests";
+      default:
+        return "Pending Requests";
+    }
+  };
 
   // Filter keys for table filtering
   const filterKeys = ["email_verified"];
@@ -185,10 +260,10 @@ const Requests = () => {
       ) : (
         <>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl text-bg-primary font-bold">Employer Request</h2>
+            <h2 className="text-2xl text-bg-primary font-bold">{getTitleText()}</h2>
           </div>
 
-          <Tabs defaultValue="pending" className="w-full">
+          <Tabs defaultValue="pending" className="w-full" onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger className="p-3 font-semibold text-base" value="pending">Pending</TabsTrigger>
               <TabsTrigger className="p-3 font-semibold text-base" value="approved">Approved</TabsTrigger>
@@ -203,7 +278,7 @@ const Requests = () => {
                 // titles={titles}
                 // statusKey="email_verified"
                 onEdit={handleEdit}
-                renderActionCell={renderActionCell}
+                renderActionCell={(item) => renderActionCell(item, 'pending')}
                 actionsButtons={false} // unEnable action buttons for pending requests
               />
             </TabsContent>
@@ -223,10 +298,11 @@ const Requests = () => {
             <TabsContent value="rejected">
               <Table
                 data={rejectedRequests}
-                columns={Columns}
+                columns={RejectedColumns}
                 filterKeys={filterKeys}
                 // titles={titles}
                 // statusKey="email_verified"
+                renderReasonCell={renderReasonCell}
                 onEdit={handleEdit}
                 actionsButtons={false} // unEnable action buttons for pending requests
               />
@@ -237,12 +313,28 @@ const Requests = () => {
             <DialogContent className="bg-white">
               <DialogHeader>
                 <DialogTitle>
-                  {modalAction === 'accept' ? 'Confirm Accept' : 'Confirm Reject'}
+                  {modalAction === 'accept' ? 'Confirm Approve' : 'Confirm Reject'}
                 </DialogTitle>
               </DialogHeader>
-              <p>
-                Are you sure you want to {modalAction === 'accept' ? 'accept' : 'reject'} this employer?
-              </p>
+              <div>
+                <p>
+                  Are you sure you want to {modalAction === 'accept' ? 'approve' : 'reject'} this payment request?
+                </p>
+                {modalAction === 'reject' && (
+                  <div className="mt-4">
+                    <label htmlFor="rejectionReason" className="block text-sm font-medium text-gray-700">
+                      Reason for Rejection
+                    </label>
+                    <Input
+                      id="rejectionReason"
+                      value={rejectionReason}
+                      onChange={(e) => setRejectionReason(e.target.value)}
+                      placeholder="Enter reason for rejection"
+                      className="mt-1 p-2"
+                    />
+                  </div>
+                )}
+              </div>
               <DialogFooter>
                 <Button
                   variant="outline"
@@ -257,8 +349,29 @@ const Requests = () => {
                     ? 'bg-green-500 hover:bg-green-600'
                     : 'bg-red-500 hover:bg-red-600'
                     } text-white`}
+                  disabled={modalAction === 'reject' && !rejectionReason.trim()}
                 >
                   Confirm
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isReasonModalOpen} onOpenChange={setIsReasonModalOpen}>
+            <DialogContent className="bg-white">
+              <DialogHeader>
+                <DialogTitle>Rejection Reason</DialogTitle>
+              </DialogHeader>
+              <div>
+                <p className="text-gray-700">{selectedReason || "No reason provided"}</p>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={closeReasonModal}
+                  className="bg-gray-300 text-black hover:bg-gray-400"
+                >
+                  Close
                 </Button>
               </DialogFooter>
             </DialogContent>

@@ -14,6 +14,7 @@ import {
     DialogTitle,
     DialogFooter,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const PendingPayment = () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -31,10 +32,15 @@ const PendingPayment = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalAction, setModalAction] = useState(null);
     const [selectedItemId, setSelectedItemId] = useState(null);
+    const [rejectionReason, setRejectionReason] = useState("");
 
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [selectedReceiptUrl, setSelectedReceiptUrl] = useState(null);
 
+    const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
+    const [selectedReason, setSelectedReason] = useState("");
+
+    const [activeTab, setActiveTab] = useState("pending");
 
     useEffect(() => {
         refetchPending();
@@ -48,9 +54,6 @@ const PendingPayment = () => {
                 return {
                     id: u.id,
                     user_name: u.empeloyee?.full_name || `${u.empeloyee?.first_name} ${u.empeloyee?.last_name}` || "—",
-                    // user_name: employee.first_name && employee.last_name
-                    //     ? `${employee.first_name} ${employee.last_name}`
-                    //     : '—',
                     phone: u.empeloyee?.phone || '—',
                     plan_name: u?.plan?.name || '—',
                     plan_price: u?.plan?.price_after_discount || '—',
@@ -68,13 +71,9 @@ const PendingPayment = () => {
     useEffect(() => {
         if (approvedData?.Approved_payment_requests && Array.isArray(approvedData?.Approved_payment_requests)) {
             const formatted = approvedData.Approved_payment_requests.map((u) => {
-                const employee = u?.employee || {};
                 return {
                     id: u.id,
                     user_name: u.empeloyee?.full_name || `${u.empeloyee?.first_name} ${u.empeloyee?.last_name}` || "—",
-                    // user_name: employee.first_name && employee.last_name
-                    //     ? `${employee.first_name} ${employee.last_name}`
-                    //     : '—',
                     phone: u.empeloyee?.phone || '—',
                     plan_name: u?.plan?.name || '—',
                     plan_price: u?.plan?.price_after_discount || '—',
@@ -92,19 +91,16 @@ const PendingPayment = () => {
     useEffect(() => {
         if (rejectedData?.rejected_payment_requests && Array.isArray(rejectedData?.rejected_payment_requests)) {
             const formatted = rejectedData.rejected_payment_requests.map((u) => {
-                const employee = u?.employee || {};
                 return {
                     id: u.id,
                     user_name: u.empeloyee?.full_name || `${u.empeloyee?.first_name} ${u.empeloyee?.last_name}` || "—",
-                    // user_name: employee.first_name && employee.last_name
-                    //     ? `${employee.first_name} ${employee.last_name}`
-                    //     : '—',
                     phone: u.empeloyee?.phone || '—',
                     plan_name: u?.plan?.name || '—',
                     plan_price: u?.plan?.price_after_discount || '—',
                     company: u?.company?.name || '—',
                     payment_method: u?.payment_method?.name || '—',
                     receipt: u?.receipt_image_link || '—',
+                    reason: u?.reject_reason || '—',
                 };
             });
             setRejectedRequests(formatted);
@@ -120,23 +116,24 @@ const PendingPayment = () => {
         { key: "plan_price", label: "Price" },
         { key: "company", label: "Company" },
         { key: "payment_method", label: "Payment Method" },
+        { key: "receipt", label: "Receipt" },
     ];
 
     const PendingColumns = [
         ...Columns,
-        { key: "receipt", label: "Receipt" },
         { key: "action", label: "Action" },
     ];
 
     const RejectedColumns = [
         ...Columns,
-        { key: "receipt", label: "Receipt" },
+        { key: "reason", label: "Reason" },
         { key: "action", label: "Action" },
     ];
 
     const openConfirmationModal = (id, action) => {
         setSelectedItemId(id);
         setModalAction(action);
+        setRejectionReason("");
         setIsModalOpen(true);
     };
 
@@ -144,6 +141,7 @@ const PendingPayment = () => {
         setIsModalOpen(false);
         setSelectedItemId(null);
         setModalAction(null);
+        setRejectionReason("");
     };
 
     const openImageModal = (receiptUrl) => {
@@ -156,6 +154,16 @@ const PendingPayment = () => {
         setSelectedReceiptUrl(null);
     };
 
+    const openReasonModal = (reason) => {
+        setSelectedReason(reason);
+        setIsReasonModalOpen(true);
+    };
+
+    const closeReasonModal = () => {
+        setIsReasonModalOpen(false);
+        setSelectedReason("");
+    };
+
     const handleAction = async () => {
         if (!selectedItemId || !modalAction) return;
 
@@ -163,10 +171,12 @@ const PendingPayment = () => {
             ? `${apiUrl}/admin/acceptPendingPyament/${selectedItemId}`
             : `${apiUrl}/admin/rejectPendingPyament/${selectedItemId}`;
 
+        const payload = modalAction === 'reject' ? { reason: rejectionReason } : {};
+
         const success = await changeState(
             url,
             `${modalAction === 'accept' ? 'Accepted' : 'Rejected'} Successfully.`,
-            {}
+            payload
         );
 
         if (success) {
@@ -194,7 +204,7 @@ const PendingPayment = () => {
                         onClick={() => openConfirmationModal(item.id, 'accept')}
                         className="bg-green-500 text-white hover:bg-green-600"
                     >
-                        Accept
+                        Approve
                     </Button>
                     <Button
                         variant="outline"
@@ -233,6 +243,34 @@ const PendingPayment = () => {
         </div>
     );
 
+    const renderReasonCell = (item) => (
+        <div>
+            {item.reason && item.reason !== "—" ? (
+                <button
+                    onClick={() => openReasonModal(item.reason)}
+                    className="text-blue-600 hover:underline"
+                >
+                    Details
+                </button>
+            ) : (
+                "—"
+            )}
+        </div>
+    );
+
+     const getTitleText = () => {
+        switch (activeTab) {
+            case "pending":
+                return "Pending Payment";
+            case "approved":
+                return "Approved Payment";
+            case "rejected":
+                return "Rejected Payment";
+            default:
+                return "Pending Payment";
+        }
+    };
+
     const filterKeys = ["payment_method"];
     const titles = { payment_method: "Payment Method" };
 
@@ -243,10 +281,10 @@ const PendingPayment = () => {
             ) : (
                 <>
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-2xl text-bg-primary font-bold">Pending Payment</h2>
+                        <h2 className="text-2xl text-bg-primary font-bold">{getTitleText()}</h2>
                     </div>
 
-                    <Tabs defaultValue="pending" className="w-full">
+                    <Tabs defaultValue="pending" className="w-full" onValueChange={setActiveTab}>
                         <TabsList className="grid w-full grid-cols-3">
                             <TabsTrigger className="p-3 font-semibold text-base" value="pending">Pending</TabsTrigger>
                             <TabsTrigger className="p-3 font-semibold text-base" value="approved">Approved</TabsTrigger>
@@ -258,8 +296,6 @@ const PendingPayment = () => {
                                 data={pendingRequests}
                                 columns={PendingColumns}
                                 filterKeys={filterKeys}
-                                // titles={titles}
-                                // statusKey="email_verified"
                                 onEdit={handleEdit}
                                 renderActionCell={(item) => renderActionCell(item, 'pending')}
                                 renderReceiptCell={renderReceiptCell}
@@ -272,8 +308,6 @@ const PendingPayment = () => {
                                 data={approvedRequests}
                                 columns={Columns}
                                 filterKeys={filterKeys}
-                                // titles={titles}
-                                // statusKey="email_verified"
                                 onEdit={handleEdit}
                                 renderReceiptCell={renderReceiptCell}
                                 actionsButtons={false}
@@ -285,11 +319,10 @@ const PendingPayment = () => {
                                 data={rejectedRequests}
                                 columns={RejectedColumns}
                                 filterKeys={filterKeys}
-                                // titles={titles}
-                                // statusKey="email_verified"
                                 onEdit={handleEdit}
                                 renderActionCell={(item) => renderActionCell(item, 'rejected')}
                                 renderReceiptCell={renderReceiptCell}
+                                renderReasonCell={renderReasonCell}
                                 actionsButtons={false}
                             />
                         </TabsContent>
@@ -302,9 +335,25 @@ const PendingPayment = () => {
                                     {modalAction === 'accept' ? 'Confirm Approve' : 'Confirm Reject'}
                                 </DialogTitle>
                             </DialogHeader>
-                            <p>
-                                Are you sure you want to {modalAction === 'accept' ? 'approve' : 'reject'} this payment request?
-                            </p>
+                            <div>
+                                <p>
+                                    Are you sure you want to {modalAction === 'accept' ? 'approve' : 'reject'} this payment request?
+                                </p>
+                                {modalAction === 'reject' && (
+                                    <div className="mt-4">
+                                        <label htmlFor="rejectionReason" className="block text-sm font-medium text-gray-700">
+                                            Reason for Rejection
+                                        </label>
+                                        <Input
+                                            id="rejectionReason"
+                                            value={rejectionReason}
+                                            onChange={(e) => setRejectionReason(e.target.value)}
+                                            placeholder="Enter reason for rejection"
+                                            className="mt-1 p-2"
+                                        />
+                                    </div>
+                                )}
+                            </div>
                             <DialogFooter>
                                 <Button
                                     variant="outline"
@@ -319,6 +368,7 @@ const PendingPayment = () => {
                                         ? 'bg-green-500 hover:bg-green-600'
                                         : 'bg-red-500 hover:bg-red-600'
                                         } text-white`}
+                                    disabled={modalAction === 'reject' && !rejectionReason.trim()}
                                 >
                                     Confirm
                                 </Button>
@@ -337,7 +387,6 @@ const PendingPayment = () => {
                                         src={selectedReceiptUrl}
                                         alt="Receipt"
                                         className="max-w-full max-h-[70vh] object-contain"
-                                        onError={(e) => (e.target.src = "/placeholder-image.png")}
                                     />
                                 ) : (
                                     <p className="text-gray-500">No receipt image available</p>
@@ -347,6 +396,26 @@ const PendingPayment = () => {
                                 <Button
                                     variant="outline"
                                     onClick={closeImageModal}
+                                    className="bg-gray-300 text-black hover:bg-gray-400"
+                                >
+                                    Close
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+                    <Dialog open={isReasonModalOpen} onOpenChange={setIsReasonModalOpen}>
+                        <DialogContent className="bg-white">
+                            <DialogHeader>
+                                <DialogTitle>Rejection Reason</DialogTitle>
+                            </DialogHeader>
+                            <div>
+                                <p className="text-gray-700">{selectedReason || "No reason provided"}</p>
+                            </div>
+                            <DialogFooter>
+                                <Button
+                                    variant="outline"
+                                    onClick={closeReasonModal}
                                     className="bg-gray-300 text-black hover:bg-gray-400"
                                 >
                                     Close
