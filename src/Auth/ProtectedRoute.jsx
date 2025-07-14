@@ -9,13 +9,16 @@ const ProtectedRoute = () => {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    // Small delay to allow Redux state to initialize
-    const timer = setTimeout(() => {
+    // Check localStorage directly for faster initial check
+    const storedUser = localStorage.getItem('admin');
+    
+    if (storedUser || user) {
       setIsChecking(false);
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
+    } else {
+      // If no stored user, no need to wait
+      setIsChecking(false);
+    }
+  }, [user]);
 
   if (isChecking) {
     return <Loading />;

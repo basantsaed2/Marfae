@@ -162,8 +162,10 @@ const LoginAdmin = () => {
     localStorage.setItem("admin", JSON.stringify(userWithToken));
     localStorage.setItem("token", token);
     
+    setTimeout(() => {
     const redirectTo = new URLSearchParams(location.search).get("redirect");
     navigate(redirectTo || "/");
+  }, 100);
   }, [dispatch, navigate, location.search]);
 
   useEffect(() => {
