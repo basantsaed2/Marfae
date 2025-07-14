@@ -5,18 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import FullPageLoader from "@/components/Loading";
 import { useGet } from "@/Hooks/UseGet";
-import {
-    FaUsers,
-    FaUmbrellaBeach,
-    FaSwimmingPool,
-    FaUserFriends,
-    FaHome,
-    FaStore,
-    FaWrench
-} from "react-icons/fa";
-import { MdReportProblem } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { AiOutlineHome } from "react-icons/ai";
 import { BriefcaseBusiness, Clipboard } from "lucide-react";
 import { HiOutlineUsers, HiOutlineOfficeBuilding } from "react-icons/hi";
 

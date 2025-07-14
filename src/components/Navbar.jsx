@@ -10,15 +10,15 @@ import { useSelector } from "react-redux";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function Navbar({ className }) {
-  const userData = JSON.parse(localStorage.getItem("user"));
+  const userData = JSON.parse(localStorage.getItem("admin"));
   const navigate = useNavigate();
-  const userName = userData?.user?.first_name+ " " + userData?.user?.last_name || userData?.user?.full_name || "";
+  const userName = userData?.full_name || userData?.first_name+ " " + userData?.last_name || "";
   const userInitials = userName
     ? userName.split(" ").slice(0, 2).map((word) => word[0]).join("")
     : "AD";
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("admin");
     localStorage.removeItem("token");
     navigate("/login");
   };

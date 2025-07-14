@@ -2,7 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: JSON.parse(localStorage.getItem("user")) || null,
+  user: JSON.parse(localStorage.getItem("admin")) || null,
 };
 
 const authSlice = createSlice({
@@ -10,11 +10,14 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.user = action.payload;
+      if (action.payload?.user?.role === "admin") {
+        state.user = action.payload;
+      }
     },
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem("user");
+      localStorage.removeItem("admin");
+      localStorage.removeItem("token");
     },
   },
 });

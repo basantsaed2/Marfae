@@ -25,13 +25,17 @@ import { RiSecurePaymentFill } from "react-icons/ri";
 import { BsBuildingGear } from "react-icons/bs";
 import { IoIosGitPullRequest } from "react-icons/io";
 import { MdPendingActions } from "react-icons/md";
-
+import { PiReadCvLogo } from "react-icons/pi";
+import { MdOutlineContactPhone } from "react-icons/md";
+import logo from "@/assets/Logo.png"
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
     { label: "User Management", to: "/users", icon: <HiOutlineUsers className="stroke-2" size={20} /> },
     { label: "Requests", to: "/requests", icon: <IoIosGitPullRequest className="stroke-2" size={20} /> },
     { label: "Plans", to: "/plans", icon: <SquareChartGantt className="stroke-2" size={20} /> },
+    { label: "Contact Requests", to: "/contact_request", icon: <MdOutlineContactPhone size={20} /> },
     { label: "Pending Payment", to: "/pending_payment", icon: <MdPendingActions size={20} /> },
+    { label: "CV List", to: "/all_cv", icon: <PiReadCvLogo size={20} /> },
     { label: "Governorates and Regions", to: "/regions", icon: <CiLocationOn className="stroke-1" size={20} /> },
     {
         label: "Job Management",
@@ -112,24 +116,22 @@ export function AdminSidebar() {
             className="bg-white border-none sm:border-none overflow-x-hidden h-full shadow-lg transition-all duration-300 font-cairo"
         >
             <SidebarContent
-                className="bg-white p-2 text-white border-none overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                className="bg-white p-2 pb-5 text-white border-none overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                 style={{
                     msOverflowStyle: "none",
                     scrollbarWidth: "none",
                 }}
             >
                 <SidebarGroup>
-                    <SidebarGroupLabel className="p-4 text-white flex items-center justify-center gap-3">
-                        {villageImage && (
+                    <SidebarGroupLabel className="p-2 text-white flex items-center justify-center gap-3">
                             <img
-                                src={villageImage}
-                                alt={villageName || "Village"}
-                                className="w-20 h-20 rounded-full object-cover border-2 border-white/30 hover:scale-105 transition-transform duration-200"
+                                src={logo}
+                                alt={logo || "Marfae"}
+                                className="w-dull h-24 object-cover border-2 border-white/30 hover:scale-105 transition-transform duration-200"
                             />
-                        )}
-                        <span className="text-xl leading-[30px] font-bold text-center text-bg-primary">
+                        {/* <span className="text-xl leading-[30px] font-bold text-center text-bg-primary">
                             {"Administration panel"}
-                        </span>
+                        </span> */}
                     </SidebarGroupLabel>
                     <hr className="w-full border-white !mb-3" />
 

@@ -14,13 +14,13 @@ const AddUser = ({ lang = 'en' }) => {
     const { refetch: refetchSpecialization, loading: loadingSpecialization, data: dataSpecialization } = useGet({ url: `${apiUrl}/admin/getSpecializations` });
 
     const [specializations, setSpecializations] = useState([]);
+    const [imageChanged, setImageChanged] = useState(false); // Track if image has been changed
 
     const location = useLocation();
     const navigate = useNavigate();
     const { state } = location;
     const initialItemData = state?.itemData || null;
 
-    // Determine if we're in "edit" mode based on whether itemData is provided
     const isEditMode = !!initialItemData;
     const title = isEditMode ? 'Edit User' : 'Add User';
 
@@ -30,15 +30,14 @@ const AddUser = ({ lang = 'en' }) => {
 
     useEffect(() => {
         if (dataSpecialization && dataSpecialization.specializations) {
-            const formatted = dataSpecialization?.specializations.map((u) => ({
+            const formatted = dataSpecialization.specializations.map((u) => ({
                 label: u.name || "—",
-                value: u.id.toString() || "", // Ensure ID is a string
+                value: u.id.toString() || "",
             }));
             setSpecializations(formatted);
         }
     }, [dataSpecialization]);
 
-    // Define the fields for the form
     const fields = [
         { name: 'first_name', type: 'input', placeholder: 'First Name' },
         { name: 'last_name', type: 'input', placeholder: 'Last Name' },
@@ -48,7 +47,7 @@ const AddUser = ({ lang = 'en' }) => {
         {
             name: 'specializations',
             type: 'multi-select',
-            placeholder: 'Choose specializations',
+            placeholder: ',Choose specializations',
             options: specializations,
             multiple: true,
         },
@@ -63,10 +62,8 @@ const AddUser = ({ lang = 'en' }) => {
         },
     ];
 
-    // State to manage form values
     const [values, setValues] = useState({});
 
-    // Set initial values when itemData is provided
     useEffect(() => {
         if (initialItemData) {
             setValues({
@@ -77,16 +74,19 @@ const AddUser = ({ lang = 'en' }) => {
                 email: initialItemData.email || '',
                 specializations: Array.isArray(initialItemData.specializations)
                     ? initialItemData.specializations
-                        .filter(s => s && s.id != null) // Ensure s and s.id are defined
-                        .map(s => s.id.toString())
+                        .filter((s) => s && s.id != null)
+                        .map((s) => s.id.toString())
                     : [],
                 status: initialItemData.status === 'Active' ? 'active' : 'inactive',
-                image: initialItemData.image || '',
+                image: initialItemData.image || '', // Existing image URL or empty
             });
         }
     }, [initialItemData]);
 
     const handleChange = (lang, name, value) => {
+        if (name === 'image') {
+            setImageChanged(true); // Mark image as changed when file input is used
+        }
         setValues((prev) => ({ ...prev, [name]: value }));
     };
 
@@ -105,14 +105,15 @@ const AddUser = ({ lang = 'en' }) => {
                 last_name: values.last_name || '',
                 phone: values.phone || '',
                 email: values.email || '',
-                specialization: values.specializations.map(id => parseInt(id)), // Convert to integers
+                specialization: values.specializations.map((id) => parseInt(id)),
                 status: values.status || 'inactive',
-                image: values.image || '',
             };
-            // Only include image if a new file is selected
-            if (values.image && values.image instanceof File) {
+
+            // Only include image if it has been changed
+            if (imageChanged && values.image) {
                 data.image = values.image;
             }
+
             await changeState(
                 `${apiUrl}/admin/editUser/${values.id}`,
                 'User Updated Successfully!',
@@ -126,40 +127,49 @@ const AddUser = ({ lang = 'en' }) => {
             body.append('phone', values.phone || '');
             body.append('email', values.email || '');
             body.append('password', values.password || '');
-            // Use specializations[] to match backend expectation
             values.specializations.forEach((id) => {
                 body.append('specialization[]', parseInt(id));
             });
             body.append('status', values.status || 'inactive');
-            body.append('image', values.image);
+
+            // Only append image if it has been changed
+            if (imageChanged && values.image) {
+                body.append('image', values.image);
+            }
+
             await postData(body, 'User Added Successfully!');
         }
     };
 
     const handleReset = () => {
-        setValues(initialItemData ? {
-            id: initialItemData.id || '',
-            first_name: initialItemData.first_name || '',
-            last_name: initialItemData.last_name || '',
-            phone: initialItemData.phone || '',
-            email: initialItemData.email || '',
-            specializations: Array.isArray(initialItemData.specializations)
-                ? initialItemData.specializations
-                    .filter(s => s && s.id != null)
-                    .map(s => s.id.toString())
-                : [],
-            status: initialItemData.status === 'Active' ? 'active' : 'inactive',
-            image: initialItemData.image || '',
-        } : {});
+        setImageChanged(false); // Reset image change flag
+        setValues(
+            initialItemData
+                ? {
+                    id: initialItemData.id || '',
+                    first_name: initialItemData.first_name || '',
+                    last_name: initialItemData.last_name || '',
+                    phone: initialItemData.phone || '',
+                    email: initialItemData.email || '',
+                    specializations: Array.isArray(initialItemData.specializations)
+                        ? initialItemData.specializations
+                            .filter((s) => s && s.id != null)
+                            .map((s) => s.id.toString())
+                        : [],
+                    status: initialItemData.status === 'Active' ? 'active' : 'inactive',
+                    image: initialItemData.image || '',
+                }
+                : {}
+        );
     };
 
     const handleBack = () => {
         navigate(-1);
     };
 
-    // if (loadingSpecialization) {
-    //     return <FullPageLoader />;
-    // }
+    if (loadingSpecialization) {
+      return <FullPageLoader />;
+    }
 
     return (
         <div className="p-4">
@@ -175,12 +185,7 @@ const AddUser = ({ lang = 'en' }) => {
             </div>
 
             <div className="py-10 px-4 bg-white rounded-lg shadow-md">
-                <Add
-                    fields={fields}
-                    lang={lang}
-                    values={values}
-                    onChange={handleChange}
-                />
+                <Add fields={fields} lang={lang} values={values} onChange={handleChange} />
             </div>
 
             <div className="mt-6 flex justify-end gap-4">

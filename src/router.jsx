@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import AdminLayout from "./Layout/AdminLayout";
 import { SidebarProvider } from "./components/ui/sidebar";
 import ProtAuth from "./Auth/ProtAuth";
-import LoginAdmin from "./components/Login/LoginAdmin";
+import LoginAdmin from "./Pages/Autherzation/LoginAdmin";
 import NotFound from "./Pages/NotFound";
 import ProtectedRoute from "./Auth/ProtectedRoute";
 import AuthLayout from "./Layout/AuthLayout";
@@ -35,6 +35,8 @@ import Requests from "./Pages/Admin/Requests/Request";
 import PaymentMethod from "./Pages/Admin/PaymentMethod/PaymentMethod";
 import AddPaymentMethod from "./Pages/Admin/PaymentMethod/AddPaymentMethod";
 import PendingPayment from "./Pages/Admin/PendingPayment/PendingPayment";
+import ContactRequest from "./Pages/Admin/ContactRequest/ContactRequest";
+import AllCV from "./Pages/Admin/AllCV/AllCV";
 
 const router = createBrowserRouter([
   {
@@ -52,18 +54,16 @@ const router = createBrowserRouter([
   },
   {
     element: (
+      // <ProtectedRoute>
       <SidebarProvider>
         <AdminLayout />
       </SidebarProvider>
+      // </ProtectedRoute>
     ),
     children: [
       {
         path: "/",
-        element: (
-          <ProtectedRoute>
-            <ControlPanel />
-          </ProtectedRoute>
-        ),
+        element: <ControlPanel />,
       },
       {
         path: "users",
@@ -79,9 +79,21 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: "contact_request",
+        children: [
+          { index: true, element: <ContactRequest /> },
+        ],
+      },
+      {
         path: "pending_payment",
         children: [
           { index: true, element: <PendingPayment /> },
+        ],
+      },
+      {
+        path: "all_cv",
+        children: [
+          { index: true, element: <AllCV /> },
         ],
       },
       {

@@ -36,7 +36,6 @@ const JobManagement = () => {
                 zone: j.zone?.name || "—",
                 type: j.type || "—",
                 level: j.experience || "—",
-                status: j.status === "active" ? "Active" : "Inactive",
                 description: j.description || "—",
                 qualifications: j.qualifications || "—",
                 expected_salary: j.expected_salary || "—",
@@ -47,6 +46,8 @@ const JobManagement = () => {
                 job_category_id: j.job_category_id || "—",
                 city_id: j.city_id || "—",
                 zone_id: j.zone_id || "—",
+                status: j.status === "active" ? "Active" : "Inactive",
+                image: j.image_link || '',
             }));
             setJobs(formatted);
         }
