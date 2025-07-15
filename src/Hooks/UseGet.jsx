@@ -10,11 +10,12 @@ export const useGet = ({ url, enabled = true, pollInterval }) => {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+    const token = localStorage.getItem("token"); // Get token from localStorage
     try {
       const response = await axios.get(url, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${user?.token || ""}`,
+          Authorization: `Bearer ${ token || user?.token || ""}`,
         },
       });
       if (response.status === 200 || response.status === 201) {

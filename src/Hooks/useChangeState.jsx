@@ -10,10 +10,12 @@ export const useChangeState = () => {
 
   const changeState = async (url, name, data) => { // Accepting a single "data" object
     setLoadingChange(true);
+    const token = localStorage.getItem("token"); // Get token from localStorage
+
     try {
       const config = {
         headers: {
-          'Authorization': `Bearer ${user?.token || ''}`,
+          'Authorization': `Bearer ${user?.token || token || ''}`,
         },
       };
       const response = await axios.put(url, data || {}, config);

@@ -9,10 +9,12 @@ export const useDelete = () => {
 
   const deleteData = async (url, name) => {
     setLoadingDelete(true);
+    const token = localStorage.getItem("token"); // Get token from localStorage
+
     try {
       const config = {
         headers: {
-          'Authorization': `Bearer ${user?.token || ''}`,
+          'Authorization': `Bearer ${user?.token || token || ''}`,
         },
       };
 
