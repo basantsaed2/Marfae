@@ -14,7 +14,7 @@ export const useDelete = () => {
     try {
       const config = {
         headers: {
-          'Authorization': `Bearer ${user?.token || token || ''}`,
+          'Authorization': `Bearer ${user?.token || ''}`,
         },
       };
 

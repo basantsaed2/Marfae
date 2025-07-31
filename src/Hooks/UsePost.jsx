@@ -10,7 +10,6 @@ export const usePost = ({ url, login = false, type = false }) => {
 
   const postData = async (data, name) => {
     setLoadingPost(true);
-    const token = localStorage.getItem("token"); // Get token from localStorage
 
     try {
       const contentType = type ? 'application/json' : 'multipart/form-data';
@@ -18,7 +17,7 @@ export const usePost = ({ url, login = false, type = false }) => {
         ? {
           headers: {
             'Content-Type': contentType,
-            'Authorization': `Bearer ${user?.token || token || ''}`,
+            'Authorization': `Bearer ${user?.token || ''}`,
           },
         }
         : {
