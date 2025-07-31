@@ -1,38 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import Loading from '@/components/Loading'; // Add a loading spinner component
+// ProtectedRoute.js
+import { Navigate } from 'react-router-dom';
 
-const ProtectedRoute = () => {
-  const location = useLocation();
-  const { user } = useSelector((state) => state.auth);
-  const [isChecking, setIsChecking] = useState(true);
-
-  useEffect(() => {
-    // Check localStorage directly for faster initial check
-    const storedUser = localStorage.getItem('admin');
-    
-    if (storedUser || user) {
-      setIsChecking(false);
-    } else {
-      // If no stored user, no need to wait
-      setIsChecking(false);
+const ProtectedRoute = ({ children }) => {
+  try {
+    const user = JSON.parse(localStorage.getItem('admin'));
+    if (!user) {
+      return <Navigate to="/login" replace />;
     }
-  }, [user]);
-
-  if (isChecking) {
-    return <Loading />;
+    return children;
+  } catch (error) {
+    console.error('Error parsing user from localStorage:', error);
+    return <Navigate to="/login" replace />;
   }
-
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  if (user?.role !== "admin") {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  return <Outlet />;
 };
 
 export default ProtectedRoute;

@@ -54,11 +54,11 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      // <ProtectedRoute>
+      <ProtectedRoute>
       <SidebarProvider>
         <AdminLayout />
       </SidebarProvider>
-      // </ProtectedRoute>
+      </ProtectedRoute>
     ),
     children: [
       {
