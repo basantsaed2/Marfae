@@ -92,7 +92,7 @@ const LoginAdmin = () => {
         toast.error(response.data.message || "Invalid Credentials");
       }
     }
-  }, [response, loadingPost, handleLoginSuccess]);
+  }, [response, loadingPost]);
 
   return (
     <div className="login-container" data-bg-image={image} ref={containerRef}>
