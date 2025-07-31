@@ -20,23 +20,6 @@ const LoginAdmin = () => {
   const location = useLocation();
   const containerRef = useRef(null);
 
-  // Memoized login success handler
-  const handleLoginSuccess = useCallback((userData, token) => {
-    const userWithToken = {
-      ...userData,
-      token // Include token in the user object
-    };
-    
-    dispatch(setUser(userWithToken));
-    localStorage.setItem("admin", JSON.stringify(userWithToken));
-    localStorage.setItem("token", token);
-    
-    setTimeout(() => {
-    const redirectTo = new URLSearchParams(location.search).get("redirect");
-    navigate(redirectTo || "/");
-  }, 100);
-  }, [dispatch, navigate, location.search]);
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -62,7 +45,7 @@ const LoginAdmin = () => {
   useEffect(() => {
     const adminData = localStorage.getItem("admin");
     const token = localStorage.getItem("token");
-    
+
     if (adminData && token) {
       const parsedUser = JSON.parse(adminData);
       if (parsedUser?.role === "admin" && parsedUser.token === token) {
@@ -92,11 +75,15 @@ const LoginAdmin = () => {
   useEffect(() => {
     if (!loadingPost && response) {
       if (response.status === 200 && response.data?.user?.role === "admin") {
-        handleLoginSuccess(response.data.user, response.data.token);
+        dispatch(setUser(response?.data));
+        localStorage.setItem("admin", JSON.stringify(response?.data));
+        localStorage.setItem("token", response?.data.token);
+        const redirectTo = new URLSearchParams(location.search).get("redirect");
+        navigate(redirectTo || "/");
       }
-      else if (response.data.message !== "Invalid credentials" && 
-               response.status === 200 && 
-               response.data?.user?.role !== "admin") {
+      else if (response.data.message !== "Invalid credentials" &&
+        response.status === 200 &&
+        response.data?.user?.role !== "admin") {
         toast.error("You do not have admin privileges");
         localStorage.removeItem("admin");
         localStorage.removeItem("token");
