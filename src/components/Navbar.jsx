@@ -12,7 +12,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 export default function Navbar({ className }) {
   const userData = JSON.parse(localStorage.getItem("admin"));
   const navigate = useNavigate();
-  const userName = userData?.user?.first_name+ " " + userData?.user?.last_name || userData?.user?.full_name || "";
+  const userName = userData?.user?.full_name || userData?.user?.first_name+ " " + userData?.user?.last_name || "";
   const userInitials = userName
     ? userName.split(" ").slice(0, 2).map((word) => word[0]).join("")
     : "AD";

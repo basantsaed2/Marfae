@@ -6,6 +6,7 @@ import { usePost } from '@/Hooks/UsePost';
 import { useChangeState } from '@/Hooks/useChangeState';
 import { useGet } from '@/Hooks/UseGet';
 import FullPageLoader from '@/components/Loading';
+import { toast } from 'react-toastify';
 
 const AddUser = ({ lang = 'en' }) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -39,15 +40,15 @@ const AddUser = ({ lang = 'en' }) => {
     }, [dataSpecialization]);
 
     const fields = [
-        { name: 'first_name', type: 'input', placeholder: 'First Name' },
+        { name: 'first_name', type: 'input', placeholder: 'First Name *' },
         { name: 'last_name', type: 'input', placeholder: 'Last Name' },
-        { name: 'phone', type: 'input', placeholder: 'Phone' },
-        { name: 'email', type: 'input', placeholder: 'Email' },
-        { name: 'password', type: 'input', placeholder: 'Password', disabled: isEditMode },
+        { name: 'phone', type: 'input', placeholder: 'Phone *' },
+        { name: 'email', type: 'input', placeholder: 'Email *' },
+        { name: 'password', type: 'input', placeholder: 'Password *', disabled: isEditMode },
         {
             name: 'specializations',
             type: 'multi-select',
-            placeholder: ',Choose specializations',
+            placeholder: 'Choose specializations *',
             options: specializations,
             multiple: true,
         },
@@ -97,6 +98,15 @@ const AddUser = ({ lang = 'en' }) => {
     }, [responseChange, postResponse, navigate]);
 
     const handleSubmit = async () => {
+        if (
+            !values.first_name ||
+            !values.phone ||
+            !values.email ||
+            !values.specializations
+        ) {
+            toast.error('Please fill in all required fields');
+            return;
+        }
         if (isEditMode) {
             // Edit mode: Use changeState (PUT request)
             const data = {
@@ -127,9 +137,11 @@ const AddUser = ({ lang = 'en' }) => {
             body.append('phone', values.phone || '');
             body.append('email', values.email || '');
             body.append('password', values.password || '');
-            values.specializations.forEach((id) => {
-                body.append('specialization[]', parseInt(id));
-            });
+            if (values.specializations) {
+                values.specializations.forEach((id) => {
+                    body.append('specialization[]', parseInt(id));
+                });
+            }
             body.append('status', values.status || 'inactive');
 
             // Only append image if it has been changed
@@ -168,7 +180,7 @@ const AddUser = ({ lang = 'en' }) => {
     };
 
     if (loadingSpecialization) {
-      return <FullPageLoader />;
+        return <FullPageLoader />;
     }
 
     return (

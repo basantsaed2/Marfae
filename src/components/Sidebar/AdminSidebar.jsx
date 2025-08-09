@@ -27,7 +27,7 @@ import { IoIosGitPullRequest } from "react-icons/io";
 import { MdPendingActions } from "react-icons/md";
 import { PiReadCvLogo } from "react-icons/pi";
 import { MdOutlineContactPhone } from "react-icons/md";
-import logo from "@/assets/Logo.png"
+import logo from "@/assets/Logo.jpeg"
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
     { label: "User Management", to: "/users", icon: <HiOutlineUsers className="stroke-2" size={20} /> },

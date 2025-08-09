@@ -14,6 +14,7 @@ const AddPaymentMethod = ({ lang = 'en' }) => {
     const navigate = useNavigate();
     const { state } = location;
     const initialItemData = state?.itemData || null;
+    const [imageChanged, setImageChanged] = useState(false); // New state to track image changes
 
     // Determine if we're in "edit" mode based on whether itemData is provided
     const isEditMode = !!initialItemData;
@@ -48,26 +49,33 @@ const AddPaymentMethod = ({ lang = 'en' }) => {
                 phone: initialItemData.phone || '',
                 account: initialItemData.account || '',
                 status: initialItemData.status === 'Active' ? 'active' : 'inactive',
-                image: initialItemData.img|| '', // Image URL or file name
+                image: initialItemData.img || null, // Image URL or file name
             });
+            setImageChanged(false); // Reset imageChanged when loading initial data
         }
     }, [initialItemData]);
 
     const handleChange = (lang, name, value) => {
         setValues((prev) => ({ ...prev, [name]: value }));
+        if (name === 'image' && value !== null) {
+            setImageChanged(true); // Mark image as changed when a new file is selected
+        }
     };
 
     const handleSubmit = async () => {
         if (isEditMode) {
-            // Edit mode: Use changeState (PUT request)
             const data = {
                 id: values.id,
                 name: values.name || '',
                 phone: values.phone || '',
                 account: values.account || '',
-                image: values.image || '',
                 status: values.status || 'inactive',
             };
+
+            // Only include image if it was changed (imageChanged is true)
+            if (imageChanged && values.image) {
+                data.image = values.image;
+            }
             await changeState(
                 `${apiUrl}/admin/editPaymentMethod/${values.id}`,
                 'Payment Method Updated Successfully!',
@@ -80,10 +88,9 @@ const AddPaymentMethod = ({ lang = 'en' }) => {
             body.append('phone', values.phone || '');
             body.append('account', values.account || '');
             body.append('status', values.status || 'inactive');
-            // if (values.image && typeof values.image !== 'string') {
+            if (values.image) {
                 body.append('image', values.image);
-            // }
-
+            }
             await postData(body, 'Payment Method Added Successfully!');
         }
     };
@@ -103,6 +110,7 @@ const AddPaymentMethod = ({ lang = 'en' }) => {
             status: initialItemData.status === 'Active' ? 'active' : 'inactive',
             image: initialItemData.image || '',
         } : {});
+        setImageChanged(false); // Reset imageChanged on reset
     };
 
     const handleBack = () => {

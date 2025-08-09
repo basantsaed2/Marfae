@@ -6,9 +6,9 @@ import { setUser } from "../../Store/authSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import image from "../../assets/Login.png";
 import "react-toastify/dist/ReactToastify.css";
 import { usePost } from "@/Hooks/UsePost";
+import { FaStethoscope, FaHeartbeat, FaUserMd, FaSyringe } from "react-icons/fa";
 
 const LoginAdmin = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -95,41 +95,86 @@ const LoginAdmin = () => {
   }, [response, loadingPost]);
 
   return (
-    <div className="login-container" data-bg-image={image} ref={containerRef}>
-      <Card className="w-full md:max-w-2xl pb-10 md:p-10 bg-white shadow-lg rounded-lg">
-        <CardContent>
-          <h2 className="p-10 text-3xl font-bold text-center mb-6 text-bg-primary">Login</h2>
-          <form onSubmit={handleLogin} className="space-y-7">
-            <div>
-              <Input
-                type="text"
-                placeholder="Email or Username"
-                value={emailOrUsername}
-                onChange={(e) => setEmailOrUsername(e.target.value)}
-                className="w-full p-3"
-                disabled={loadingPost}
-              />
-            </div>
-            <div>
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3"
-                disabled={loadingPost}
-              />
-            </div>
-            <Button
-              type="submit"
-              className="w-full cursor-pointer p-6 bg-bg-secondary text-xl font-semibold text-white hover:bg-bg-secondary transition-colors duration-300"
-              disabled={loadingPost}
+    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 via-bg-primary/40 to-white bg-cover bg-center relative overflow-hidden">
+      {/* Doctor-themed background image */}
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1580281780460-82d277b0e3f8')] bg-cover bg-center opacity-20"></div>
+
+      {/* Decorative medical elements */}
+      <div className="absolute top-8 left-8 text-bg-primary opacity-30 text-6xl">
+        <FaStethoscope />
+      </div>
+      <div className="absolute bottom-8 right-8 text-bg-primary opacity-30 text-6xl">
+        <FaHeartbeat />
+      </div>
+      <div className="absolute top-1/4 right-12 text-bg-primary opacity-25 text-5xl">
+        <FaUserMd />
+      </div>
+      <div className="absolute bottom-1/4 left-12 text-bg-primary opacity-25 text-5xl">
+        <FaSyringe />
+      </div>
+
+      <div
+        className="relative z-10 max-w-md w-full"
+      >
+        <Card className="bg-white/90 backdrop-blur-xl shadow-2xl rounded-3xl border border-bg-primary/50 overflow-hidden ring-1 ring-bg-primary/30">
+          <CardContent className="p-12">
+            <div
+              className="text-center mb-10"
             >
-              {loadingPost ? "Logging in..." : "Login"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              <h2 className="text-5xl font-extrabold text-bg-primary tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-bg-primary to-blue-300">
+                Login Mrfae
+              </h2>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div
+                className="relative"
+              >
+                <Input
+                  type="text"
+                  placeholder="Email or Username"
+                  value={emailOrUsername}
+                  onChange={(e) => setEmailOrUsername(e.target.value)}
+                  className="w-full p-4 pr-12 border border-bg-primary/50 rounded-xl focus:ring-2 focus:ring-bg-primary focus:border-transparent transition-all duration-300 bg-white/70 placeholder-bg-primary/70"
+                  disabled={loadingPost}
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-bg-primary">
+                  <FaUserMd />
+                </span>
+              </div>
+
+              <div
+                className="relative"
+              >
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-4 pr-12 border border-bg-primary/50 rounded-xl focus:ring-2 focus:ring-bg-primary focus:border-transparent transition-all duration-300 bg-white/70 placeholder-bg-primary/70"
+                  disabled={loadingPost}
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-bg-primary">
+                  <FaHeartbeat />
+                </span>
+              </div>
+
+              <div
+              >
+                <Button
+                  type="submit"
+                  className="w-full p-4 text-lg bg-gradient-to-r from-bg-primary to-blue-300 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-500 transition-all duration-300 disabled:opacity-50 shadow-lg"
+                  disabled={loadingPost}
+                >
+                  {loadingPost ? "Logging in..." : "Login Mrfae"}
+                </Button>
+              </div>
+            </form>
+
+          </CardContent>
+        </Card>
+      </div>
+
       <ToastContainer />
     </div>
   );

@@ -226,7 +226,7 @@ const AddJob = ({ lang = 'en' }) => {
                 image: initialItemData.image_link || '',
                 type: initialItemData.type || '',
                 level: initialItemData.level || '',
-                status: initialItemData.status || 'inactive',
+                status: initialItemData.status === 'Active' ? 'active' : 'inactive',
                 expected_salary: initialItemData.expected_salary?.toString() || '',
                 expire_date: initialItemData.expire_date || '',
                 location_link: initialItemData.location_link || '',

@@ -11,33 +11,10 @@ import router from './router';
 import './i18n';
 import { LanguageProvider } from './context/LanguageContext';
 
-// Create a portal-based ToastContainer with maximum z-index
-function GlobalToast() {
-  return createPortal(
-    <ToastContainer
-      position="top-right"
-      autoClose={3000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      pauseOnFocusLoss={false}
-      draggable
-      pauseOnHover
-      theme="light"
-      style={{
-        zIndex: 999999, // Extremely high z-index
-        position: 'fixed' // Ensure fixed positioning
-      }}
-      className="toast-container" // Add a class for additional styling
-    />,
-    document.body
-  );
-}
-
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <LanguageProvider>
-      <GlobalToast />
+      <ToastContainer />
       <RouterProvider router={router} />
     </LanguageProvider>
   </Provider>
