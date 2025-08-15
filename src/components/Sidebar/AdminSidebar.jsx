@@ -27,6 +27,7 @@ import { IoIosGitPullRequest } from "react-icons/io";
 import { MdPendingActions } from "react-icons/md";
 import { PiReadCvLogo } from "react-icons/pi";
 import { MdOutlineContactPhone } from "react-icons/md";
+import { MdStarRate } from "react-icons/md";
 import logo from "@/assets/Logo.jpeg"
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
@@ -36,6 +37,7 @@ const navItems = [
     { label: "Contact Requests", to: "/contact_request", icon: <MdOutlineContactPhone size={20} /> },
     { label: "Pending Payment", to: "/pending_payment", icon: <MdPendingActions size={20} /> },
     { label: "CV List", to: "/all_cv", icon: <PiReadCvLogo size={20} /> },
+    { label: "Reviews", to: "/reviews", icon: <MdStarRate size={20} /> },
     { label: "Governorates and Regions", to: "/regions", icon: <CiLocationOn className="stroke-1" size={20} /> },
     {
         label: "Job Management",
@@ -124,11 +126,11 @@ export function AdminSidebar() {
             >
                 <SidebarGroup>
                     <SidebarGroupLabel className="p-2 text-white flex items-center justify-center gap-3">
-                            <img
-                                src={logo}
-                                alt={logo || "Marfae"}
-                                className="w-dull h-24 object-cover border-2 border-white/30 hover:scale-105 transition-transform duration-200"
-                            />
+                        <img
+                            src={logo}
+                            alt={logo || "Marfae"}
+                            className="w-dull h-24 object-cover border-2 border-white/30 hover:scale-105 transition-transform duration-200"
+                        />
                         {/* <span className="text-xl leading-[30px] font-bold text-center text-bg-primary">
                             {"Administration panel"}
                         </span> */}

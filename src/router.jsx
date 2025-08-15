@@ -37,6 +37,7 @@ import AddPaymentMethod from "./Pages/Admin/PaymentMethod/AddPaymentMethod";
 import PendingPayment from "./Pages/Admin/PendingPayment/PendingPayment";
 import ContactRequest from "./Pages/Admin/ContactRequest/ContactRequest";
 import AllCV from "./Pages/Admin/AllCV/AllCV";
+import Reviews from "./Pages/Admin/Reviews/Reviews";
 
 const router = createBrowserRouter([
   {
@@ -55,9 +56,9 @@ const router = createBrowserRouter([
   {
     element: (
       <ProtectedRoute>
-      <SidebarProvider>
-        <AdminLayout />
-      </SidebarProvider>
+        <SidebarProvider>
+          <AdminLayout />
+        </SidebarProvider>
       </ProtectedRoute>
     ),
     children: [
@@ -94,6 +95,12 @@ const router = createBrowserRouter([
         path: "all_cv",
         children: [
           { index: true, element: <AllCV /> },
+        ],
+      },
+      {
+        path: "reviews",
+        children: [
+          { index: true, element: <Reviews /> },
         ],
       },
       {
