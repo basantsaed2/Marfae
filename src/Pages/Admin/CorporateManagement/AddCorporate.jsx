@@ -116,7 +116,13 @@ const AddCorporate = ({ lang = 'en' }) => {
     }, [values.country_id]);
 
     useEffect(() => {
-        if (initialItemData) {
+        if (initialItemData && companyType.length > 0) {
+            // Find the company type ID by matching initialItemData.type with companyType options
+            const selectedCompanyType =
+                companyType.find((ct) => ct.label === initialItemData.type)?.value ||
+                initialItemData.company_type?.id?.toString() ||
+                '';
+
             setValues({
                 id: initialItemData.id || '',
                 name: initialItemData.name || '',
@@ -129,15 +135,15 @@ const AddCorporate = ({ lang = 'en' }) => {
                 linkedin_link: initialItemData.linkedin_link || '',
                 site_link: initialItemData.site_link || '',
                 specializations: initialItemData.specializations
-                    ? initialItemData.specializations.map(s => s.id.toString())
+                    ? initialItemData.specializations.map((s) => s.id.toString())
                     : [],
-                companyType: initialItemData.companyType || '',
+                companyType: selectedCompanyType, // Fix: Use the matched ID
                 image: initialItemData.image || '',
-                country_id: initialItemData.country_id || '',
-                city_id: initialItemData.city_id || '',
+                country_id: initialItemData.country_id?.toString() || '', // Ensure string
+                city_id: initialItemData.city_id?.toString() || '', // Ensure string
             });
         }
-    }, [initialItemData]);
+    }, [initialItemData, companyType]); // Add companyType as a dependency
 
     const handleChange = (lang, name, value) => {
         if (name === 'image') {
@@ -147,10 +153,10 @@ const AddCorporate = ({ lang = 'en' }) => {
     };
 
     const handleSubmit = async () => {
-        if (!values.name || !values.email || !values.phone || !values.description || !values.country_id || !values.city_id) {
-            toast.error('Please fill in all required fields');
-            return;
-        }
+        // if (!values.name || !values.email || !values.phone || !values.description || !values.country_id || !values.city_id) {
+        //     toast.error('Please fill in all required fields');
+        //     return;
+        // }
 
         if (isEditMode) {
             const data = {
@@ -262,8 +268,8 @@ const AddCorporate = ({ lang = 'en' }) => {
 
     const fields = [
         { name: 'name', type: 'input', placeholder: 'Company Name *' },
-        { name: 'email', type: 'input', placeholder: 'Email *', typeInput: 'email' },
-        { name: 'phone', type: 'input', placeholder: 'Phone *', typeInput: 'tel' },
+        { name: 'email', type: 'input', placeholder: 'Email', inputType: 'email' },
+        { name: 'phone', type: 'input', placeholder: 'Phone', inputType: 'tel' },
         { name: 'location_link', type: 'input', placeholder: 'Location (e.g., Google Maps URL)' },
         { name: 'description', type: 'textarea', placeholder: 'Tell us about your company...' },
         { name: 'twitter_link', type: 'input', placeholder: 'Twitter URL' },
@@ -282,18 +288,18 @@ const AddCorporate = ({ lang = 'en' }) => {
             type: 'select',
             placeholder: 'Choose Company Type',
             options: companyType,
-            multiple: false, // Corrected to false as it's a single select
+            multiple: false,
         },
         {
             name: 'country_id',
             type: 'select',
-            placeholder: 'Select Job Country *',
+            placeholder: 'Select Job Country',
             options: countries,
         },
         {
             name: 'city_id',
             type: 'select',
-            placeholder: 'Select Job City *',
+            placeholder: 'Select Job City',
             options: filteredCities,
         },
         { type: 'file', placeholder: 'Upload Logo', name: 'image', accept: 'image/*' },

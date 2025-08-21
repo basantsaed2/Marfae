@@ -96,7 +96,6 @@ export function AdminSidebar() {
                 initialExpanded[item.label] = isParentActive;
             }
         });
-        console.log("Route:", location.pathname, "Expanded state:", initialExpanded);
         setExpandedItems(initialExpanded); // Reset state to collapse non-active menus
     }, [location.pathname]);
 

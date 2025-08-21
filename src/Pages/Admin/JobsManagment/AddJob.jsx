@@ -36,7 +36,7 @@ const AddJob = ({ lang = 'en' }) => {
         qualifications: '',
         image: null,
         type: '',
-        level: '',
+        experience: '',
         status: 'inactive',
         expected_salary: '',
         expire_date: '',
@@ -172,7 +172,7 @@ const AddJob = ({ lang = 'en' }) => {
             ],
         },
         {
-            name: 'level',
+            name: 'experience',
             type: 'select',
             placeholder: 'Job Experience *',
             options: [
@@ -189,13 +189,13 @@ const AddJob = ({ lang = 'en' }) => {
             name: 'expected_salary',
             type: 'input',
             placeholder: 'Expected Salary *',
-            typeInput: 'number',
+            inputType: 'number',
         },
         {
             name: 'expire_date',
             type: 'input',
-            placeholder: 'Expiration Date (YYYY-MM-DD) *',
-            typeInput: 'date',
+            placeholder: 'Expiration Date *',
+            inputType: 'date',
         },
         {
             name: 'location_link',
@@ -225,7 +225,7 @@ const AddJob = ({ lang = 'en' }) => {
                 qualifications: initialItemData.qualifications || '',
                 image: initialItemData.image_link || '',
                 type: initialItemData.type || '',
-                level: initialItemData.level || '',
+                experience: initialItemData.experience || '',
                 status: initialItemData.status === 'Active' ? 'active' : 'inactive',
                 expected_salary: initialItemData.expected_salary?.toString() || '',
                 expire_date: initialItemData.expire_date || '',
@@ -254,7 +254,7 @@ const AddJob = ({ lang = 'en' }) => {
             !values.description ||
             !values.qualifications ||
             !values.type ||
-            !values.level ||
+            !values.experience ||
             !values.status ||
             !values.expected_salary ||
             !values.expire_date
@@ -275,7 +275,7 @@ const AddJob = ({ lang = 'en' }) => {
                     description: values.description,
                     qualifications: values.qualifications,
                     type: values.type,
-                    level: values.level,
+                    experience: values.experience,
                     status: values.status || 'inactive',
                     expected_salary: parseFloat(values.expected_salary),
                     expire_date: values.expire_date,
@@ -302,7 +302,7 @@ const AddJob = ({ lang = 'en' }) => {
                     body.append('image', values.image);
                 }
                 body.append('type', values.type);
-                body.append('level', values.level);
+                body.append('experience', values.experience);
                 body.append('status', values.status || 'inactive');
                 body.append('expected_salary', values.expected_salary);
                 body.append('expire_date', values.expire_date);
@@ -333,7 +333,7 @@ const AddJob = ({ lang = 'en' }) => {
             qualifications: initialItemData.qualifications || '',
             image: initialItemData.image_link || '',
             type: initialItemData.type || '',
-            level: initialItemData.level || '',
+            experience: initialItemData.experience || '',
             status: initialItemData.status || 'inactive',
             expected_salary: initialItemData.expected_salary?.toString() || '',
             expire_date: initialItemData.expire_date || '',
@@ -348,7 +348,7 @@ const AddJob = ({ lang = 'en' }) => {
             qualifications: '',
             image: null,
             type: '',
-            level: '',
+            experience: '',
             status: 'inactive',
             expected_salary: '',
             expire_date: '',

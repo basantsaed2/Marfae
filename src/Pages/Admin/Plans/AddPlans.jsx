@@ -43,7 +43,7 @@ const AddPlans = ({ lang = 'en' }) => {
             name: 'name',
             type: 'input',
             placeholder: 'Plan Name *',
-            typeInput: 'text',
+            inputType: 'text',
         },
         {
             name: 'description',
@@ -54,13 +54,13 @@ const AddPlans = ({ lang = 'en' }) => {
             name: 'price',
             type: 'input',
             placeholder: 'Price *',
-            typeInput: 'number',
+            inputType: 'number',
         },
         {
             name: 'price_after_discount',
             type: 'input',
             placeholder: 'Price After Discount',
-            typeInput: 'number',
+            inputType: 'number',
         },
         {
             name: 'type',

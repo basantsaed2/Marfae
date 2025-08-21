@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Table } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Plus, Info } from 'lucide-react';
+import { Briefcase, Calendar, Circle, FileText, Info, LinkIcon, MapPin, Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGet } from '@/Hooks/UseGet';
 import { useChangeState } from '@/Hooks/useChangeState';
 import DeleteDialog from '@/components/DeleteDialog';
 import FullPageLoader from "@/components/Loading";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useDelete } from "@/Hooks/useDelete";
 
 const CorporateManagement = () => {
@@ -31,31 +31,20 @@ const CorporateManagement = () => {
             const formatted = dataCompanies.companies.map((c) => ({
                 id: c.id || "—",
                 name: c.name || "—",
-                // img: c.image_link ? (
-                //     <img
-                //         src={c.image_link}
-                //         alt={c.name}
-                //         className="w-12 h-12 object-cover rounded-md"
-                //     />
-                // ) : (
-                //     <Avatar className="w-12 h-12">
-                //         <AvatarFallback>{c.name?.charAt(0)}</AvatarFallback>
-                //     </Avatar>
-                // ),
                 email: c.email || "—",
                 phone: c.phone || "—",
-                type: c.type || "—",
+                type: c.company_type?.name || "—", // String, e.g., "Medical"
                 specializations: Array.isArray(c.company_specializations)
                     ? c.company_specializations.map((s) => ({
                         id: s.specialization_id,
                         name: s.specialization?.name || "—",
                     }))
-                    : [], // Store for editing
+                    : [],
                 specializationsDisplay: Array.isArray(c.company_specializations)
                     ? c.company_specializations
                         .map((s) => s.specialization?.name || "—")
                         .join(", ") || "—"
-                    : "—", // For display
+                    : "—",
                 location_link: c.location_link || "—",
                 description: c.description || "—",
                 facebook_link: c.facebook_link || "—",
@@ -67,11 +56,12 @@ const CorporateManagement = () => {
                 end_date: c.end_date || "—",
                 user_id: c.user_id || "—",
                 user: c.user || "—",
+                company_type: c.company_type || { name: "—" }, // Object, e.g., { id: 1, name: "Medical" }
+                company_specializations: c.company_specializations || [],
             }));
             setCompanies(formatted);
         }
     }, [dataCompanies]);
-
     const Columns = [
 
         { key: "name", label: "Company Name" },
@@ -80,22 +70,6 @@ const CorporateManagement = () => {
         { key: "type", label: "Type" },
         { key: "specializationsDisplay", label: "Specializations" },
         { key: "status", label: "Status" },
-        // {
-        //     key: "details",
-        //     label: "Details",
-        //     render: (item) => (
-        //         <Button
-        //             variant="outline"
-        //             size="sm"
-        //             onClick={() => {
-        //                 setSelectedRow(item);
-        //                 setIsDetailsOpen(true);
-        //             }}
-        //         >
-        //             <Info className="h-4 w-4 mr-2" /> View
-        //         </Button>
-        //     ),
-        // },
     ];
 
     const handleEdit = (item) => navigate(`add`, { state: { companyDetails: item } });
@@ -119,6 +93,14 @@ const CorporateManagement = () => {
         }
 
     };
+
+
+    // Add this function to handle opening the details dialog
+    const handleOpenDetails = (item) => {
+        setSelectedRow(item);
+        setIsDetailsOpen(true);
+    };
+
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
@@ -140,6 +122,7 @@ const CorporateManagement = () => {
                     // filterKeys={["name"]} // Exclude image_link from filtering
                     // titles={{ name: "Company Name" }}
                     onEdit={(item) => handleEdit({ ...item })}
+                    onView={(item) => handleOpenDetails({ ...item })} // Pass the handler to the Table
                     onDelete={handleDelete}
                     className="w-full bg-white rounded-lg shadow-md p-6"
                 />
@@ -151,119 +134,118 @@ const CorporateManagement = () => {
                 name={selectedRow?.name}
                 isLoading={loadingChange}
             />
+            {/* Company Details Dialog */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader>
-                        <DialogTitle>{selectedRow?.name} Details</DialogTitle>
-                        <DialogDescription>View all details for the selected company.</DialogDescription>
-                    </DialogHeader>
+                <DialogContent className="w-full bg-white rounded-xl shadow-xl p-0 sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+                    <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                                <Briefcase className="h-5 w-5 text-blue-600" />
+                                Company Details
+                            </DialogTitle>
+                            <DialogDescription className="text-sm text-gray-600 mt-1">
+                                Comprehensive information about the selected company
+                            </DialogDescription>
+                        </DialogHeader>
+                    </div>
                     {selectedRow && (
-                        <div className="grid gap-4 py-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Logo:</span>
-                                <div className="col-span-3">
-                                    {selectedRow.image_link && selectedRow.image_link !== "—" ? (
-                                        <img
+                        <div className="flex-1 overflow-y-auto p-6">
+                            <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 pb-6 border-b border-gray-100">
+                                <div className="flex-shrink-0">
+                                    <Avatar className="h-20 w-20 rounded-xl border-4 border-white shadow-md">
+                                        <AvatarImage
                                             src={selectedRow.image_link}
-                                            alt={selectedRow.name}
-                                            className="w-16 h-16 object-cover rounded-md"
+                                            alt={`${selectedRow.name} image`}
+                                            className="object-cover"
                                         />
-                                    ) : (
-                                        <Avatar className="w-16 h-16">
-                                            <AvatarFallback>{selectedRow.name?.charAt(0) || "—"}</AvatarFallback>
-                                        </Avatar>
-                                    )}
+                                        <AvatarFallback className="bg-gradient-to-br from-blue-100 to-indigo-100 text-blue-600 text-lg font-semibold">
+                                            {selectedRow.name?.charAt(0) || "C"}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                </div>
+                                <div className="text-center sm:text-left">
+                                    <h2 className="text-2xl font-bold text-gray-900 mb-1">{selectedRow.name}</h2>
+                                    <p className="text-lg text-gray-700 font-medium mb-2">
+                                        {selectedRow.type || "N/A"} {/* Fix: Use type instead of company_type */}
+                                    </p>
+                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            <MapPin className="h-3 w-3 mr-1" />
+                                            City ID: {selectedRow.city_id}, Country ID: {selectedRow.country_id}
+                                        </span>
+                                        {selectedRow.specializations && selectedRow.specializations.length > 0 ? (
+                                            selectedRow.specializations.map((spec, index) => (
+                                                <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                    {spec.name || "N/A"} {/* Fix: Use specializations array */}
+                                                </span>
+                                            ))
+                                        ) : (
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                No Specializations
+                                            </span>
+                                        )}
+                                        <span
+                                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${selectedRow.status === "Active"
+                                                    ? "bg-green-100 text-green-800"
+                                                    : "bg-red-100 text-red-800"
+                                                }`}
+                                        >
+                                            <Circle className="h-2 w-2 mr-1 fill-current" />
+                                            {selectedRow.status}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Name:</span>
-                                <span className="col-span-3">{selectedRow.name}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Email:</span>
-                                <span className="col-span-3">{selectedRow.email}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Phone:</span>
-                                <span className="col-span-3">{selectedRow.phone}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Type:</span>
-                                <span className="col-span-3">{selectedRow.type}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Specializations:</span>
-                                <span className="col-span-3">{selectedRow.specializations}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Status:</span>
-                                <span className="col-span-3">{selectedRow.status}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Location:</span>
-                                <span className="col-span-3">
-                                    <a href={selectedRow.location_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                        {selectedRow.location_link}
-                                    </a>
-                                </span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Description:</span>
-                                <span className="col-span-3">{selectedRow.description}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Facebook:</span>
-                                <span className="col-span-3">
-                                    <a href={selectedRow.facebook_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                        {selectedRow.facebook_link}
-                                    </a>
-                                </span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Twitter:</span>
-                                <span className="col-span-3">
-                                    <a href={selectedRow.twitter_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                        {selectedRow.twitter_link}
-                                    </a>
-                                </span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">LinkedIn:</span>
-                                <span className="col-span-3">
-                                    <a href={selectedRow.linkedin_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                        {selectedRow.linkedin_link}
-                                    </a>
-                                </span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Website:</span>
-                                <span className="col-span-3">
-                                    <a href={selectedRow.site_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                        {selectedRow.site_link}
-                                    </a>
-                                </span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">Start Date:</span>
-                                <span className="col-span-3">{selectedRow.start_date}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">End Date:</span>
-                                <span className="col-span-3">{selectedRow.end_date}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">User ID:</span>
-                                <span className="col-span-3">{selectedRow.user_id}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <span className="font-medium col-span-1">User:</span>
-                                <span className="col-span-3">{selectedRow.user}</span>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div className="space-y-6">
+                                    <div className="p-4 bg-gray-50 rounded-lg">
+                                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                            <Info className="h-4 w-4" />
+                                            Company Information
+                                        </h3>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-500">Type</p>
+                                                <p className="text-gray-900 font-medium">{selectedRow.type || "N/A"}</p> {/* Fix: Use type */}
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-500">Specializations</p>
+                                                <div className="flex flex-wrap gap-1 mt-1">
+                                                    {selectedRow.specializations && selectedRow.specializations.length > 0 ? (
+                                                        selectedRow.specializations.map((spec, index) => (
+                                                            <span key={index} className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
+                                                                {spec.name || "N/A"} {/* Fix: Use specializations */}
+                                                            </span>
+                                                        ))
+                                                    ) : (
+                                                        <span className="text-gray-500 text-sm">No specializations</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-500">Email</p>
+                                                <p className="text-gray-900 font-medium">{selectedRow.email || "N/A"}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-500">Phone</p>
+                                                <p className="text-gray-900 font-medium">{selectedRow.phone || "N/A"}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}
-                    <div className="flex justify-end">
-                        <Button onClick={() => setIsDetailsOpen(false)}>Close</Button>
-                    </div>
+                    <DialogFooter className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsDetailsOpen(false)}
+                            className="rounded-lg border-gray-300"
+                        >
+                            Close
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </div>
