@@ -43,6 +43,7 @@ const AddJob = ({ lang = 'en' }) => {
         location_link: '',
     });
 
+    const [imageChanged, setImageChanged] = useState(false); // Track if image was changed
     const [companies, setCompanies] = useState([]);
     const [categories, setCategories] = useState([]);
     const [jobTitles, setJobTitles] = useState([]);
@@ -223,7 +224,7 @@ const AddJob = ({ lang = 'en' }) => {
                 jobTitle: initialItemData.job_titel_id?.toString() || '',
                 description: initialItemData.description || '',
                 qualifications: initialItemData.qualifications || '',
-                image: initialItemData.image_link || '',
+                image: initialItemData.img || '',
                 type: initialItemData.type || '',
                 experience: initialItemData.experience || '',
                 status: initialItemData.status === 'Active' ? 'active' : 'inactive',
@@ -231,6 +232,7 @@ const AddJob = ({ lang = 'en' }) => {
                 expire_date: initialItemData.expire_date || '',
                 location_link: initialItemData.location_link || '',
             });
+            setImageChanged(false); // Reset image changed flag when loading initial data
         }
     }, [initialItemData]);
 
@@ -242,6 +244,11 @@ const AddJob = ({ lang = 'en' }) => {
             }
             return newValues;
         });
+
+        // Track if image was changed
+        if (name === 'image') {
+            setImageChanged(true);
+        }
     };
 
     const handleSubmit = async () => {
@@ -249,13 +256,11 @@ const AddJob = ({ lang = 'en' }) => {
             !values.company_id ||
             !values.job_category_id ||
             !values.city_id ||
-            !values.zone_id ||
             !values.jobTitle ||
             !values.description ||
             !values.qualifications ||
             !values.type ||
             !values.experience ||
-            !values.status ||
             !values.expected_salary ||
             !values.expire_date
         ) {
@@ -281,7 +286,8 @@ const AddJob = ({ lang = 'en' }) => {
                     expire_date: values.expire_date,
                     location_link: values.location_link || '',
                 };
-                if (values.image && typeof values.image !== 'string') {
+                // Only include image if it was changed
+                if (imageChanged && values.image) {
                     data.image = values.image;
                 }
                 await changeState(
@@ -298,7 +304,7 @@ const AddJob = ({ lang = 'en' }) => {
                 body.append('job_titel_id', values.jobTitle);
                 body.append('description', values.description);
                 body.append('qualifications', values.qualifications);
-                if (values.image && typeof values.image !== 'string') {
+                if (values.image) {
                     body.append('image', values.image);
                 }
                 body.append('type', values.type);
@@ -331,7 +337,7 @@ const AddJob = ({ lang = 'en' }) => {
             jobTitle: initialItemData.job_titel_id?.toString() || '',
             description: initialItemData.description || '',
             qualifications: initialItemData.qualifications || '',
-            image: initialItemData.image_link || '',
+            image: initialItemData.img || '',
             type: initialItemData.type || '',
             experience: initialItemData.experience || '',
             status: initialItemData.status || 'inactive',
@@ -354,6 +360,7 @@ const AddJob = ({ lang = 'en' }) => {
             expire_date: '',
             location_link: '',
         });
+        setImageChanged(false); // Reset image changed flag on reset
     };
 
     const handleBack = () => {

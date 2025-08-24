@@ -276,11 +276,14 @@ function Table({
                 <TableRow key={index}>
                   {columns.map((col) => (
                     <TableCell className="" key={col.key}>
-                      {col.key === "action" && renderActionCell ? (
+                      {/* Check if column has a custom renderCell function */}
+                      {col.renderCell ? (
+                        col.renderCell(item)
+                      ) : col.key === "action" && renderActionCell ? (
                         renderActionCell(item)
                       ) : col.key === "receipt" && renderReceiptCell ? (
                         renderReceiptCell(item)
-                      ) : col.key === "reason" && renderReasonCell ? ( // Added support for renderReasonCell
+                      ) : col.key === "reason" && renderReasonCell ? (
                         renderReasonCell(item)
                       ) : col.key === "img" ? (
                         item[col.key] && item[col.key] !== "—" ? (

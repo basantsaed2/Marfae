@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useGet } from '@/Hooks/UseGet';
 import FullPageLoader from "@/components/Loading";
-import { 
-  FiDownload, 
-  FiSearch, 
-  FiUser, 
-  FiFileText, 
-  FiMapPin, 
-  FiMail, 
-  FiPhone, 
-  FiCalendar 
+import {
+    FiDownload,
+    FiSearch,
+    FiUser,
+    FiFileText,
+    FiMapPin,
+    FiMail,
+    FiPhone,
+    FiCalendar
 } from "react-icons/fi";
-import { 
-  FaSortAmountDownAlt, 
-  FaSortAmountUp,
-  FaFileDownload,
-  FaMapMarkerAlt
+import {
+    FaSortAmountDownAlt,
+    FaSortAmountUp,
+    FaFileDownload,
+    FaMapMarkerAlt
 } from "react-icons/fa";
 
 const AllCV = () => {
@@ -49,23 +49,23 @@ const AllCV = () => {
 
     const sortedAndFilteredCVs = React.useMemo(() => {
         let filtered = [...cvList];
-        
+
         if (searchTerm) {
-            filtered = filtered.filter(cv => 
+            filtered = filtered.filter(cv =>
                 cv.user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 cv.user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 cv.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (cv.user_address && cv.user_address.toLowerCase().includes(searchTerm.toLowerCase()))
             );
         }
-        
+
         if (sortConfig.key) {
             filtered.sort((a, b) => {
                 // Handle nested user properties
-                const aValue = sortConfig.key.includes('.') 
+                const aValue = sortConfig.key.includes('.')
                     ? sortConfig.key.split('.').reduce((o, i) => o[i], a)
                     : a[sortConfig.key];
-                const bValue = sortConfig.key.includes('.') 
+                const bValue = sortConfig.key.includes('.')
                     ? sortConfig.key.split('.').reduce((o, i) => o[i], b)
                     : b[sortConfig.key];
 
@@ -78,16 +78,16 @@ const AllCV = () => {
                 return 0;
             });
         }
-        
+
         return filtered;
     }, [cvList, searchTerm, sortConfig]);
 
-    if(loadingCV){
-        return <FullPageLoader/>
+    if (loadingCV) {
+        return <FullPageLoader />
     }
 
     return (
-        <div className="min-h-screen p-6 bg-gray-50">
+        <div className="min-h-screen p-4 md:p-6 bg-gray-50">
             <div className="w-full">
                 <div className="mb-4">
                     <h1 className="text-3xl text-bg-primary font-bold mb-2">CV Management</h1>
@@ -117,9 +117,9 @@ const AllCV = () => {
                             >
                                 Date
                                 {sortConfig.key === "created_at" && (
-                                    sortConfig.direction === "asc" ? 
-                                    <FaSortAmountDownAlt className="ml-1" /> : 
-                                    <FaSortAmountUp className="ml-1" />
+                                    sortConfig.direction === "asc" ?
+                                        <FaSortAmountDownAlt className="ml-1" /> :
+                                        <FaSortAmountUp className="ml-1" />
                                 )}
                             </button>
                             <button
@@ -128,18 +128,18 @@ const AllCV = () => {
                             >
                                 Name
                                 {sortConfig.key === "user.first_name" && (
-                                    sortConfig.direction === "asc" ? 
-                                    <FaSortAmountDownAlt className="ml-1" /> : 
-                                    <FaSortAmountUp className="ml-1" />
+                                    sortConfig.direction === "asc" ?
+                                        <FaSortAmountDownAlt className="ml-1" /> :
+                                        <FaSortAmountUp className="ml-1" />
                                 )}
                             </button>
                         </div>
                     </div>
                 </div>
 
-                   {/* Stats Cards */}
+                {/* Stats Cards */}
                 {sortedAndFilteredCVs.length > 0 && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
                         <div className="bg-white p-5 rounded-lg shadow">
                             <h3 className="text-lg font-medium text-gray-700 mb-2">Total CVs</h3>
                             <p className="text-3xl font-bold text-blue-600">{sortedAndFilteredCVs.length}</p>
@@ -175,7 +175,7 @@ const AllCV = () => {
                         sortedAndFilteredCVs.map((cv) => (
                             <div
                                 key={cv.id}
-                                className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 p-6 flex flex-col"
+                                className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 p-6 flex flex-col max-w-full overflow-hidden min-w-0"
                             >
                                 {/* User Info Header */}
                                 <div className="flex items-center mb-4">
@@ -183,34 +183,35 @@ const AllCV = () => {
                                         <img
                                             src={cv.user.image_link}
                                             alt={`${cv.user.first_name}'s profile`}
-                                            className="w-12 h-12 rounded-full object-cover mr-4"
+                                            className="w-12 h-12 rounded-full object-cover mr-4 max-w-full h-auto"
+                                            onError={(e) => (e.target.src = '/fallback-image.png')}
                                         />
                                     ) : (
                                         <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
                                             <FiUser className="text-blue-600 text-xl" />
                                         </div>
                                     )}
-                                    <div>
-                                        <h2 className="text-xl font-semibold text-gray-800">
+                                    <div className="min-w-0">
+                                        <h2 className="text-xl font-semibold text-gray-800 truncate">
                                             {cv.user.first_name} {cv.user.last_name}
                                         </h2>
-                                        <p className="text-sm text-gray-500">{cv.user.email}</p>
+                                        <p className="text-sm text-gray-500 truncate">{cv.user.email}</p>
                                     </div>
                                 </div>
 
                                 {/* User Details */}
                                 <div className="flex-1 space-y-3 mb-4">
-                                    <div className="flex items-center text-gray-600">
+                                    <div className="flex items-center text-gray-600 truncate">
                                         <FaMapMarkerAlt className="mr-2 text-blue-500" />
                                         <span>{cv.user_address || 'Location not specified'}</span>
                                     </div>
-                                    <div className="flex items-center text-gray-600">
+                                    <div className="flex items-center text-gray-600 truncate">
                                         <FiPhone className="mr-2 text-blue-500" />
                                         <span>{cv.user.phone || 'Phone not provided'}</span>
                                     </div>
                                     <div className="flex items-center text-gray-600">
                                         <FiCalendar className="mr-2 text-blue-500" />
-                                        <span>Age: {cv.age || 'N/A'}</span>
+                                        <span>Age: {cv.user.age || 'N/A'}</span>
                                     </div>
                                     <div className="flex items-center text-gray-600 text-sm">
                                         <FiFileText className="mr-2 text-blue-500" />

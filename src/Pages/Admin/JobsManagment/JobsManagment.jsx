@@ -41,19 +41,20 @@ const JobManagement = () => {
                 expected_salary: j.expected_salary || "—",
                 expire_date: j.expire_date || "—",
                 location_link: j.location_link || "—",
-                image_link: j.image_link || "—",
                 company_id: j.company_id || "—",
                 job_category_id: j.job_category_id || "—",
                 city_id: j.city_id || "—",
                 zone_id: j.zone_id || "—",
                 status: j.status === "active" ? "Active" : "Inactive",
-                image: j.image_link || '',
+                img: j.image_link || "—", // Store the image URL or a placeholder string
+                image: j.image || "—", // Use the image_l field for the avatar
             }));
             setJobs(formatted);
         }
     }, [dataJobs]);
 
     const Columns = [
+        { key: "img", label: "Image" },
         { key: "title", label: "Job Title" },
         { key: "company", label: "Company" },
         { key: "job_category", label: "Category" },
