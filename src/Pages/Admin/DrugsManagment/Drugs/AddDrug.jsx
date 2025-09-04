@@ -56,6 +56,12 @@ const AddDrug = ({ lang = 'en' }) => {
         { name: 'name', type: 'input', placeholder: 'Drug Name *' },
         { name: 'description', type: 'input', placeholder: 'Drug Description *' },
         {
+            name: 'price',
+            type: 'input',
+            placeholder: 'Price *',
+            inputType: 'number',
+        },
+        {
             name: 'company_id',
             type: 'select',
             placeholder: 'Choose the company *',
@@ -74,6 +80,7 @@ const AddDrug = ({ lang = 'en' }) => {
         id: '',
         name: '',
         description: '',
+        price: '',
         company_id: '',
         drug_category_id: '',
         image: null,
@@ -85,6 +92,7 @@ const AddDrug = ({ lang = 'en' }) => {
                 id: initialItemData.id || '',
                 name: initialItemData.name || '',
                 description: initialItemData.description || '',
+                price: initialItemData.price || '',
                 company_id: initialItemData.company_id?.toString() || '',
                 drug_category_id: initialItemData.drug_category_id?.toString() || '',
                 image: initialItemData.image || null, // Keep as URL/path or null
@@ -109,24 +117,28 @@ const AddDrug = ({ lang = 'en' }) => {
 
         try {
             if (isEditMode) {
-                const body = new FormData();
-                body.append('id', values.id);
-                body.append('name', values.name);
-                body.append('description', values.description);
-                body.append('company_id', values.company_id);
-                body.append('drug_category_id', values.drug_category_id);
+                const data = {
+                    id: values.id,
+                    name: values.name,
+                    description: values.description,
+                    price: values.price,
+                    company_id: parseInt(values.company_id),
+                    drug_category_id: parseInt(values.drug_category_id),
+                };
+                // Only include image if it was changed
                 if (imageChanged && values.image) {
-                    body.append('image', values.image); // Only append image if changed
+                    data.image = values.image;
                 }
                 await changeState(
                     `${apiUrl}/admin/editDrug/${values.id}`,
                     'Drug Updated Successfully!',
-                    body
+                    data
                 );
             } else {
                 const body = new FormData();
                 body.append('name', values.name);
                 body.append('description', values.description);
+                body.append('price', values.price);
                 body.append('company_id', values.company_id);
                 body.append('drug_category_id', values.drug_category_id);
                 if (values.image) {
@@ -150,6 +162,7 @@ const AddDrug = ({ lang = 'en' }) => {
             id: initialItemData.id || '',
             name: initialItemData.name || '',
             description: initialItemData.description || '',
+            price: initialItemData.price || '',
             company_id: initialItemData.company_id?.toString() || '',
             drug_category_id: initialItemData.drug_category_id?.toString() || '',
             image: initialItemData.image || null,
@@ -157,6 +170,7 @@ const AddDrug = ({ lang = 'en' }) => {
             id: '',
             name: '',
             description: '',
+            price: '',
             company_id: '',
             drug_category_id: '',
             image: null,

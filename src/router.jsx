@@ -38,6 +38,7 @@ import PendingPayment from "./Pages/Admin/PendingPayment/PendingPayment";
 import ContactRequest from "./Pages/Admin/ContactRequest/ContactRequest";
 import AllCV from "./Pages/Admin/AllCV/AllCV";
 import Reviews from "./Pages/Admin/Reviews/Reviews";
+import CompanyEmployers from "./Pages/Admin/CorporateManagement/CompanyEmployers";
 
 const router = createBrowserRouter([
   {
@@ -153,6 +154,7 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <CorporateManagement /> },
               { path: "add", element: <AddCorporate /> },
+              { path: "employers/:id", element: <CompanyEmployers /> }, // Add this route
             ],
           },
           {

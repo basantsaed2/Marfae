@@ -27,6 +27,7 @@ const Drug = () => {
         img: u.image_link || "—",
         name: u.name || "—",
         description: u.description || "—",
+        price: u.price || '0',
         company: u.company?.name || "—",
         drug_category: u.drug_category?.name || "—",
         drug_category_id: u.drug_category_id?.toString() || "—", // Add drug_category_id
@@ -37,8 +38,9 @@ const Drug = () => {
   }, [dataDrug]);
 
   const Columns = [
-    { key: "img", label: "Drug Image",},
+    { key: "img", label: "Drug Image", },
     { key: "name", label: "Drug Name" },
+    { key: "price", label: "Price" },
     { key: "company", label: "Company" },
     { key: "drug_category", label: "Drug Category" },
     { key: "description", label: "Description" },

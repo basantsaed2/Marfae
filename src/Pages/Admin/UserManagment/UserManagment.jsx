@@ -41,6 +41,7 @@ const UserManagment = () => {
         role: u.role || "—",
         email_verified: u.email_verified || "—",
         company_id: u.company_id || null,
+        company:u.company?.name,
         specializations: Array.isArray(u.specializations)
           ? u.specializations.map((s) => ({
             id: s?.id,
@@ -62,8 +63,8 @@ const UserManagment = () => {
   // Custom renderer for role column
   const renderRoleCell = (item) => {
     let icon, bgColor, textColor;
-    
-    switch(item.role) {
+
+    switch (item.role) {
       case 'employeer':
         icon = <Building className="h-4 w-4 mr-1" />;
         bgColor = 'bg-blue-100';
@@ -81,7 +82,7 @@ const UserManagment = () => {
         textColor = 'text-green-800';
         break;
     }
-    
+
     return (
       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}>
         {icon}
@@ -95,12 +96,13 @@ const UserManagment = () => {
     { key: "name", label: "Name" },
     { key: "phone", label: "Phone" },
     { key: "email", label: "Email" },
-    { 
-      key: "role", 
+    {
+      key: "role",
       label: "Role",
       renderCell: renderRoleCell // Add custom renderer
     },
     { key: "specializationsDisplay", label: "Specializations" },
+    { key: "company", label: "Company" },
     { key: "status", label: "Status" },
   ];
 

@@ -98,6 +98,7 @@ const AddPlans = ({ lang = 'en' }) => {
 
     const [values, setValues] = useState({});
     const [cvNumber, setCvNumber] = useState('');
+    const [jobNumber, setJobNumber] = useState('');
     const [featureInputs, setFeatureInputs] = useState([]);
 
     useEffect(() => {
@@ -124,10 +125,11 @@ const AddPlans = ({ lang = 'en' }) => {
             if (initialItemData.features) {
                 // Extract cv_number directly from the features object
                 setCvNumber(initialItemData.features.cv_number?.toString() || '');
+                setJobNumber(initialItemData.features.job_add?.toString() || '')
 
                 // Convert other features to an array of { id, name, value } objects
                 const otherFeatures = Object.entries(initialItemData.features)
-                    .filter(([key]) => key !== 'cv_number')
+                    .filter(([key]) => key !== 'cv_number' && key !== 'job_add')
                     .map(([key, value], index) => ({
                         id: index + 1,
                         name: key,
@@ -144,6 +146,10 @@ const AddPlans = ({ lang = 'en' }) => {
 
     const handleCvNumberChange = (e) => {
         setCvNumber(e.target.value);
+    };
+
+    const handleJobNumberChange = (e) => {
+        setJobNumber(e.target.value);
     };
 
     const handleAddFeature = () => {
@@ -170,8 +176,15 @@ const AddPlans = ({ lang = 'en' }) => {
 
         // Validate cv_number
         const cvNum = parseInt(cvNumber);
+        const jobNum = parseInt(jobNumber);
+
         if (isNaN(cvNum) || cvNum < 0 || cvNumber.trim() === '') {
             toast.error('Number of CVs must be a valid number');
+            return;
+        }
+
+        if (isNaN(jobNum) || jobNum < 0 ) {
+            toast.error('Number of jobs must be a valid number');
             return;
         }
 
@@ -179,6 +192,7 @@ const AddPlans = ({ lang = 'en' }) => {
             // Construct features as a flat object
             const featuresObj = {
                 cv_number: cvNum,
+                job_add: jobNum,
                 ...Object.fromEntries(
                     featureInputs
                         .filter(input => input.value.trim() !== '')
@@ -226,6 +240,8 @@ const AddPlans = ({ lang = 'en' }) => {
 
             // Append features as flat keys
             body.append('features[cv_number]', cvNum);
+            body.append('features[job_add]', jobNum);
+
             featureInputs
                 .filter(input => input.value.trim() !== '')
                 .forEach((input, index) => {
@@ -255,14 +271,21 @@ const AddPlans = ({ lang = 'en' }) => {
             price: initialItemData.price?.toString() || '',
             price_after_discount: initialItemData.price_after_discount?.toString() || '',
             type: initialItemData.type || '',
-            categories: initialItemData.categories || [],
+            categories: Array.isArray(initialItemData.job_categories)
+                ? initialItemData.job_categories
+                    .filter(s => s && s.id != null)
+                    .map(s => s.id.toString())
+                : [],
+            top_picked: initialItemData.top_picked || 0,
             status: initialItemData.status || 'inactive',
         } : {});
 
         setCvNumber(initialItemData?.features?.cv_number?.toString() || '');
+        setJobNumber(initialItemData?.features?.job_add?.toString() || '');
+
         if (initialItemData?.features) {
             const otherFeatures = Object.entries(initialItemData.features)
-                .filter(([key]) => key !== 'cv_number')
+                .filter(([key]) => key !== 'cv_number' && key !== 'job_add')
                 .map(([key, value], index) => ({
                     id: index + 1,
                     name: key,
@@ -273,7 +296,6 @@ const AddPlans = ({ lang = 'en' }) => {
             setFeatureInputs([]);
         }
     };
-
     const handleBack = () => {
         navigate(-1);
     };
@@ -325,6 +347,18 @@ const AddPlans = ({ lang = 'en' }) => {
                             onChange={handleCvNumberChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Number of CVs *"
+                            required
+                        />
+                    </div>
+
+                    {/* job Number Input */}
+                    <div className="mb-2">
+                        <input
+                            type="number"
+                            value={jobNumber}
+                            onChange={handleJobNumberChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Number of Jobs *"
                             required
                         />
                     </div>

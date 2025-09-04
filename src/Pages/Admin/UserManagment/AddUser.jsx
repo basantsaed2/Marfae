@@ -13,9 +13,12 @@ const AddUser = ({ lang = 'en' }) => {
     const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addUser` });
     const { changeState, loadingChange, responseChange } = useChangeState();
     const { refetch: refetchSpecialization, loading: loadingSpecialization, data: dataSpecialization } = useGet({ url: `${apiUrl}/admin/getSpecializations` });
+    const { refetch: refetchCompanies, loading: loadingCompanies, data: dataCompanies } = useGet({ url: `${apiUrl}/admin/getCompanies` });
 
     const [specializations, setSpecializations] = useState([]);
-    const [imageChanged, setImageChanged] = useState(false); // Track if image has been changed
+    const [companies, setCompanies] = useState([]);
+    const [imageChanged, setImageChanged] = useState(false);
+    const [selectedRole, setSelectedRole] = useState('');
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -27,7 +30,8 @@ const AddUser = ({ lang = 'en' }) => {
 
     useEffect(() => {
         refetchSpecialization();
-    }, [refetchSpecialization]);
+        refetchCompanies();
+    }, [refetchSpecialization, refetchCompanies]);
 
     useEffect(() => {
         if (dataSpecialization && dataSpecialization.specializations) {
@@ -39,18 +43,31 @@ const AddUser = ({ lang = 'en' }) => {
         }
     }, [dataSpecialization]);
 
-    const fields = [
+    useEffect(() => {
+        if (dataCompanies && dataCompanies.companies) {
+            const formatted = dataCompanies.companies.map((u) => ({
+                label: u.name || "—",
+                value: u.id.toString() || "",
+            }));
+            setCompanies(formatted);
+        }
+    }, [dataCompanies]);
+
+    // Base fields that are always shown
+    const baseFields = [
         { name: 'first_name', type: 'input', placeholder: 'First Name *' },
         { name: 'last_name', type: 'input', placeholder: 'Last Name' },
         { name: 'phone', type: 'input', placeholder: 'Phone *' },
         { name: 'email', type: 'input', placeholder: 'Email *' },
         { name: 'password', type: 'input', placeholder: 'Password *', disabled: isEditMode },
         {
-            name: 'specializations',
-            type: 'multi-select',
-            placeholder: 'Choose specializations *',
-            options: specializations,
-            multiple: true,
+            name: 'role',
+            type: 'select',
+            placeholder: 'Select Role *',
+            options: [
+                { label: 'User', value: 'user' },
+                { label: 'Employer', value: 'employeer' },
+            ],
         },
         { type: 'file', placeholder: 'Image', name: 'image', accept: 'image/*' },
         {
@@ -63,32 +80,96 @@ const AddUser = ({ lang = 'en' }) => {
         },
     ];
 
+    // Conditionally add fields based on role
+    const getFields = () => {
+        const fields = [...baseFields];
+        
+        // Add company selection for employeers
+        if (selectedRole === 'employeer') {
+            fields.splice(6, 0, {
+                name: 'companies',
+                type: 'select',
+                placeholder: 'Select Company *',
+                options: companies,
+            });
+        } 
+        // Add specialization selection for users
+        else if (selectedRole === 'user') {
+            fields.splice(6, 0, {
+                name: 'specializations',
+                type: 'multi-select',
+                placeholder: 'Choose specializations *',
+                options: specializations,
+                multiple: true,
+            });
+        }
+        
+        return fields;
+    };
+
     const [values, setValues] = useState({});
 
     useEffect(() => {
         if (initialItemData) {
-            setValues({
+            const initialValues = {
                 id: initialItemData.id || '',
                 first_name: initialItemData.first_name || '',
                 last_name: initialItemData.last_name || '',
                 phone: initialItemData.phone || '',
                 email: initialItemData.email || '',
-                specializations: Array.isArray(initialItemData.specializations)
-                    ? initialItemData.specializations
-                        .filter((s) => s && s.id != null)
-                        .map((s) => s.id.toString())
-                    : [],
                 status: initialItemData.status === 'Active' ? 'active' : 'inactive',
-                image: initialItemData.image || '', // Existing image URL or empty
-            });
+                image: initialItemData.image || '',
+            };
+            
+            // Set role and role-specific fields
+            if (initialItemData.role) {
+                initialValues.role = initialItemData.role;
+                setSelectedRole(initialItemData.role);
+                
+                if (initialItemData.role === 'user') {
+                    initialValues.specializations = Array.isArray(initialItemData.specializations)
+                        ? initialItemData.specializations
+                            .filter((s) => s && s.id != null)
+                            .map((s) => s.id.toString())
+                        : [];
+                } else if (initialItemData.role === 'employeer') {
+                    initialValues.companies = initialItemData.company_id 
+                        ? initialItemData.company_id.toString() 
+                        : '';
+                }
+            }
+            
+            setValues(initialValues);
         }
     }, [initialItemData]);
 
     const handleChange = (lang, name, value) => {
         if (name === 'image') {
-            setImageChanged(true); // Mark image as changed when file input is used
+            setImageChanged(true);
         }
-        setValues((prev) => ({ ...prev, [name]: value }));
+        
+        if (name === 'role') {
+            setSelectedRole(value);
+            
+            // Clear role-specific fields when role changes
+            if (value === 'user') {
+                setValues(prev => {
+                    const newValues = {...prev, [name]: value};
+                    delete newValues.companies;
+                    return newValues;
+                });
+            } else if (value === 'employeer') {
+                setValues(prev => {
+                    const newValues = {...prev, [name]: value};
+                    delete newValues.specializations;
+                    return newValues;
+                });
+            } else {
+                setValues(prev => ({...prev, [name]: value}));
+            }
+        } else {
+            setValues((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     useEffect(() => {
@@ -98,15 +179,28 @@ const AddUser = ({ lang = 'en' }) => {
     }, [responseChange, postResponse, navigate]);
 
     const handleSubmit = async () => {
+        // Validate required fields
         if (
             !values.first_name ||
             !values.phone ||
             !values.email ||
-            !values.specializations
+            !values.role
         ) {
             toast.error('Please fill in all required fields');
             return;
         }
+        
+        // Role-specific validation
+        if (values.role === 'user' && (!values.specializations || values.specializations.length === 0)) {
+            toast.error('Please select at least one specialization');
+            return;
+        }
+        
+        if (values.role === 'employeer' && !values.companies) {
+            toast.error('Please select a company');
+            return;
+        }
+
         if (isEditMode) {
             // Edit mode: Use changeState (PUT request)
             const data = {
@@ -115,9 +209,15 @@ const AddUser = ({ lang = 'en' }) => {
                 last_name: values.last_name || '',
                 phone: values.phone || '',
                 email: values.email || '',
-                specialization: values.specializations.map((id) => parseInt(id)),
                 status: values.status || 'inactive',
             };
+
+            // Add role-specific data
+            if (values.role === 'user') {
+                data.specialization = values.specializations.map((id) => parseInt(id));
+            } else if (values.role === 'employeer') {
+                data.company_id = parseInt(values.companies);
+            }
 
             // Only include image if it has been changed
             if (imageChanged && values.image) {
@@ -137,12 +237,17 @@ const AddUser = ({ lang = 'en' }) => {
             body.append('phone', values.phone || '');
             body.append('email', values.email || '');
             body.append('password', values.password || '');
-            if (values.specializations) {
+            body.append('role', values.role || '');
+            body.append('status', values.status || 'inactive');
+
+            // Add role-specific data
+            if (values.role === 'user' && values.specializations) {
                 values.specializations.forEach((id) => {
                     body.append('specialization[]', parseInt(id));
                 });
+            } else if (values.role === 'employeer' && values.companies) {
+                body.append('company_id', parseInt(values.companies));
             }
-            body.append('status', values.status || 'inactive');
 
             // Only append image if it has been changed
             if (imageChanged && values.image) {
@@ -154,32 +259,47 @@ const AddUser = ({ lang = 'en' }) => {
     };
 
     const handleReset = () => {
-        setImageChanged(false); // Reset image change flag
-        setValues(
-            initialItemData
-                ? {
-                    id: initialItemData.id || '',
-                    first_name: initialItemData.first_name || '',
-                    last_name: initialItemData.last_name || '',
-                    phone: initialItemData.phone || '',
-                    email: initialItemData.email || '',
-                    specializations: Array.isArray(initialItemData.specializations)
+        setImageChanged(false);
+        if (initialItemData) {
+            const resetValues = {
+                id: initialItemData.id || '',
+                first_name: initialItemData.first_name || '',
+                last_name: initialItemData.last_name || '',
+                phone: initialItemData.phone || '',
+                email: initialItemData.email || '',
+                status: initialItemData.status === 'Active' ? 'active' : 'inactive',
+                image: initialItemData.image || '',
+            };
+            
+            if (initialItemData.role) {
+                resetValues.role = initialItemData.role;
+                setSelectedRole(initialItemData.role);
+                
+                if (initialItemData.role === 'user') {
+                    resetValues.specializations = Array.isArray(initialItemData.specializations)
                         ? initialItemData.specializations
                             .filter((s) => s && s.id != null)
                             .map((s) => s.id.toString())
-                        : [],
-                    status: initialItemData.status === 'Active' ? 'active' : 'inactive',
-                    image: initialItemData.image || '',
+                        : [];
+                } else if (initialItemData.role === 'employeer') {
+                    resetValues.companies = initialItemData.company_id 
+                        ? initialItemData.company_id.toString() 
+                        : '';
                 }
-                : {}
-        );
+            }
+            
+            setValues(resetValues);
+        } else {
+            setSelectedRole('');
+            setValues({});
+        }
     };
 
     const handleBack = () => {
         navigate(-1);
     };
 
-    if (loadingSpecialization) {
+    if (loadingSpecialization || loadingCompanies) {
         return <FullPageLoader />;
     }
 
@@ -197,7 +317,7 @@ const AddUser = ({ lang = 'en' }) => {
             </div>
 
             <div className="py-10 px-4 bg-white rounded-lg shadow-md">
-                <Add fields={fields} lang={lang} values={values} onChange={handleChange} />
+                <Add fields={getFields()} lang={lang} values={values} onChange={handleChange} />
             </div>
 
             <div className="mt-6 flex justify-end gap-4">

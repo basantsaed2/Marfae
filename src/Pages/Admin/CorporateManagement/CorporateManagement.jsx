@@ -69,6 +69,18 @@ const CorporateManagement = () => {
         { key: "phone", label: "Phone" },
         { key: "type", label: "Type" },
         { key: "specializationsDisplay", label: "Specializations" },
+        { 
+        key: "employers", 
+        label: "Employers",
+        renderCell: (item) => (
+            <Link 
+                to={`employers/${item.id}`}
+                className="text-blue-600 hover:text-blue-800 underline text-sm"
+            >
+                View Employers
+            </Link>
+        )
+    },
         { key: "status", label: "Status" },
     ];
 

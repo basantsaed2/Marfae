@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import "react-toastify/dist/ReactToastify.css";
 import { usePost } from "@/Hooks/UsePost";
-import { FaStethoscope, FaHeartbeat, FaUserMd, FaSyringe } from "react-icons/fa";
+import { FaStethoscope, FaHeartbeat, FaUserMd, FaSyringe, FaEye, FaEyeSlash, } from "react-icons/fa";
 
 const LoginAdmin = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const { postData, loadingPost, response } = usePost({ url: `${apiUrl}/login` });
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -94,13 +95,17 @@ const LoginAdmin = () => {
     }
   }, [response, loadingPost]);
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 via-bg-primary/40 to-white bg-cover bg-center relative overflow-hidden">
       {/* Doctor-themed background image */}
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1580281780460-82d277b0e3f8')] bg-cover bg-center opacity-20"></div>
+      <div className="absolute inset-0 bg-[url('https://i.pinimg.com/1200x/0e/82/d4/0e82d4cbbfd783d3d7245fcb927dd358.jpg')] bg-cover bg-center opacity-40"></div>
 
       {/* Decorative medical elements */}
-      <div className="absolute top-8 left-8 text-bg-primary opacity-30 text-6xl">
+      {/* <div className="absolute top-8 left-8 text-bg-primary opacity-30 text-6xl">
         <FaStethoscope />
       </div>
       <div className="absolute bottom-8 right-8 text-bg-primary opacity-30 text-6xl">
@@ -111,7 +116,7 @@ const LoginAdmin = () => {
       </div>
       <div className="absolute bottom-1/4 left-12 text-bg-primary opacity-25 text-5xl">
         <FaSyringe />
-      </div>
+      </div> */}
 
       <div
         className="relative z-10 max-w-md w-full"
@@ -121,7 +126,7 @@ const LoginAdmin = () => {
             <div
               className="text-center mb-10"
             >
-              <h2 className="text-5xl font-extrabold text-bg-primary tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-bg-primary to-blue-300">
+              <h2 className="text-5xl font-extrabold text-bg-primary tracking-tight bg-clip-text bg-gradient-to-r from-bg-primary to-blue-300">
                 Login Mrfae
               </h2>
             </div>
@@ -147,13 +152,21 @@ const LoginAdmin = () => {
                 className="relative"
               >
                 <Input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full p-4 pr-12 border border-bg-primary/50 rounded-xl focus:ring-2 focus:ring-bg-primary focus:border-transparent transition-all duration-300 bg-white/70 placeholder-bg-primary/70"
                   disabled={loadingPost}
                 />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-12 top-1/2 -translate-y-1/2 text-bg-primary hover:text-blue-700 transition-colors duration-200 focus:outline-none"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-bg-primary">
                   <FaHeartbeat />
                 </span>
