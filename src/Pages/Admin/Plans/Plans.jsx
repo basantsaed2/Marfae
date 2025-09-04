@@ -104,7 +104,7 @@ const Plans = () => {
                             {plan.features.job_add || '0'} Jobs
                         </li>
                         {Object.entries(plan.features)
-                            .filter(([key]) => key !== 'cv_number' || key !== 'job_add' )
+                            .filter(([key]) => key !== 'cv_number' && key !== 'job_add' )
                             .map(([key, feature], index) => (
                                 <li key={index} className="flex items-center text-gray-600">
                                     <svg className="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

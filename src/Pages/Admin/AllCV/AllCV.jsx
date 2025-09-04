@@ -246,13 +246,13 @@ const AllCV = () => {
                                         <FaFileDownload className="mr-2" />
                                         Download CV
                                     </a>
-                                    <a
+                                    {/* <a
                                         href={`mailto:${cv.user.email}`}
                                         className="inline-flex items-center justify-center bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200"
                                     >
                                         <FiMail className="mr-2" />
                                         Email
-                                    </a>
+                                    </a> */}
                                 </div>
                             </div>
                         ))
