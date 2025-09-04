@@ -48,12 +48,7 @@ const CompanyEmployers = () => {
             );
             
             if (success) {
-                // Update the local state to reflect the change
-                setEmployers(prev => prev.map(employer => 
-                    employer.id === employerId 
-                        ? { ...employer, is_admin: true, role: "Admin" }
-                        : employer
-                ));
+               refetch();
             }
         } catch (error) {
             toast.error("Failed to make employer admin");

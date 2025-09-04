@@ -183,7 +183,7 @@ const AllCV = () => {
                                         <img
                                             src={cv.user.image_link}
                                             alt={`${cv.user.first_name}'s profile`}
-                                            className="w-12 h-12 rounded-full object-cover mr-4 max-w-full h-auto"
+                                            className="w-12 h-12 rounded-full object-cover mr-4 max-w-full"
                                             onError={(e) => (e.target.src = '/fallback-image.png')}
                                         />
                                     ) : (
@@ -195,16 +195,27 @@ const AllCV = () => {
                                         <h2 className="text-xl font-semibold text-gray-800 truncate">
                                             {cv.user.first_name} {cv.user.last_name}
                                         </h2>
-                                        <p className="text-sm text-gray-500 truncate">{cv.user.email}</p>
+                                        <a 
+                                            href={`mailto:${cv.user.email}`}
+                                            className="text-sm text-blue-500 hover:text-blue-700 truncate block"
+                                        >
+                                            {cv.user.email}
+                                        </a>
                                     </div>
                                 </div>
 
                                 {/* User Details */}
                                 <div className="flex-1 space-y-3 mb-4">
+                                    {/* Country and City Information */}
                                     <div className="flex items-center text-gray-600 truncate">
                                         <FaMapMarkerAlt className="mr-2 text-blue-500" />
-                                        <span>{cv.user_address || 'Location not specified'}</span>
+                                        <span>
+                                            {cv.user.country ? cv.user.country.name : 'Country not specified'}
+                                            {cv.user.city && cv.user.country ? ', ' : ''}
+                                            {cv.user.city ? cv.user.city.name : ''}
+                                        </span>
                                     </div>
+                                    
                                     <div className="flex items-center text-gray-600 truncate">
                                         <FiPhone className="mr-2 text-blue-500" />
                                         <span>{cv.user.phone || 'Phone not provided'}</span>
@@ -225,15 +236,24 @@ const AllCV = () => {
                                     )}
                                 </div>
 
-                                {/* Download CV Button */}
-                                <a
-                                    href={cv.cv_file_url}
-                                    download
-                                    className="mt-auto inline-flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200"
-                                >
-                                    <FaFileDownload className="mr-2" />
-                                    Download CV
-                                </a>
+                                {/* Action Buttons */}
+                                <div className="mt-auto flex space-x-2">
+                                    <a
+                                        href={cv.cv_file_url}
+                                        download
+                                        className="flex-1 inline-flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200"
+                                    >
+                                        <FaFileDownload className="mr-2" />
+                                        Download CV
+                                    </a>
+                                    <a
+                                        href={`mailto:${cv.user.email}`}
+                                        className="inline-flex items-center justify-center bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200"
+                                    >
+                                        <FiMail className="mr-2" />
+                                        Email
+                                    </a>
+                                </div>
                             </div>
                         ))
                     ) : (

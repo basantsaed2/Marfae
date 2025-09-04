@@ -319,7 +319,7 @@ const UserManagment = () => {
                       <h3 className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-2">
                         Company Association
                       </h3>
-                      <p className="text-gray-700">Associated with company ID: {selectedRow.company_id}</p>
+                      <p className="text-gray-700">Associated with company : {selectedRow.company}</p>
                     </div>
                   )}
                 </div>
