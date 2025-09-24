@@ -28,6 +28,7 @@ import { MdPendingActions } from "react-icons/md";
 import { PiReadCvLogo } from "react-icons/pi";
 import { MdOutlineContactPhone } from "react-icons/md";
 import { MdStarRate } from "react-icons/md";
+import { MdOutlineAddToQueue } from "react-icons/md";
 import logo from "@/assets/Logo.jpeg"
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
@@ -44,6 +45,7 @@ const navItems = [
         icon: <BriefcaseBusiness size={20} />,
         subItems: [
             { label: "Jobs", to: "/job_management/jobs", icon: <MonitorCog size={20} /> },
+            { label: "Add Job", to: "/job_management/add_job", icon: <MdOutlineAddToQueue size={20} /> },
             { label: "Job Category", to: "/job_management/job_category", icon: <BiCategory size={20} /> },
             { label: "Job Title", to: "/job_management/job_title", icon: <PiSubtitlesLight className="stroke-1" size={20} /> },
         ],

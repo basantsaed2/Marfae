@@ -131,6 +131,12 @@ const router = createBrowserRouter([
             ],
           },
           {
+            path: "add_job",
+            children: [
+              { index: true, element: <AddJob /> },
+            ],
+          },
+          {
             path: "job_category",
             children: [
               { index: true, element: <JobCategory /> },
