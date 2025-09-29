@@ -97,12 +97,12 @@ const Plans = () => {
                             </svg>
                             {plan.features.cv_number || '0'} CVs
                         </li>
-                         <li className="flex items-center text-gray-600">
+                         {/* <li className="flex items-center text-gray-600">
                             <svg className="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                             </svg>
                             {plan.features.job_add || '0'} Jobs
-                        </li>
+                        </li> */}
                         {Object.entries(plan.features)
                             .filter(([key]) => key !== 'cv_number' && key !== 'job_add' )
                             .map(([key, feature], index) => (

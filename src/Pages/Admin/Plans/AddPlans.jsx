@@ -183,16 +183,16 @@ const AddPlans = ({ lang = 'en' }) => {
             return;
         }
 
-        if (isNaN(jobNum) || jobNum < 0 ) {
-            toast.error('Number of jobs must be a valid number');
-            return;
-        }
+        // if (isNaN(jobNum) || jobNum < 0 ) {
+        //     toast.error('Number of jobs must be a valid number');
+        //     return;
+        // }
 
         if (isEditMode) {
             // Construct features as a flat object
             const featuresObj = {
                 cv_number: cvNum,
-                job_add: jobNum,
+                job_add: '800',
                 ...Object.fromEntries(
                     featureInputs
                         .filter(input => input.value.trim() !== '')
@@ -240,7 +240,7 @@ const AddPlans = ({ lang = 'en' }) => {
 
             // Append features as flat keys
             body.append('features[cv_number]', cvNum);
-            body.append('features[job_add]', jobNum);
+            body.append('features[job_add]', 800);
 
             featureInputs
                 .filter(input => input.value.trim() !== '')
@@ -352,7 +352,7 @@ const AddPlans = ({ lang = 'en' }) => {
                     </div>
 
                     {/* job Number Input */}
-                    <div className="mb-2">
+                    {/* <div className="mb-2">
                         <input
                             type="number"
                             value={jobNumber}
@@ -362,6 +362,7 @@ const AddPlans = ({ lang = 'en' }) => {
                             required
                         />
                     </div>
+                    */}
 
                     {/* Additional Features */}
                     {featureInputs.map((input) => (
