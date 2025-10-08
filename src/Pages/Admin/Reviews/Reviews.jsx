@@ -18,7 +18,8 @@ const Reviews = () => {
 
     useEffect(() => {
         if (dataReview?.reviews) {
-            setReviewList(dataReview.reviews);
+            // Reverse the reviews so the latest (last) one comes first
+            setReviewList([...dataReview.reviews].reverse());
         }
     }, [dataReview]);
 
@@ -89,8 +90,8 @@ const Reviews = () => {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${activeTab === tab
-                                    ? 'bg-indigo-600 text-white'
-                                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-white text-gray-700 hover:bg-gray-100'
                                 }`}
                         >
                             {tab}
@@ -141,8 +142,8 @@ const Reviews = () => {
                                                 onClick={() => toggleReviewStatus(review.id, review.status)}
                                                 disabled={loadingChange}
                                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${review.status === "public"
-                                                        ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                                        : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+                                                    ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                                    : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
                                                     }`}
                                             >
                                                 {review.status === "public" ? (

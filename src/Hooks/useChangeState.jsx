@@ -53,6 +53,9 @@ export const useChangeState = () => {
         // If no specific error messages are found, just display a fallback message
         toast.error('An unknown error occurred.');
       }
+      // Still set the response for error cases to allow component to handle it
+      setResponseChange(error.response);
+      return error.response;
     } finally {
       setLoadingChange(false);
     }

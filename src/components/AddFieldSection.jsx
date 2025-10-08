@@ -52,6 +52,37 @@ export default function Add({ fields, lang, values, onChange }) {
           const value = values?.[field.name] || "";
           const fieldId = `${field.name}-${lang}-${index}`;
 
+          // Special design for description field
+          if (field.name === "description") {
+            return (
+              <div key={index} className="md:col-span-2 xl:col-span-3 space-y-2 relative group">
+                <div className="flex items-start gap-4">
+
+                  {/* Textarea with Creative Design */}
+                  <div className="flex-1">
+                    <label
+                      htmlFor="description"
+                      className="block text-sm !p-3 font-medium text-gray-700"
+                    >
+                      {field.placeholder}
+                    </label>
+
+                    <div className="relative">
+                      <Textarea
+                        id="description"
+                        placeholder={field.placeholder}
+                        value={value}
+                        rows={4}
+                        onChange={(e) => handleChange(field.name, e.target.value)}
+                        className={` w-full !px-5 !py-4 min-h-[120px] resize-y ${commonInputClass}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div key={index} className="space-y-2">
               <label
@@ -102,7 +133,7 @@ export default function Add({ fields, lang, values, onChange }) {
                       />
                     );
 
-                 case "file":
+                  case "file":
                     return (
                       <div className="flex items-center">
                         {/* Display existing image if available */}

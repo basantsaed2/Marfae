@@ -15,6 +15,7 @@ const AddJob = ({ lang = 'en' }) => {
     const { refetch: refetchJobTitle, loading: loadingJobTitle, data: dataJobTitle } = useGet({ url: `${apiUrl}/admin/getActiveJobTittles` });
     const { refetch: refetchCity, loading: loadingCity, data: dataCity } = useGet({ url: `${apiUrl}/admin/getCities` });
     const { refetch: refetchZone, loading: loadingZone, data: dataZone } = useGet({ url: `${apiUrl}/admin/getZones` });
+    const { refetch: refetchQualifications, loading: loadingQualifications, data: dataQualifications } = useGet({ url: `${apiUrl}/admin/get-jobs-qualifications` });
     const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/addJob` });
     const { changeState, loadingChange, responseChange } = useChangeState();
 
@@ -33,7 +34,7 @@ const AddJob = ({ lang = 'en' }) => {
         zone_id: '',
         jobTitle: '',
         description: '',
-        qualifications: '',
+        job_qualification_id: '',
         // image: null,
         type: '',
         experience: '',
@@ -49,6 +50,7 @@ const AddJob = ({ lang = 'en' }) => {
     const [jobTitles, setJobTitles] = useState([]);
     const [cities, setCities] = useState([]);
     const [zones, setZones] = useState([]);
+    const [qualifications, setQualifications] = useState([]);
 
     useEffect(() => {
         refetchCompanies();
@@ -56,7 +58,8 @@ const AddJob = ({ lang = 'en' }) => {
         refetchJobTitle();
         refetchCity();
         refetchZone();
-    }, [refetchCompanies, refetchCategory, refetchJobTitle, refetchCity, refetchZone]);
+        refetchQualifications();
+    }, [refetchCompanies, refetchCategory, refetchJobTitle, refetchCity, refetchZone, refetchQualifications]);
 
     useEffect(() => {
         if (dataCompanies && dataCompanies.companies) {
@@ -107,24 +110,24 @@ const AddJob = ({ lang = 'en' }) => {
                     value: u.id.toString(),
                 }));
             setZones(formatted);
+
         } else {
             setZones([]);
         }
     }, [dataZone, values.city_id]);
 
+    useEffect(() => {
+        if (dataQualifications && dataQualifications.job_qualifications) {
+            const formatted = dataQualifications.job_qualifications.map((u) => ({
+                label: u.name || "—",
+                value: u.id.toString(),
+            }));
+            setQualifications(formatted);
+        }
+    }, [dataQualifications]);
+
     const fields = [
-        {
-            name: 'company_id',
-            type: 'select',
-            placeholder: 'Select Company *',
-            options: companies,
-        },
-        {
-            name: 'job_category_id',
-            type: 'select',
-            placeholder: 'Select Job Category *',
-            options: categories,
-        },
+        // 1️⃣ Location (City → Zone)
         {
             name: 'city_id',
             type: 'select',
@@ -138,28 +141,36 @@ const AddJob = ({ lang = 'en' }) => {
             options: zones,
             disabled: !values.city_id || zones.length === 0,
         },
+
+        // 2️⃣ Company & Job Category
+        {
+            name: 'company_id',
+            type: 'select',
+            placeholder: 'Select Company *',
+            options: companies,
+        },
+        {
+            name: 'job_category_id',
+            type: 'select',
+            placeholder: 'Select Job Category *',
+            options: categories,
+        },
         {
             name: 'jobTitle',
             type: 'select',
             placeholder: 'Select Job Title *',
             options: jobTitles,
         },
+
+        // 3️⃣ Qualification
         {
-            name: 'description',
-            type: 'textarea',
-            placeholder: 'Job Description *',
+            name: 'job_qualification_id',
+            type: 'select',
+            placeholder: 'Select Qualifications',
+            options: qualifications,
         },
-        {
-            name: 'qualifications',
-            type: 'textarea',
-            placeholder: 'Qualifications *',
-        },
-        // {
-        //     name: 'image',
-        //     type: 'file',
-        //     placeholder: 'Upload Image',
-        //     accept: 'image/*',
-        // },
+
+        // 4️⃣ Job Type & Experience
         {
             name: 'type',
             type: 'select',
@@ -186,6 +197,8 @@ const AddJob = ({ lang = 'en' }) => {
                 { label: 'Senior', value: 'senior' },
             ],
         },
+
+        // 5️⃣ Salary & Expiration
         {
             name: 'expected_salary',
             type: 'input',
@@ -198,18 +211,22 @@ const AddJob = ({ lang = 'en' }) => {
             placeholder: 'Expiration Date *',
             inputType: 'date',
         },
-        // {
-        //     name: 'location_link',
-        //     type: 'input',
-        //     placeholder: 'Location Link (e.g., Google Maps URL)',
-        // },
+
+        // 6️⃣ Job Description
         {
-            type: "switch",
-            name: "status",
-            placeholder: "Status",
-            returnType: "string",
-            activeLabel: "Active",
-            inactiveLabel: "Inactive"
+            name: 'description',
+            type: 'textarea',
+            placeholder: 'Job Description *',
+        },
+
+        // 7️⃣ Status Toggle
+        {
+            type: 'switch',
+            name: 'status',
+            placeholder: 'Status',
+            returnType: 'string',
+            activeLabel: 'Active',
+            inactiveLabel: 'Inactive',
         },
     ];
 
@@ -223,7 +240,7 @@ const AddJob = ({ lang = 'en' }) => {
                 zone_id: initialItemData.zone_id?.toString() || '',
                 jobTitle: initialItemData.job_titel_id?.toString() || '',
                 description: initialItemData.description || '',
-                qualifications: initialItemData.qualifications || '',
+                job_qualification_id: initialItemData.job_qualification_id?.toString() || '',
                 // image: initialItemData.img || '',
                 type: initialItemData.type || '',
                 experience: initialItemData.experience || '',
@@ -258,7 +275,7 @@ const AddJob = ({ lang = 'en' }) => {
             !values.city_id ||
             !values.jobTitle ||
             !values.description ||
-            !values.qualifications ||
+            !values.job_qualification_id ||
             !values.type ||
             !values.experience ||
             !values.expected_salary ||
@@ -278,7 +295,7 @@ const AddJob = ({ lang = 'en' }) => {
                     zone_id: parseInt(values.zone_id),
                     job_titel_id: values.jobTitle,
                     description: values.description,
-                    qualifications: values.qualifications,
+                    job_qualification_id: values.job_qualification_id,
                     type: values.type,
                     experience: values.experience,
                     status: values.status || 'inactive',
@@ -303,7 +320,7 @@ const AddJob = ({ lang = 'en' }) => {
                 body.append('zone_id', values.zone_id);
                 body.append('job_titel_id', values.jobTitle);
                 body.append('description', values.description);
-                body.append('qualifications', values.qualifications);
+                body.append('job_qualification_id', values.job_qualification_id);
                 // if (values.image) {
                 //     body.append('image', values.image);
                 // }
@@ -336,7 +353,7 @@ const AddJob = ({ lang = 'en' }) => {
             zone_id: initialItemData.zone_id?.toString() || '',
             jobTitle: initialItemData.job_titel_id?.toString() || '',
             description: initialItemData.description || '',
-            qualifications: initialItemData.qualifications || '',
+            job_qualification_id: initialItemData.job_qualification_id || '',
             // image: initialItemData.img || '',
             type: initialItemData.type || '',
             experience: initialItemData.experience || '',
@@ -351,7 +368,7 @@ const AddJob = ({ lang = 'en' }) => {
             zone_id: '',
             jobTitle: '',
             description: '',
-            qualifications: '',
+            job_qualification_id: '',
             // image: null,
             type: '',
             experience: '',

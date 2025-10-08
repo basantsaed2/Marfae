@@ -39,6 +39,8 @@ import ContactRequest from "./Pages/Admin/ContactRequest/ContactRequest";
 import AllCV from "./Pages/Admin/AllCV/AllCV";
 import Reviews from "./Pages/Admin/Reviews/Reviews";
 import CompanyEmployers from "./Pages/Admin/CorporateManagement/CompanyEmployers";
+import Qualifications from "./Pages/Admin/Setting/Qualifications/Qualifications";
+import AddQualifications from "./Pages/Admin/Setting/Qualifications/AddQualifications";
 
 const router = createBrowserRouter([
   {
@@ -206,6 +208,13 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <JobSpecialization /> },
               { path: "add", element: <AddJobSpecialization /> },
+            ],
+          },
+          {
+            path: "qualifications",
+            children: [
+              { index: true, element: <Qualifications /> }, 
+              { path: "add", element: <AddQualifications /> }, 
             ],
           },
         ],

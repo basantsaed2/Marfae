@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 import { HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineUserCircle } from "react-icons/hi";
 import { CiLocationOn } from "react-icons/ci";
-import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight, SquareChartGantt, MonitorCog } from "lucide-react";
+import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight, SquareChartGantt, MonitorCog, FileCog } from "lucide-react";
 import { BiCategory } from "react-icons/bi";
 import { GiPill } from "react-icons/gi";
 import {
@@ -73,6 +73,7 @@ const navItems = [
         subItems: [
             { label: "Payment Method", to: "/setting/payment_method", icon: <RiSecurePaymentFill size={20} /> },
             { label: "Specialization", to: "/setting/specialization", icon: <HiOutlineUserCircle size={20} /> },
+            { label: "Qualifications", to: "/setting/qualifications", icon: <FileCog size={20} /> },
         ],
     },
 ];
