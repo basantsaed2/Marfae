@@ -2,10 +2,11 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/ui/combobox";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 
 function Table({
   data = [], // Default to empty array
@@ -29,6 +30,7 @@ function Table({
   );
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(0);
+  const [selectedImage, setSelectedImage] = React.useState(null);
   const rowsPerPage = 15;
 
   // Initialize selectedFilters with default title values for each filterKey
@@ -90,6 +92,14 @@ function Table({
       [key]: titles[key] || key.charAt(0).toUpperCase() + key.slice(1),
     }));
     setCurrentPage(0); // Reset to first page on filter reset
+  };
+
+  const handleImageClick = (imageUrl, altText) => {
+    setSelectedImage({ url: imageUrl, alt: altText });
+  };
+
+  const handleCloseImageDialog = () => {
+    setSelectedImage(null);
   };
 
   const filteredData = data
@@ -287,11 +297,16 @@ function Table({
                         renderReasonCell(item)
                       ) : col.key === "img" ? (
                         item[col.key] && item[col.key] !== "—" ? (
-                          <img
-                            src={item[col.key]}
-                            alt={item.name}
-                            className="w-12 h-12 object-cover rounded-md"
-                          />
+                          <button
+                            onClick={() => handleImageClick(item[col.key], item.name)}
+                            className="cursor-pointer hover:opacity-80 transition-opacity"
+                          >
+                            <img
+                              src={item[col.key]}
+                              alt={item.name}
+                              className="w-12 h-12 object-cover rounded-md"
+                            />
+                          </button>
                         ) : (
                           <Avatar className="w-12 h-12 rounded-full bg-gray-200">
                             <AvatarFallback>{item.name?.charAt(0) || ""}</AvatarFallback>
@@ -375,6 +390,31 @@ function Table({
           </Button>
         </div>
       )}
+
+      {/* Image Dialog */}
+      <Dialog open={!!selectedImage} onOpenChange={handleCloseImageDialog}>
+        <DialogContent showCloseButton={false} className="max-w-4xl max-h-[90vh] p-0 bg-transparent border-none shadow-none">
+          <div className="relative flex items-center justify-center">
+            {selectedImage && (
+              <>
+                <img
+                  src={selectedImage.url}
+                  alt={selectedImage.alt}
+                  className="max-w-full max-h-[85vh] object-contain rounded-lg"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full"
+                  onClick={handleCloseImageDialog}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

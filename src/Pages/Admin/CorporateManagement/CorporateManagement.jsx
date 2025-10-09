@@ -33,6 +33,7 @@ const CorporateManagement = () => {
                 name: c.name || "—",
                 email: c.email || "—",
                 phone: c.phone || "—",
+                img:c.image_link || '_',
                 type: c.company_type?.name || "—", // String, e.g., "Medical"
                 specializations: Array.isArray(c.company_specializations)
                     ? c.company_specializations.map((s) => ({
@@ -45,12 +46,12 @@ const CorporateManagement = () => {
                         .map((s) => s.specialization?.name || "—")
                         .join(", ") || "—"
                     : "—",
-                location_link: c.location_link || "—",
-                description: c.description || "—",
-                facebook_link: c.facebook_link || "—",
-                twitter_link: c.twitter_link || "—",
-                linkedin_link: c.linkedin_link || "—",
-                site_link: c.site_link || "—",
+                location_link: c.location_link || "",
+                description: c.description || "",
+                facebook_link: c.facebook_link || "",
+                twitter_link: c.twitter_link || "",
+                linkedin_link: c.linkedin_link || "",
+                site_link: c.site_link || "",
                 status: c.status === "active" ? "Active" : "Inactive",
                 start_date: c.start_date || "—",
                 end_date: c.end_date || "—",
@@ -58,12 +59,16 @@ const CorporateManagement = () => {
                 user: c.user || "—",
                 company_type: c.company_type || { name: "—" }, // Object, e.g., { id: 1, name: "Medical" }
                 company_specializations: c.company_specializations || [],
+                country_id:c.country_id,
+                city_id:c.city_id,
+                country:c.country?.name,
+                city:c.city?.name
             }));
             setCompanies(formatted);
         }
     }, [dataCompanies]);
     const Columns = [
-
+        { key: "img", label: "Company Image" },
         { key: "name", label: "Company Name" },
         { key: "email", label: "Email" },
         { key: "phone", label: "Phone" },
@@ -166,7 +171,7 @@ const CorporateManagement = () => {
                                 <div className="flex-shrink-0">
                                     <Avatar className="h-20 w-20 rounded-xl border-4 border-white shadow-md">
                                         <AvatarImage
-                                            src={selectedRow.image_link}
+                                            src={selectedRow.img}
                                             alt={`${selectedRow.name} image`}
                                             className="object-cover"
                                         />
@@ -183,7 +188,7 @@ const CorporateManagement = () => {
                                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                                         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                             <MapPin className="h-3 w-3 mr-1" />
-                                            City ID: {selectedRow.city_id}, Country ID: {selectedRow.country_id}
+                                            City : {selectedRow.city}, Country : {selectedRow.country}
                                         </span>
                                         {selectedRow.specializations && selectedRow.specializations.length > 0 ? (
                                             selectedRow.specializations.map((spec, index) => (

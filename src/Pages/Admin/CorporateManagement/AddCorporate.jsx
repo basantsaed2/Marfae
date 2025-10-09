@@ -49,6 +49,7 @@ const AddCorporate = ({ lang = 'en' }) => {
         country_id: '',
         city_id: '',
         image: '',
+        status: '',
     });
 
     useEffect(() => {
@@ -141,6 +142,7 @@ const AddCorporate = ({ lang = 'en' }) => {
                 image: initialItemData.image || '',
                 country_id: initialItemData.country_id?.toString() || '', // Ensure string
                 city_id: initialItemData.city_id?.toString() || '', // Ensure string
+                status: initialItemData.status === 'Active' ? 'active' : 'inactive',
             });
         }
     }, [initialItemData, companyType]); // Add companyType as a dependency
@@ -174,6 +176,7 @@ const AddCorporate = ({ lang = 'en' }) => {
                 company_type_id: values.companyType || '',
                 country_id: values.country_id || '',
                 city_id: values.city_id || '',
+                status: values.status || 'active',
             };
 
             // Only include image if it has been changed
@@ -203,6 +206,7 @@ const AddCorporate = ({ lang = 'en' }) => {
             body.append('company_type_id', values.companyType || '');
             body.append('country_id', values.country_id || '');
             body.append('city_id', values.city_id || '');
+            body.append('status', values.status || 'active');
             if (imageChanged && values.image && typeof values.image !== 'string') {
                 body.append('image', values.image);
             }
@@ -293,16 +297,24 @@ const AddCorporate = ({ lang = 'en' }) => {
         {
             name: 'country_id',
             type: 'select',
-            placeholder: 'Select Job Country',
+            placeholder: 'Select Country',
             options: countries,
         },
         {
             name: 'city_id',
             type: 'select',
-            placeholder: 'Select Job City',
+            placeholder: 'Select City',
             options: filteredCities,
         },
         { type: 'file', placeholder: 'Upload Logo', name: 'image', accept: 'image/*' },
+        {
+            type: 'switch',
+            name: 'status',
+            placeholder: 'Status',
+            returnType: 'string',
+            activeLabel: 'Active',
+            inactiveLabel: 'Inactive',
+        },
     ];
 
     return (

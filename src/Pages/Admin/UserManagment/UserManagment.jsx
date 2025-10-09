@@ -41,7 +41,7 @@ const UserManagment = () => {
         role: u.role || "—",
         email_verified: u.email_verified || "—",
         company_id: u.company_id || null,
-        company:u.company?.name,
+        company: u.company?.name,
         specializations: Array.isArray(u.specializations)
           ? u.specializations.map((s) => ({
             id: s?.id,
@@ -60,34 +60,51 @@ const UserManagment = () => {
     }
   }, [dataUser]);
 
-  // Custom renderer for role column
+  // Custom renderer for role column - split roles and display each on separate line
   const renderRoleCell = (item) => {
-    let icon, bgColor, textColor;
-
-    switch (item.role) {
-      case 'employeer':
-        icon = <Building className="h-4 w-4 mr-1" />;
-        bgColor = 'bg-blue-100';
-        textColor = 'text-blue-800';
-        break;
-      case 'admin':
-        icon = <Award className="h-4 w-4 mr-1" />;
-        bgColor = 'bg-purple-100';
-        textColor = 'text-purple-800';
-        break;
-      case 'user':
-      default:
-        icon = <User className="h-4 w-4 mr-1" />;
-        bgColor = 'bg-green-100';
-        textColor = 'text-green-800';
-        break;
-    }
+    // Split the role string by comma and trim each role
+    const roles = typeof item.role === 'string'
+      ? item.role.split(',').map(role => role.trim()).filter(role => role)
+      : [];
 
     return (
-      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}>
-        {icon}
-        {item.role?.charAt(0).toUpperCase() + item.role?.slice(1)}
-      </span>
+      <div className="flex flex-col gap-1 min-w-[100px]">
+        {roles.map((role, index) => {
+          let icon, bgColor, textColor, displayText;
+
+          switch (role.toLowerCase()) {
+            case 'employeer':
+              icon = <Building className="h-3 w-3 mr-1" />;
+              bgColor = 'bg-blue-100';
+              textColor = 'text-blue-800';
+              displayText = 'Employer';
+              break;
+            case 'admin':
+              icon = <Award className="h-3 w-3 mr-1" />;
+              bgColor = 'bg-purple-100';
+              textColor = 'text-purple-800';
+              displayText = 'Admin';
+              break;
+            case 'user':
+            default:
+              icon = <User className="h-3 w-3 mr-1" />;
+              bgColor = 'bg-green-100';
+              textColor = 'text-green-800';
+              displayText = 'User';
+              break;
+          }
+
+          return (
+            <span
+              key={index}
+              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor} w-fit`}
+            >
+              {icon}
+              {displayText}
+            </span>
+          );
+        })}
+      </div>
     );
   };
 
@@ -135,7 +152,8 @@ const UserManagment = () => {
   };
 
   const getRoleBadgeColor = (role) => {
-    switch (role) {
+    const roleLower = role.toLowerCase();
+    switch (roleLower) {
       case 'admin': return 'bg-purple-100 text-purple-800';
       case 'employeer': return 'bg-blue-100 text-blue-800';
       case 'user': return 'bg-green-100 text-green-800';
@@ -222,11 +240,24 @@ const UserManagment = () => {
                 <div className="text-center sm:text-left">
                   <h2 className="text-2xl font-bold text-gray-900 mb-1">{selectedRow.name}</h2>
                   <p className="text-lg text-gray-700 font-medium mb-2">{selectedRow.email}</p>
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(selectedRow.role)}`}>
-                      <User className="h-3 w-3 mr-1" />
-                      {selectedRow.role?.charAt(0).toUpperCase() + selectedRow.role?.slice(1)}
-                    </span>
+
+                  <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center sm:justify-start gap-2">
+                    {/* Display multiple roles in details dialog */}
+                    {(() => {
+                      const roles = typeof selectedRow.role === 'string'
+                        ? selectedRow.role.split(',').map(role => role.trim()).filter(role => role)
+                        : [];
+
+                      return roles.map((role, index) => (
+                        <span
+                          key={index}
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(role)}`}
+                        >
+                          <User className="h-3 w-3 mr-1" />
+                          {role?.charAt(0).toUpperCase() + role?.slice(1)}
+                        </span>
+                      ));
+                    })()}
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(selectedRow.status)}`}>
                       <Circle className="h-2 w-2 mr-1 fill-current" />
                       {selectedRow.status}
@@ -237,6 +268,7 @@ const UserManagment = () => {
                       </span>
                     )}
                   </div>
+
                 </div>
               </div>
 
