@@ -77,12 +77,12 @@ const ControlPanel = () => {
                     </div>
                 </Link>
 
-                <Link to={"company_management/companies"} className="bg-white items-center gap-4 text-bg-primary py-4 px-6 rounded-2xl shadow flex">
+                <Link to={"organization_management/organizations"} className="bg-white items-center gap-4 text-bg-primary py-4 px-6 rounded-2xl shadow flex">
                     <div className="!p-4 flex items-center justify-center bg-bg-secondary rounded-md">
                         <HiOutlineOfficeBuilding className="text-2xl text-white" />
                     </div>
                     <div className="!p-2">
-                        <div className="">{t("Total Companies")}</div>
+                        <div className="">{t("Total Organizations")}</div>
                         <div className="text-3xl font-bold">{homeStats.totalCompanies}</div>
                     </div>
                 </Link>

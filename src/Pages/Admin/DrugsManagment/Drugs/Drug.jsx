@@ -41,7 +41,7 @@ const Drug = () => {
     { key: "img", label: "Drug Image", },
     { key: "name", label: "Drug Name" },
     { key: "price", label: "Price" },
-    { key: "company", label: "Company" },
+    { key: "company", label: "Organization" },
     { key: "drug_category", label: "Drug Category" },
     { key: "description", label: "Description" },
   ];

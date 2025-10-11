@@ -17,11 +17,11 @@ const AddCompanyType = ({ lang = 'en' }) => {
 
     // Determine if we're in "edit" mode based on whether itemData is provided
     const isEditMode = !!initialItemData;
-    const title = isEditMode ? 'Edit Company Type' : 'Add Company Type';
+    const title = isEditMode ? 'Edit Organization Type' : 'Add Organization Type';
 
     // Define the fields for the form
     const fields = [
-        { name: 'CompanyType', type: 'input', placeholder: 'Company Type Name' },
+        { name: 'CompanyType', type: 'input', placeholder: 'Organization Type Name' },
         {
             type: "switch",
             name: "status",
@@ -69,7 +69,7 @@ const AddCompanyType = ({ lang = 'en' }) => {
             const body = new FormData();
             body.append("name", values.CompanyType || "");
             body.append("status", values.status || "inactive");
-            await postData(body, "Company Type Added Successfully!");
+            await postData(body, "Organization Type Added Successfully!");
         }
     };
 

@@ -68,8 +68,8 @@ const CorporateManagement = () => {
         }
     }, [dataCompanies]);
     const Columns = [
-        { key: "img", label: "Company Image" },
-        { key: "name", label: "Company Name" },
+        { key: "img", label: "Image" },
+        { key: "name", label: "Organization Name" },
         { key: "email", label: "Email" },
         { key: "phone", label: "Phone" },
         { key: "type", label: "Type" },
@@ -121,12 +121,12 @@ const CorporateManagement = () => {
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl text-bg-primary font-bold">Company Management</h2>
+                <h2 className="text-2xl text-bg-primary font-bold">Organization Management</h2>
                 <Link
                     to="add"
                     className="flex justify-center items-center px-4 py-1 rounded-md text-base bg-bg-secondary font-semibold text-white hover:bg-bg-secondary/90"
                 >
-                    <Plus className="mr-2 h-4 w-4 text-white" /> Add Company
+                    <Plus className="mr-2 h-4 w-4 text-white" /> Add Organization
                 </Link>
             </div>
             {loadingCompanies ? (
@@ -158,10 +158,10 @@ const CorporateManagement = () => {
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center gap-2">
                                 <Briefcase className="h-5 w-5 text-blue-600" />
-                                Company Details
+                                Organization Details
                             </DialogTitle>
                             <DialogDescription className="text-sm text-gray-600 mt-1">
-                                Comprehensive information about the selected company
+                                Comprehensive information about the selected Organization
                             </DialogDescription>
                         </DialogHeader>
                     </div>
@@ -219,7 +219,7 @@ const CorporateManagement = () => {
                                     <div className="p-4 bg-gray-50 rounded-lg">
                                         <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1">
                                             <Info className="h-4 w-4" />
-                                            Company Information
+                                            Organization Information
                                         </h3>
                                         <div className="space-y-4">
                                             <div>

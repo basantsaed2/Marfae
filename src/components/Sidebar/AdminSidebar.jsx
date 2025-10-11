@@ -51,11 +51,11 @@ const navItems = [
         ],
     },
     {
-        label: "Company Management",
+        label: "Organization",
         icon: <BsBuildingGear size={20} />,
         subItems: [
-            { label: "Companies", to: "/company_management/companies", icon: <HiOutlineOfficeBuilding size={20} /> },
-            { label: "Company Type", to: "/company_management/company_type", icon: <LuGrid2X2Plus size={20} /> },
+            { label: "Organizations", to: "/organization_management/organizations", icon: <HiOutlineOfficeBuilding size={20} /> },
+            { label: "Organization Type", to: "/organization_management/organization_type", icon: <LuGrid2X2Plus size={20} /> },
 
         ],
     },

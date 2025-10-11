@@ -35,7 +35,7 @@ const CompanyType = () => {
     }, [dataCompanyType]);
 
     const Columns = [
-        { key: "CompanyType", label: "CompanyType" },
+        { key: "CompanyType", label: "Organization Type" },
         { key: "status", label: "Status" },
     ];
 
@@ -64,12 +64,12 @@ const CompanyType = () => {
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl text-bg-primary font-bold">CompanyType</h2>
+                <h2 className="text-2xl text-bg-primary font-bold">Organization Type</h2>
                 <Link
                     to="add"
                     className="flex justify-center items-center px-4 py-1 rounded-md text-base bg-bg-secondary font-semibold text-white hover:bg-bg-secondary/90"
                 >
-                    <Plus className="mr-2 h-4 w-4 text-white" /> Add Company Type
+                    <Plus className="mr-2 h-4 w-4 text-white" /> Add Organization Type
                 </Link>
             </div>
             {loadingCompanyType ? (
@@ -78,8 +78,8 @@ const CompanyType = () => {
                 <Table
                     data={countries}
                     columns={Columns}
-                    statusKey="status"
-                    filterKeys={["status"]}
+                    // statusKey="status"
+                    // filterKeys={["status"]}
                     // titles={{ CompanyType: "CompanyType"}}
                     onEdit={(item) => handleEdit({ ...item, type: 'CompanyType' })}
                     onDelete={handleDelete}

@@ -146,7 +146,7 @@ const AddJob = ({ lang = 'en' }) => {
         {
             name: 'company_id',
             type: 'select',
-            placeholder: 'Select Company *',
+            placeholder: 'Select Organization *',
             options: companies,
         },
         {

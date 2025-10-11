@@ -119,7 +119,7 @@ const UserManagment = () => {
       renderCell: renderRoleCell // Add custom renderer
     },
     { key: "specializationsDisplay", label: "Specializations" },
-    { key: "company", label: "Company" },
+    { key: "company", label: "Organization" },
     { key: "status", label: "Status" },
   ];
 
@@ -349,9 +349,9 @@ const UserManagment = () => {
                   {selectedRow.company_id && (
                     <div className="p-4 bg-green-50 rounded-lg">
                       <h3 className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-2">
-                        Company Association
+                        Organization Association
                       </h3>
-                      <p className="text-gray-700">Associated with company : {selectedRow.company}</p>
+                      <p className="text-gray-700">Associated with Organization : {selectedRow.company}</p>
                     </div>
                   )}
                 </div>

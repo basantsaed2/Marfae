@@ -47,7 +47,7 @@ const Requests = () => {
   const Columns = [
     { key: "full_name", label: "Name" },
     { key: "phone", label: "Phone" },
-    { key: "company", label: "Company" },
+    { key: "company", label: "Organization" },
     { key: "email", label: "Email" },
     { key: "email_verified", label: "Email Verified" },
   ];

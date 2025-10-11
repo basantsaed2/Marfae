@@ -89,7 +89,7 @@ const AddUser = ({ lang = 'en' }) => {
             fields.splice(6, 0, {
                 name: 'companies',
                 type: 'select',
-                placeholder: 'Select Company *',
+                placeholder: 'Select Organization *',
                 options: companies,
             });
         } 
@@ -197,7 +197,7 @@ const AddUser = ({ lang = 'en' }) => {
         }
         
         if (values.role === 'employeer' && !values.companies) {
-            toast.error('Please select a company');
+            toast.error('Please select a Organization');
             return;
         }
 

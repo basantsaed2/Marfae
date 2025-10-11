@@ -114,7 +114,7 @@ const PendingPayment = () => {
         { key: "phone", label: "Phone" },
         { key: "plan_name", label: "Plan" },
         { key: "plan_price", label: "Price" },
-        { key: "company", label: "Company" },
+        { key: "company", label: "Organization" },
         { key: "payment_method", label: "Payment Method" },
         { key: "receipt", label: "Receipt" },
     ];

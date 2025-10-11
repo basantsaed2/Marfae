@@ -102,10 +102,10 @@ const CompanyEmployers = () => {
                     className="flex items-center text-blue-600 hover:text-blue-800 mr-4"
                 >
                     <ArrowLeft className="h-4 w-4 mr-1" />
-                    Back to Companies
+                    Back to Organizations
                 </Link>
                 <h2 className="text-2xl text-bg-primary font-bold">
-                    Employers for Company #{id}
+                    Employers for Organization #{id}
                 </h2>
             </div>
 

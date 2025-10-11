@@ -30,7 +30,7 @@ const AddCorporate = ({ lang = 'en' }) => {
     const initialItemData = state?.companyDetails || null;
 
     const isEditMode = !!initialItemData;
-    const title = isEditMode ? 'Edit Company' : 'Add Company';
+    const title = isEditMode ? 'Edit Organization' : 'Add Organization';
 
     // Initialize values state with default empty values
     const [values, setValues] = useState({
@@ -211,7 +211,7 @@ const AddCorporate = ({ lang = 'en' }) => {
                 body.append('image', values.image);
             }
 
-            await postData(body, 'Company Added Successfully!');
+            await postData(body, 'Organization Added Successfully!');
         }
     };
 
@@ -271,11 +271,11 @@ const AddCorporate = ({ lang = 'en' }) => {
     }
 
     const fields = [
-        { name: 'name', type: 'input', placeholder: 'Company Name *' },
+        { name: 'name', type: 'input', placeholder: 'Organization Name *' },
         { name: 'email', type: 'input', placeholder: 'Email', inputType: 'email' },
         { name: 'phone', type: 'input', placeholder: 'Phone', inputType: 'tel' },
         { name: 'location_link', type: 'input', placeholder: 'Location (e.g., Google Maps URL)' },
-        { name: 'description', type: 'textarea', placeholder: 'Tell us about your company...' },
+        { name: 'description', type: 'textarea', placeholder: 'Tell us about your Organization...' },
         { name: 'twitter_link', type: 'input', placeholder: 'Twitter URL' },
         { name: 'facebook_link', type: 'input', placeholder: 'Facebook URL' },
         { name: 'linkedin_link', type: 'input', placeholder: 'LinkedIn URL' },
@@ -290,7 +290,7 @@ const AddCorporate = ({ lang = 'en' }) => {
         {
             name: 'companyType',
             type: 'select',
-            placeholder: 'Choose Company Type',
+            placeholder: 'Choose Organization Type',
             options: companyType,
             multiple: false,
         },

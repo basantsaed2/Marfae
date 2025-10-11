@@ -155,10 +155,10 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "company_management",
+        path: "organization_management",
         children: [
           {
-            path: "companies",
+            path: "organizations",
             children: [
               { index: true, element: <CorporateManagement /> },
               { path: "add", element: <AddCorporate /> },
@@ -166,7 +166,7 @@ const router = createBrowserRouter([
             ],
           },
           {
-            path: "company_type",
+            path: "organization_type",
             children: [
               { index: true, element: <CompanyType /> },
               { path: "add", element: <AddCompanyType /> },

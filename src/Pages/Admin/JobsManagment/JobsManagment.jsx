@@ -57,7 +57,7 @@ const JobManagement = () => {
     const Columns = [
         { key: "img", label: "Image" },
         { key: "title", label: "Job Title" },
-        { key: "company", label: "Company" },
+        { key: "company", label: "Organization" },
         { key: "job_category", label: "Category" },
         { key: "city", label: "City" },
         { key: "zone", label: "Zone" },

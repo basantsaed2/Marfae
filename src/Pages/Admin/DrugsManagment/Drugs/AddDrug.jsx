@@ -64,7 +64,7 @@ const AddDrug = ({ lang = 'en' }) => {
         {
             name: 'company_id',
             type: 'select',
-            placeholder: 'Choose the company *',
+            placeholder: 'Choose the organization *',
             options: Companies,
         },
         {
