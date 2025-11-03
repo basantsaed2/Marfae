@@ -18,6 +18,7 @@ const AddUser = ({ lang = 'en' }) => {
     const [specializations, setSpecializations] = useState([]);
     const [companies, setCompanies] = useState([]);
     const [imageChanged, setImageChanged] = useState(false);
+    const [passwordChanged, setPasswordChanged] = useState(false); // Track password changes
     const [selectedRole, setSelectedRole] = useState('');
 
     const location = useLocation();
@@ -148,6 +149,11 @@ const AddUser = ({ lang = 'en' }) => {
             setImageChanged(true);
         }
         
+        // Track password changes in edit mode
+        if (name === 'password' && isEditMode) {
+            setPasswordChanged(true);
+        }
+        
         if (name === 'role') {
             setSelectedRole(value);
             
@@ -190,6 +196,12 @@ const AddUser = ({ lang = 'en' }) => {
             return;
         }
         
+        // For new users, password is required
+        if (!isEditMode && !values.password) {
+            toast.error('Password is required for new users');
+            return;
+        }
+        
         // Role-specific validation
         if (values.role === 'user' && (!values.specializations || values.specializations.length === 0)) {
             toast.error('Please select at least one specialization');
@@ -211,6 +223,11 @@ const AddUser = ({ lang = 'en' }) => {
                 email: values.email || '',
                 status: values.status || 'inactive',
             };
+
+            // Only include password if it has been changed
+            if (passwordChanged && values.password) {
+                data.password = values.password;
+            }
 
             // Add role-specific data
             if (values.role === 'user') {
@@ -236,7 +253,7 @@ const AddUser = ({ lang = 'en' }) => {
             body.append('last_name', values.last_name || '');
             body.append('phone', values.phone || '');
             body.append('email', values.email || '');
-            body.append('password', values.password || '');
+            body.append('password', values.password || ''); // Always include password for new users
             body.append('role', values.role || '');
             body.append('status', values.status || 'inactive');
 
@@ -260,6 +277,7 @@ const AddUser = ({ lang = 'en' }) => {
 
     const handleReset = () => {
         setImageChanged(false);
+        setPasswordChanged(false); // Reset password change tracker
         if (initialItemData) {
             const resetValues = {
                 id: initialItemData.id || '',
