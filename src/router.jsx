@@ -41,6 +41,8 @@ import Reviews from "./Pages/Admin/Reviews/Reviews";
 import CompanyEmployers from "./Pages/Admin/CorporateManagement/CompanyEmployers";
 import Qualifications from "./Pages/Admin/Setting/Qualifications/Qualifications";
 import AddQualifications from "./Pages/Admin/Setting/Qualifications/AddQualifications";
+import Doctors from "./Pages/Admin/Doctors/Doctors";
+import AddDoctors from "./Pages/Admin/Doctors/AddDoctors";
 
 const router = createBrowserRouter([
   {
@@ -194,6 +196,13 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: "doctors",
+        children: [
+          { index: true, element: <Doctors /> },
+          { path: "add", element: <AddDoctors /> },
+        ],
+      },
+      {
         path: "setting",
         children: [
           {
@@ -213,8 +222,8 @@ const router = createBrowserRouter([
           {
             path: "qualifications",
             children: [
-              { index: true, element: <Qualifications /> }, 
-              { path: "add", element: <AddQualifications /> }, 
+              { index: true, element: <Qualifications /> },
+              { path: "add", element: <AddQualifications /> },
             ],
           },
         ],

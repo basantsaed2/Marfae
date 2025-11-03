@@ -115,7 +115,7 @@ export default function Add({ fields, lang, values, onChange }) {
                         placeholder={field.placeholder}
                         value={value}
                         onChange={(e) => handleChange(field.name, e.target.value)}
-                        className={`!px-5 !py-6 ${commonInputClass}`}
+                        className={`!px-5 !py-3 ${commonInputClass}`}
                         step={field.step || "1"}
                       />
                     );

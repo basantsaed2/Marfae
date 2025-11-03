@@ -65,10 +65,19 @@ const AddPlans = ({ lang = 'en' }) => {
         {
             name: 'type',
             type: 'select',
-            placeholder: 'Plan Type *',
+            placeholder: 'Plan Type',
             options: [
                 { label: 'Monthly', value: 'monthly' },
                 { label: 'Yearly', value: 'yearly' },
+            ],
+        },
+         {
+            name: 'role',
+            type: 'select',
+            placeholder: 'Role *',
+            options: [
+                { label: 'User', value: 'user' },
+                { label: 'Employeer', value: 'employeer' },
             ],
         },
         {
@@ -110,6 +119,7 @@ const AddPlans = ({ lang = 'en' }) => {
                 price: initialItemData.price?.toString() || '',
                 price_after_discount: initialItemData.price_after_discount?.toString() || '',
                 type: initialItemData.type || '',
+                role: initialItemData.role || '',
                 // categories: initialItemData.job_categories
                 //     ? initialItemData.job_categories.map(s => s.id.toString())
                 //     : [],
@@ -169,7 +179,7 @@ const AddPlans = ({ lang = 'en' }) => {
 
     const handleSubmit = async () => {
         // Validate required fields
-        if (!values.name || !values.description || !values.price || !values.type || !values.status) {
+        if (!values.name || !values.description || !values.price || !values.role || !values.status) {
             toast.error('Please fill in all required fields');
             return;
         }
@@ -207,6 +217,7 @@ const AddPlans = ({ lang = 'en' }) => {
                 price: parseFloat(values.price),
                 price_after_discount: values.price_after_discount ? parseFloat(values.price_after_discount) : null,
                 type: values.type,
+                role: values.role,
                 job_category_ids: values.categories || [],
                 top_picked: values.top_picked ? 1 : 0,
                 status: values.status,
@@ -232,6 +243,7 @@ const AddPlans = ({ lang = 'en' }) => {
                 body.append('price_after_discount', values.price_after_discount);
             }
             body.append('type', values.type);
+            body.append('role', values.role);
             values.categories.forEach((id) => {
                 body.append('job_category_ids[]', parseInt(id));
             });
@@ -271,6 +283,7 @@ const AddPlans = ({ lang = 'en' }) => {
             price: initialItemData.price?.toString() || '',
             price_after_discount: initialItemData.price_after_discount?.toString() || '',
             type: initialItemData.type || '',
+            role: initialItemData.role || '',
             categories: Array.isArray(initialItemData.job_categories)
                 ? initialItemData.job_categories
                     .filter(s => s && s.id != null)

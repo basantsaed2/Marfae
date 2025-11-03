@@ -29,12 +29,14 @@ import { PiReadCvLogo } from "react-icons/pi";
 import { MdOutlineContactPhone } from "react-icons/md";
 import { MdStarRate } from "react-icons/md";
 import { MdOutlineAddToQueue } from "react-icons/md";
+import { FaUserDoctor } from "react-icons/fa6";
 import logo from "@/assets/Logo.jpeg"
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
     { label: "User Management", to: "/users", icon: <HiOutlineUsers className="stroke-2" size={20} /> },
     { label: "Requests", to: "/requests", icon: <IoIosGitPullRequest className="stroke-2" size={20} /> },
     { label: "Plans", to: "/plans", icon: <SquareChartGantt className="stroke-2" size={20} /> },
+    { label: "Doctors", to: "/doctors", icon: <FaUserDoctor size={20} /> },
     { label: "Contact Requests", to: "/contact_request", icon: <MdOutlineContactPhone size={20} /> },
     { label: "Pending Payment", to: "/pending_payment", icon: <MdPendingActions size={20} /> },
     { label: "CV List", to: "/all_cv", icon: <PiReadCvLogo size={20} /> },
