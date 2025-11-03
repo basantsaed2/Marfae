@@ -31,14 +31,14 @@ const AddPlans = ({ lang = 'en' }) => {
         if (dataCategory && dataCategory.jobCategories) {
             const formatted = dataCategory?.jobCategories?.map((u) => ({
                 label: u.name || "—",
-                value: u.id.toString() || "", // Ensure ID is a string
+                value: u.id.toString() || "",
             }));
             setCategories(formatted);
         }
     }, [dataCategory]);
 
-
-    const fields = [
+    // Define all fields with showIf conditions - ONLY hide type and categories for user
+    const allFields = [
         {
             name: 'name',
             type: 'input',
@@ -70,22 +70,15 @@ const AddPlans = ({ lang = 'en' }) => {
                 { label: 'Monthly', value: 'monthly' },
                 { label: 'Yearly', value: 'yearly' },
             ],
-        },
-         {
-            name: 'role',
-            type: 'select',
-            placeholder: 'Role *',
-            options: [
-                { label: 'User', value: 'user' },
-                { label: 'Employeer', value: 'employeer' },
-            ],
+            showIf: (values) => values.role !== 'user' // ONLY hide this for user
         },
         {
             name: 'categories',
             type: 'multi-select',
             placeholder: 'Choose categories',
             options: categories,
-            multiple: true, // Allow multiple selections
+            multiple: true,
+            showIf: (values) => values.role !== 'user' // ONLY hide this for user
         },
         {
             type: 'switch',
@@ -105,10 +98,12 @@ const AddPlans = ({ lang = 'en' }) => {
         },
     ];
 
-    const [values, setValues] = useState({});
+    const [values, setValues] = useState({ role: 'user' });
     const [cvNumber, setCvNumber] = useState('');
     const [jobNumber, setJobNumber] = useState('');
     const [featureInputs, setFeatureInputs] = useState([]);
+
+    const currentRole = values.role || 'user';
 
     useEffect(() => {
         if (initialItemData) {
@@ -119,13 +114,10 @@ const AddPlans = ({ lang = 'en' }) => {
                 price: initialItemData.price?.toString() || '',
                 price_after_discount: initialItemData.price_after_discount?.toString() || '',
                 type: initialItemData.type || '',
-                role: initialItemData.role || '',
-                // categories: initialItemData.job_categories
-                //     ? initialItemData.job_categories.map(s => s.id.toString())
-                //     : [],
+                role: initialItemData.role || 'user',
                 categories: Array.isArray(initialItemData.job_categories)
                     ? initialItemData.job_categories
-                        .filter(s => s && s.id != null) // Ensure s and s.id are defined
+                        .filter(s => s && s.id != null)
                         .map(s => s.id.toString())
                     : [],
                 top_picked: initialItemData.top_picked || 0,
@@ -133,11 +125,9 @@ const AddPlans = ({ lang = 'en' }) => {
             });
 
             if (initialItemData.features) {
-                // Extract cv_number directly from the features object
                 setCvNumber(initialItemData.features.cv_number?.toString() || '');
-                setJobNumber(initialItemData.features.job_add?.toString() || '')
+                setJobNumber(initialItemData.features.job_add?.toString() || '');
 
-                // Convert other features to an array of { id, name, value } objects
                 const otherFeatures = Object.entries(initialItemData.features)
                     .filter(([key]) => key !== 'cv_number' && key !== 'job_add')
                     .map(([key, value], index) => ({
@@ -147,6 +137,8 @@ const AddPlans = ({ lang = 'en' }) => {
                     }));
                 setFeatureInputs(otherFeatures);
             }
+        } else {
+            setValues(prev => ({ ...prev, role: 'user', status: 'inactive' }));
         }
     }, [initialItemData]);
 
@@ -184,31 +176,36 @@ const AddPlans = ({ lang = 'en' }) => {
             return;
         }
 
-        // Validate cv_number
-        const cvNum = parseInt(cvNumber);
-        const jobNum = parseInt(jobNumber);
-
-        if (isNaN(cvNum) || cvNum < 0 || cvNumber.trim() === '') {
-            toast.error('Number of CVs must be a valid number');
-            return;
+        // For user role, features are optional - no validation needed
+        if (currentRole !== 'user') {
+            const cvNum = parseInt(cvNumber);
+            if (isNaN(cvNum) || cvNum < 0 || cvNumber.trim() === '') {
+                toast.error('Number of CVs must be a valid number');
+                return;
+            }
         }
 
-        // if (isNaN(jobNum) || jobNum < 0 ) {
-        //     toast.error('Number of jobs must be a valid number');
-        //     return;
-        // }
-
         if (isEditMode) {
-            // Construct features as a flat object
-            const featuresObj = {
-                cv_number: cvNum,
-                job_add: '800',
-                ...Object.fromEntries(
-                    featureInputs
-                        .filter(input => input.value.trim() !== '')
-                        .map((input, index) => [`feature_${index + 1}`, input.value.trim()])
-                ),
-            };
+            // Construct features - only include cv_number for employer
+            const featuresObj = {};
+            
+            // Always include job_add
+            featuresObj.job_add = '800';
+            
+            // Only include cv_number for employer
+            if (currentRole !== 'user') {
+                featuresObj.cv_number = parseInt(cvNumber);
+            }
+            
+            // Include additional features if they exist
+            const additionalFeatures = featureInputs
+                .filter(input => input.value.trim() !== '')
+                .reduce((acc, input, index) => {
+                    acc[`feature_${index + 1}`] = input.value.trim();
+                    return acc;
+                }, {});
+            
+            Object.assign(featuresObj, additionalFeatures);
 
             const data = {
                 id: values.id,
@@ -216,9 +213,9 @@ const AddPlans = ({ lang = 'en' }) => {
                 description: values.description,
                 price: parseFloat(values.price),
                 price_after_discount: values.price_after_discount ? parseFloat(values.price_after_discount) : null,
-                type: values.type,
+                type: currentRole !== 'user' ? values.type : null, // null for user
                 role: values.role,
-                job_category_ids: values.categories || [],
+                job_category_ids: currentRole !== 'user' ? (values.categories || []) : [], // empty array for user
                 top_picked: values.top_picked ? 1 : 0,
                 status: values.status,
                 features: featuresObj,
@@ -242,18 +239,29 @@ const AddPlans = ({ lang = 'en' }) => {
             if (values.price_after_discount) {
                 body.append('price_after_discount', values.price_after_discount);
             }
-            body.append('type', values.type);
+            // Only append type for employer
+            if (currentRole !== 'user' && values.type) {
+                body.append('type', values.type);
+            }
             body.append('role', values.role);
-            values.categories.forEach((id) => {
-                body.append('job_category_ids[]', parseInt(id));
-            });
+            
+            // Only append categories for employer
+            if (currentRole !== 'user' && values.categories && values.categories.length > 0) {
+                values.categories.forEach((id) => {
+                    body.append('job_category_ids[]', parseInt(id));
+                });
+            }
+            
             body.append('top_picked', values.top_picked ? 1 : 0);
             body.append('status', values.status);
 
-            // Append features as flat keys
-            body.append('features[cv_number]', cvNum);
+            // Append features - cv_number only for employer
             body.append('features[job_add]', 800);
+            if (currentRole !== 'user') {
+                body.append('features[cv_number]', parseInt(cvNumber));
+            }
 
+            // Append additional features if they exist
             featureInputs
                 .filter(input => input.value.trim() !== '')
                 .forEach((input, index) => {
@@ -276,39 +284,45 @@ const AddPlans = ({ lang = 'en' }) => {
     }, [responseChange, postResponse, navigate]);
 
     const handleReset = () => {
-        setValues(initialItemData ? {
-            id: initialItemData.id || '',
-            name: initialItemData.name || '',
-            description: initialItemData.description || '',
-            price: initialItemData.price?.toString() || '',
-            price_after_discount: initialItemData.price_after_discount?.toString() || '',
-            type: initialItemData.type || '',
-            role: initialItemData.role || '',
-            categories: Array.isArray(initialItemData.job_categories)
-                ? initialItemData.job_categories
-                    .filter(s => s && s.id != null)
-                    .map(s => s.id.toString())
-                : [],
-            top_picked: initialItemData.top_picked || 0,
-            status: initialItemData.status || 'inactive',
-        } : {});
+        if (initialItemData) {
+            setValues({
+                id: initialItemData.id || '',
+                name: initialItemData.name || '',
+                description: initialItemData.description || '',
+                price: initialItemData.price?.toString() || '',
+                price_after_discount: initialItemData.price_after_discount?.toString() || '',
+                type: initialItemData.type || '',
+                role: initialItemData.role || 'user',
+                categories: Array.isArray(initialItemData.job_categories)
+                    ? initialItemData.job_categories
+                        .filter(s => s && s.id != null)
+                        .map(s => s.id.toString())
+                    : [],
+                top_picked: initialItemData.top_picked || 0,
+                status: initialItemData.status || 'inactive',
+            });
 
-        setCvNumber(initialItemData?.features?.cv_number?.toString() || '');
-        setJobNumber(initialItemData?.features?.job_add?.toString() || '');
+            setCvNumber(initialItemData?.features?.cv_number?.toString() || '');
+            setJobNumber(initialItemData?.features?.job_add?.toString() || '');
 
-        if (initialItemData?.features) {
-            const otherFeatures = Object.entries(initialItemData.features)
-                .filter(([key]) => key !== 'cv_number' && key !== 'job_add')
-                .map(([key, value], index) => ({
-                    id: index + 1,
-                    name: key,
-                    value: value,
-                }));
-            setFeatureInputs(otherFeatures);
+            if (initialItemData?.features) {
+                const otherFeatures = Object.entries(initialItemData.features)
+                    .filter(([key]) => key !== 'cv_number' && key !== 'job_add')
+                    .map(([key, value], index) => ({
+                        id: index + 1,
+                        name: key,
+                        value: value,
+                    }));
+                setFeatureInputs(otherFeatures);
+            }
         } else {
+            setValues({ role: 'user', status: 'inactive' });
+            setCvNumber('');
+            setJobNumber('');
             setFeatureInputs([]);
         }
     };
+
     const handleBack = () => {
         navigate(-1);
     };
@@ -318,92 +332,161 @@ const AddPlans = ({ lang = 'en' }) => {
     }
 
     return (
-        <div className=" p-4">
-            <div className="flex items-center mb-4">
+        <div className="p-4">
+            <div className="flex items-center mb-6">
                 <button
                     type="button"
                     onClick={handleBack}
-                    className="p-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 mr-3"
+                    className="p-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 mr-3 transition-colors"
                 >
                     <ArrowLeft className="h-5 w-5" />
                 </button>
                 <h2 className="text-2xl text-bg-primary font-bold">{title}</h2>
             </div>
 
-            <div className="py-10 px-4 bg-white rounded-lg shadow-md">
-                <Add
-                    fields={fields}
-                    lang={lang}
-                    values={values}
-                    onChange={handleChange}
-                />
+            <div className="py-8 px-6 bg-white rounded-lg shadow-md border border-gray-200">
+                {/* Plan Name Field */}
+                <div className="mb-6">
+                    <Add
+                        fields={allFields.filter(field => field.name === 'name')}
+                        lang={lang}
+                        values={values}
+                        onChange={handleChange}
+                    />
+                </div>
 
-                {/* Features Section */}
-                <div className="mt-4 p-6 bg-gray-50 rounded-lg shadow-sm">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-lg font-medium text-gray-700">Features</h3>
+                {/* Role Selection as Radio Buttons */}
+                <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <label className="block text-lg font-semibold text-gray-800 mb-4">
+                        Plan Role *
+                    </label>
+                    <div className="flex gap-8">
+                        <label className="flex items-center space-x-3 cursor-pointer group">
+                            <div className="relative">
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="user"
+                                    checked={currentRole === 'user'}
+                                    onChange={(e) => handleChange(lang, 'role', e.target.value)}
+                                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-400 cursor-pointer"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-base font-medium text-gray-700 group-hover:text-gray-900">
+                                    User Plan
+                                </span>
+                            </div>
+                        </label>
+                        <label className="flex items-center space-x-3 cursor-pointer group">
+                            <div className="relative">
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="employeer"
+                                    checked={currentRole === 'employeer'}
+                                    onChange={(e) => handleChange(lang, 'role', e.target.value)}
+                                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-400 cursor-pointer"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-base font-medium text-gray-700 group-hover:text-gray-900">
+                                    Employer Plan
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                {/* Conditional Fields */}
+                <div className="space-y-6">
+                    <Add
+                        fields={allFields.filter(field => 
+                            field.name !== 'name' && 
+                            (!field.showIf || field.showIf(values))
+                        )}
+                        lang={lang}
+                        values={values}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                {/* Features Section - Show for both but make CV number required only for employer */}
+                <div className="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 className="text-lg font-semibold text-gray-800">Plan Features</h3>
+                            <p className="text-sm text-gray-600 mt-1">
+                                {currentRole === 'user' 
+                                    ? 'Optional features for user plan' 
+                                    : 'Configure the features available in this employer plan'
+                                }
+                            </p>
+                        </div>
                         <button
                             type="button"
                             onClick={handleAddFeature}
-                            className="flex items-center px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
-                            <Plus className="h-4 w-4 mr-1" />
+                            <Plus className="h-4 w-4 mr-2" />
                             Add Feature
                         </button>
                     </div>
 
-                    {/* CV Number Input */}
-                    <div className="mb-2">
+                    {/* CV Number Input - Only required for employer */}
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Number of CVs {currentRole !== 'user' && '*'}
+                        </label>
                         <input
                             type="number"
                             value={cvNumber}
                             onChange={handleCvNumberChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Number of CVs *"
-                            required
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder={currentRole === 'user' ? "Number of CVs (Optional)" : "Enter number of CVs allowed *"}
+                            min="0"
+                            required={currentRole !== 'user'}
                         />
+                        {currentRole === 'user' && (
+                            <p className="text-xs text-gray-500 mt-1">Optional for user plans</p>
+                        )}
                     </div>
 
-                    {/* job Number Input */}
-                    {/* <div className="mb-2">
-                        <input
-                            type="number"
-                            value={jobNumber}
-                            onChange={handleJobNumberChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Number of Jobs *"
-                            required
-                        />
-                    </div>
-                    */}
-
-                    {/* Additional Features */}
-                    {featureInputs.map((input) => (
-                        <div key={input.id} className="flex items-center mb-2">
-                            <input
-                                type="text"
-                                value={input.value}
-                                onChange={(e) => handleFeatureInputChange(input.id, e.target.value)}
-                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder={`Feature ${input.id}`}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => handleRemoveFeature(input.id)}
-                                className="ml-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                            >
-                                Remove
-                            </button>
+                    {/* Additional Features - Optional for both */}
+                    {featureInputs.length > 0 && (
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-gray-700">
+                                Additional Features (Optional)
+                            </label>
+                            {featureInputs.map((input) => (
+                                <div key={input.id} className="flex items-center gap-3">
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleFeatureInputChange(input.id, e.target.value)}
+                                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder={`Enter feature ${input.id} (Optional)`}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveFeature(input.id)}
+                                        className="px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors whitespace-nowrap"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    )}
                 </div>
             </div>
 
-            <div className="mt-6 flex justify-end gap-4">
+            {/* Action Buttons */}
+            <div className="mt-8 flex justify-end gap-4">
                 <button
                     type="button"
                     onClick={handleReset}
-                    className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400"
+                    className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors font-medium"
                     disabled={loadingPost || loadingChange}
                 >
                     Reset
@@ -411,10 +494,10 @@ const AddPlans = ({ lang = 'en' }) => {
                 <button
                     type="button"
                     onClick={handleSubmit}
-                    className="px-4 py-2 bg-bg-secondary text-white rounded-md hover:bg-bg-secondary/90"
+                    className="px-6 py-3 bg-bg-secondary text-white rounded-lg hover:bg-bg-secondary/90 transition-colors font-medium"
                     disabled={loadingPost || loadingChange}
                 >
-                    {loadingPost || loadingChange ? 'Submitting...' : isEditMode ? 'Update' : 'Submit'}
+                    {loadingPost || loadingChange ? 'Submitting...' : isEditMode ? 'Update Plan' : 'Create Plan'}
                 </button>
             </div>
         </div>
