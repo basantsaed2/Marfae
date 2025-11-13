@@ -20,9 +20,9 @@ export const useChangeState = () => {
       const response = await axios.put(url, data || {}, config);
 
       if (response.status === 200) {
-        setResponseChange(response);
         toast.success(name);
-        return true; // Return true on success
+        setResponseChange(response);
+        // return true; // Return true on success
       }
     } catch (error) {
       console.error('Error post JSON:', error);
@@ -47,7 +47,6 @@ export const useChangeState = () => {
           toast.error(error.response.data.errors);
         }
       } else if (error?.response?.data?.message) {
-        // If there's a general message outside of the 'errors' object
         toast.error(error.response.data.message); // Display the general error message
       } else {
         // If no specific error messages are found, just display a fallback message

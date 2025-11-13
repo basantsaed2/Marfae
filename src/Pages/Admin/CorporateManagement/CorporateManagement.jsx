@@ -31,20 +31,20 @@ const CorporateManagement = () => {
             const formatted = dataCompanies.companies.map((c) => ({
                 id: c.id || "—",
                 name: c.name || "—",
-                email: c.email || "—",
-                phone: c.phone || "—",
-                img:c.image_link || '_',
-                type: c.company_type?.name || "—", // String, e.g., "Medical"
+                email: c.email || "",
+                phone: c.phone || "",
+                img:c.image_link || '',
+                type: c.company_type?.name || "", // String, e.g., "Medical"
                 specializations: Array.isArray(c.company_specializations)
                     ? c.company_specializations.map((s) => ({
                         id: s.specialization_id,
-                        name: s.specialization?.name || "—",
+                        name: s.specialization?.name || "",
                     }))
                     : [],
                 specializationsDisplay: Array.isArray(c.company_specializations)
                     ? c.company_specializations
-                        .map((s) => s.specialization?.name || "—")
-                        .join(", ") || "—"
+                        .map((s) => s.specialization?.name || "")
+                        .join(", ") || ""
                     : "—",
                 location_link: c.location_link || "",
                 description: c.description || "",
@@ -53,10 +53,10 @@ const CorporateManagement = () => {
                 linkedin_link: c.linkedin_link || "",
                 site_link: c.site_link || "",
                 status: c.status === "active" ? "Active" : "Inactive",
-                start_date: c.start_date || "—",
-                end_date: c.end_date || "—",
-                user_id: c.user_id || "—",
-                user: c.user || "—",
+                start_date: c.start_date || "",
+                end_date: c.end_date || "",
+                user_id: c.user_id || "",
+                user: c.user || "",
                 company_type: c.company_type || { name: "—" }, // Object, e.g., { id: 1, name: "Medical" }
                 company_specializations: c.company_specializations || [],
                 country_id:c.country_id,

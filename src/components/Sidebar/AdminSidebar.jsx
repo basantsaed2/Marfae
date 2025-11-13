@@ -30,6 +30,7 @@ import { MdOutlineContactPhone } from "react-icons/md";
 import { MdStarRate } from "react-icons/md";
 import { MdOutlineAddToQueue } from "react-icons/md";
 import { FaUserDoctor } from "react-icons/fa6";
+import { TbCategoryPlus } from "react-icons/tb";
 import logo from "@/assets/Logo.jpeg"
 const navItems = [
     { label: "Control Panel", to: "/", icon: <AiOutlineHome className="stroke-2" size={20} /> },
@@ -49,6 +50,7 @@ const navItems = [
             { label: "Jobs", to: "/job_management/jobs", icon: <MonitorCog size={20} /> },
             { label: "Add Job", to: "/job_management/add_job", icon: <MdOutlineAddToQueue size={20} /> },
             { label: "Job Category", to: "/job_management/job_category", icon: <BiCategory size={20} /> },
+            { label: "Job Sub Category", to: "/job_management/job_sub_category", icon: <TbCategoryPlus size={20} /> },
             { label: "Job Title", to: "/job_management/job_title", icon: <PiSubtitlesLight className="stroke-1" size={20} /> },
         ],
     },
@@ -85,8 +87,6 @@ export function AdminSidebar() {
     const { i18n } = useTranslation();
     const isRTL = i18n.dir() === "rtl";
     const user = useSelector((state) => state.auth.user);
-    const villageName = user?.village?.village?.name || "Marfae";
-    const villageImage = user?.village?.village?.image_link || null;
 
     const [expandedItems, setExpandedItems] = useState({});
 
@@ -119,7 +119,7 @@ export function AdminSidebar() {
     return (
         <Sidebar
             side={isRTL ? "right" : "left"}
-            className="bg-white border-none sm:border-none overflow-x-hidden h-full shadow-lg transition-all duration-300 font-cairo"
+            className="bg-white border-none sm:border-none overflow-x-hidden h-full shadow-lg transition-all duration-300 font-semibold"
         >
             <SidebarContent
                 className="bg-white p-2 pb-5 text-white border-none overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
@@ -163,12 +163,12 @@ export function AdminSidebar() {
                                             <Link to={item.to}>
                                                 <SidebarMenuButton
                                                     isActive={isActive}
-                                                    className={`flex cursor-pointer bg-bgsidebar justify-between items-center gap-3 !p-2 text-bg-primary transition-all duration-200 text-base font-medium
+                                                    className={`flex cursor-pointer bg-bgsidebar justify-between items-center gap-3 !p-2 text-bg-primary transition-all duration-200 text-lg font-semibold
                             ${isActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                                 >
                                                     <div className="flex items-center gap-3 text-bg-primary">
                                                         {item.icon}
-                                                        <span className="text-base text-textsidebar">{item.label}</span>
+                                                        <span>{item.label}</span>
                                                     </div>
                                                 </SidebarMenuButton>
                                             </Link>
@@ -176,12 +176,12 @@ export function AdminSidebar() {
                                             <SidebarMenuButton
                                                 onClick={() => toggleExpand(item.label)}
                                                 isActive={isActive}
-                                                className={`flex cursor-pointer justify-between items-center gap-3 !p-2 text-bg-primary transition-all duration-200 text-base font-medium
+                                                className={`flex cursor-pointer justify-between items-center gap-3 !p-2 text-bg-primary transition-all duration-200 text-lg font-semibold
                           ${isActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     {item.icon}
-                                                    <span className="text-base text-textsidebar">{item.label}</span>
+                                                    <span className="text-lg">{item.label}</span>
                                                 </div>
                                                 {item.subItems && (
                                                     <span>{isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}</span>
@@ -201,11 +201,11 @@ export function AdminSidebar() {
                                                         >
                                                             <SidebarMenuButton
                                                                 isActive={isSubActive}
-                                                                className={`flex cursor-pointer justify-start items-center gap-3 !px-4 !py-2 text-bg-primary transition-all duration-200 text-base
+                                                                className={`flex cursor-pointer justify-start items-center gap-3 !px-4 !py-2 text-bg-primary transition-all duration-200 text-lg font-semibold
                                   ${isSubActive ? "shadow-md bg-bgsidebar" : "bg-white hover:bg-white hover:text-bg-primary"}`}
                                                             >
                                                                 {subItem.icon}
-                                                                <span className="text-base text-textsidebar">{subItem.label}</span>
+                                                                <span className="text-lg">{subItem.label}</span>
                                                             </SidebarMenuButton>
                                                         </Link>
                                                     );

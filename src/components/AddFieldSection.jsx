@@ -62,7 +62,7 @@ export default function Add({ fields, lang, values, onChange }) {
                   <div className="flex-1">
                     <label
                       htmlFor="description"
-                      className="block text-sm !p-3 font-medium text-gray-700"
+                      className="block text-md !p-3 font-medium text-gray-700"
                     >
                       {field.placeholder}
                     </label>
@@ -87,7 +87,7 @@ export default function Add({ fields, lang, values, onChange }) {
             <div key={index} className="space-y-2">
               <label
                 htmlFor={field.name}
-                className="block text-sm !p-3 font-medium text-gray-700"
+                className="block text-md !p-3 font-medium text-gray-700"
               >
                 {field.placeholder ? field.placeholder : field.name}
               </label>
@@ -150,7 +150,7 @@ export default function Add({ fields, lang, values, onChange }) {
                           id={field.name}
                           type="file"
                           onChange={(e) => handleChange(field.name, e.target.files?.[0])}
-                          className={`min-h-[46px] flex items-center text-gray-500 ${commonInputClass} file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200`}
+                          className={`min-h-[46px] flex items-center text-gray-500 ${commonInputClass} file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-md file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200`}
                           accept={field.accept || "image/*"}
                         />
                       </div>
@@ -235,7 +235,7 @@ export default function Add({ fields, lang, values, onChange }) {
           <div key={`map-${index}`} className="w-full space-y-2">
             <label
               htmlFor={field.name}
-              className="block text-sm !p-3 font-medium text-gray-700"
+              className="block text-md !p-3 font-medium text-gray-700"
             >
               {field.placeholder ? field.placeholder : field.name}
             </label>
