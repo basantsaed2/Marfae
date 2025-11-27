@@ -107,6 +107,8 @@ const AddPlans = ({ lang = 'en' }) => {
 
     useEffect(() => {
         if (initialItemData) {
+            const features = initialItemData.features || {};
+            
             setValues({
                 id: initialItemData.id || '',
                 name: initialItemData.name || '',
@@ -124,21 +126,24 @@ const AddPlans = ({ lang = 'en' }) => {
                 status: initialItemData.status || 'inactive',
             });
 
-            if (initialItemData.features) {
-                setCvNumber(initialItemData.features.cv_number?.toString() || '');
-                setJobNumber(initialItemData.features.job_add?.toString() || '');
+            // Set cvNumber from features
+            setCvNumber(features.cv_number?.toString() || '');
+            setJobNumber(features.job_add?.toString() || '');
 
-                const otherFeatures = Object.entries(initialItemData.features)
-                    .filter(([key]) => key !== 'cv_number' && key !== 'job_add')
-                    .map(([key, value], index) => ({
-                        id: index + 1,
-                        name: key,
-                        value: value,
-                    }));
-                setFeatureInputs(otherFeatures);
-            }
+            const otherFeatures = Object.entries(features)
+                .filter(([key]) => key !== 'cv_number' && key !== 'job_add')
+                .map(([key, value], index) => ({
+                    id: index + 1,
+                    name: key,
+                    value: value?.toString() || '',
+                }));
+            setFeatureInputs(otherFeatures);
         } else {
             setValues(prev => ({ ...prev, role: 'user', status: 'inactive' }));
+            // Initialize with empty values
+            setCvNumber('');
+            setJobNumber('');
+            setFeatureInputs([]);
         }
     }, [initialItemData]);
 
@@ -147,7 +152,10 @@ const AddPlans = ({ lang = 'en' }) => {
     };
 
     const handleCvNumberChange = (e) => {
-        setCvNumber(e.target.value);
+        // Only allow changes if role is not user
+        if (currentRole !== 'user') {
+            setCvNumber(e.target.value);
+        }
     };
 
     const handleJobNumberChange = (e) => {
@@ -176,25 +184,30 @@ const AddPlans = ({ lang = 'en' }) => {
             return;
         }
 
-        // For user role, features are optional - no validation needed
+        // Only validate cv_number for employer role
         if (currentRole !== 'user') {
             const cvNum = parseInt(cvNumber);
             if (isNaN(cvNum) || cvNum < 0 || cvNumber.trim() === '') {
-                toast.error('Number of CVs must be a valid number');
+                toast.error('Number of CVs must be a valid number for employer plans');
                 return;
             }
         }
 
         if (isEditMode) {
-            // Construct features - only include cv_number for employer
+            // Construct features
             const featuresObj = {};
             
             // Always include job_add
             featuresObj.job_add = '800';
             
-            // Only include cv_number for employer
+            // Include cv_number only for employer role
             if (currentRole !== 'user') {
-                featuresObj.cv_number = parseInt(cvNumber);
+                if (cvNumber.trim() !== '') {
+                    const cvNum = parseInt(cvNumber);
+                    if (!isNaN(cvNum) && cvNum >= 0) {
+                        featuresObj.cv_number = cvNum;
+                    }
+                }
             }
             
             // Include additional features if they exist
@@ -213,9 +226,9 @@ const AddPlans = ({ lang = 'en' }) => {
                 description: values.description,
                 price: parseFloat(values.price),
                 price_after_discount: values.price_after_discount ? parseFloat(values.price_after_discount) : null,
-                type: currentRole !== 'user' ? values.type : null, // null for user
+                type: currentRole !== 'user' ? values.type : null,
                 role: values.role,
-                job_category_ids: currentRole !== 'user' ? (values.categories || []) : [], // empty array for user
+                job_category_ids: currentRole !== 'user' ? (values.categories || []) : [],
                 top_picked: values.top_picked ? 1 : 0,
                 status: values.status,
                 features: featuresObj,
@@ -255,10 +268,17 @@ const AddPlans = ({ lang = 'en' }) => {
             body.append('top_picked', values.top_picked ? 1 : 0);
             body.append('status', values.status);
 
-            // Append features - cv_number only for employer
+            // Append features
             body.append('features[job_add]', 800);
+            
+            // Append cv_number only for employer role
             if (currentRole !== 'user') {
-                body.append('features[cv_number]', parseInt(cvNumber));
+                if (cvNumber.trim() !== '') {
+                    const cvNum = parseInt(cvNumber);
+                    if (!isNaN(cvNum) && cvNum >= 0) {
+                        body.append('features[cv_number]', cvNum);
+                    }
+                }
             }
 
             // Append additional features if they exist
@@ -278,13 +298,15 @@ const AddPlans = ({ lang = 'en' }) => {
     };
 
     useEffect(() => {
-        if ((!loadingChange && responseChange) || (!loadingPost && postResponse)) {
+        if ((!loadingChange && responseChange?.status===200) || (!loadingPost && postResponse?.status===200)) {
             navigate(-1);
         }
     }, [responseChange, postResponse, navigate]);
 
     const handleReset = () => {
         if (initialItemData) {
+            const features = initialItemData.features || {};
+            
             setValues({
                 id: initialItemData.id || '',
                 name: initialItemData.name || '',
@@ -302,19 +324,17 @@ const AddPlans = ({ lang = 'en' }) => {
                 status: initialItemData.status || 'inactive',
             });
 
-            setCvNumber(initialItemData?.features?.cv_number?.toString() || '');
-            setJobNumber(initialItemData?.features?.job_add?.toString() || '');
+            setCvNumber(features.cv_number?.toString() || '');
+            setJobNumber(features.job_add?.toString() || '');
 
-            if (initialItemData?.features) {
-                const otherFeatures = Object.entries(initialItemData.features)
-                    .filter(([key]) => key !== 'cv_number' && key !== 'job_add')
-                    .map(([key, value], index) => ({
-                        id: index + 1,
-                        name: key,
-                        value: value,
-                    }));
-                setFeatureInputs(otherFeatures);
-            }
+            const otherFeatures = Object.entries(features)
+                .filter(([key]) => key !== 'cv_number' && key !== 'job_add')
+                .map(([key, value], index) => ({
+                    id: index + 1,
+                    name: key,
+                    value: value?.toString() || '',
+                }));
+            setFeatureInputs(otherFeatures);
         } else {
             setValues({ role: 'user', status: 'inactive' });
             setCvNumber('');
@@ -411,14 +431,14 @@ const AddPlans = ({ lang = 'en' }) => {
                     />
                 </div>
 
-                {/* Features Section - Show for both but make CV number required only for employer */}
+                {/* Features Section */}
                 <div className="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex justify-between items-center mb-4">
                         <div>
                             <h3 className="text-lg font-semibold text-gray-800">Plan Features</h3>
                             <p className="text-sm text-gray-600 mt-1">
                                 {currentRole === 'user' 
-                                    ? 'Optional features for user plan' 
+                                    ? 'User plans have limited features' 
                                     : 'Configure the features available in this employer plan'
                                 }
                             </p>
@@ -433,22 +453,35 @@ const AddPlans = ({ lang = 'en' }) => {
                         </button>
                     </div>
 
-                    {/* CV Number Input - Only required for employer */}
+                    {/* CV Number Input - DISABLED for user role */}
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Number of CVs {currentRole !== 'user' && '*'}
+                            Number of CVs {currentRole !== 'user' && <span className="text-red-500">*</span>}
                         </label>
                         <input
                             type="number"
                             value={cvNumber}
                             onChange={handleCvNumberChange}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder={currentRole === 'user' ? "Number of CVs (Optional)" : "Enter number of CVs allowed *"}
+                            className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                currentRole === 'user' ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''
+                            }`}
+                            placeholder={
+                                currentRole === 'user' 
+                                    ? "Not available for user plans" 
+                                    : "Enter number of CVs allowed *"
+                            }
                             min="0"
                             required={currentRole !== 'user'}
+                            disabled={currentRole === 'user'} // This makes the input disabled for user role
                         />
-                        {currentRole === 'user' && (
-                            <p className="text-xs text-gray-500 mt-1">Optional for user plans</p>
+                        {currentRole === 'user' ? (
+                            <p className="text-xs text-gray-500 mt-1">
+                                CV number feature is not available for user plans
+                            </p>
+                        ) : (
+                            <p className="text-xs text-red-500 mt-1">
+                                Required: Enter the number of CVs this employer plan can access
+                            </p>
                         )}
                     </div>
 

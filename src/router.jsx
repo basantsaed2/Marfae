@@ -43,8 +43,8 @@ import Qualifications from "./Pages/Admin/Setting/Qualifications/Qualifications"
 import AddQualifications from "./Pages/Admin/Setting/Qualifications/AddQualifications";
 import Doctors from "./Pages/Admin/Doctors/Doctors";
 import AddDoctors from "./Pages/Admin/Doctors/AddDoctors";
-import JobSubCategory from "./Pages/Admin/Setting/JobSubCategory/JobSubCategory";
-import AddJobSubCategory from "./Pages/Admin/Setting/JobSubCategory/AddJobSubCategory";
+import JobSubTitle from "./Pages/Admin/Setting/JobSubTitle/JobSubTitle";
+import AddJobSubTitle from "./Pages/Admin/Setting/JobSubTitle/AddJobSubCategory";
 
 const router = createBrowserRouter([
   {
@@ -157,10 +157,10 @@ const router = createBrowserRouter([
             ],
           },
           {
-             path: "job_sub_category",
+             path: "job_sub_title",
             children: [
-              { index: true, element: <JobSubCategory /> },
-              { path: "add", element: <AddJobSubCategory /> },
+              { index: true, element: <JobSubTitle /> },
+              { path: "add", element: <AddJobSubTitle /> },
             ],
           }
         ],

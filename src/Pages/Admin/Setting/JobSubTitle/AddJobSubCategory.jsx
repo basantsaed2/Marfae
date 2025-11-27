@@ -8,10 +8,10 @@ import { useGet } from '@/Hooks/UseGet';
 import FullPageLoader from '@/components/Loading';
 import { toast } from 'react-toastify';
 
-const AddJobSubCategory = ({ lang = 'en' }) => {
+const AddJobSubTitle = ({ lang = 'en' }) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
-    const { refetch: refetchCategory, loading: loadingCategory, data: dataCategory } = useGet({ url: `${apiUrl}/admin/getJobCategories` });
-    const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/add-job-sub-category` });
+    const { refetch: refetchTitle, loading: loadingTitle, data: dataTitle } = useGet({ url: `${apiUrl}/admin/getJobTitles` });
+    const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/add-job-sub-title` });
     const { changeState, loadingChange, responseChange } = useChangeState();
 
     const location = useLocation();
@@ -20,36 +20,36 @@ const AddJobSubCategory = ({ lang = 'en' }) => {
     const initialItemData = state?.itemData || null;
 
     const isEditMode = !!initialItemData;
-    const title = isEditMode ? 'Edit Job Sub Category' : 'Add Job Sub Category';
+    const title = isEditMode ? 'Edit Job Sub Title' : 'Add Job Sub Title';
 
     const [values, setValues] = useState({
-        name: '',
-        job_category_id: '',
+        sub_title_name: '',
+        job_title_id: '',
     });
 
-    const [categories, setCategories] = useState([]);
+    const [titles, setTitles] = useState([]);
 
     useEffect(() => {
-        refetchCategory();
-    }, [refetchCategory]);
+        refetchTitle();
+    }, [refetchTitle]);
 
     useEffect(() => {
-        if (dataCategory && dataCategory.jobCategories) {
-            const formatted = dataCategory.jobCategories.map((u) => ({
+        if (dataTitle && dataTitle.job_tittles) {
+            const formatted = dataTitle.job_tittles.map((u) => ({
                 label: u.name || "—",
                 value: u.id.toString(),
             }));
-            setCategories(formatted);
+            setTitles(formatted);
         }
-    }, [dataCategory]);
+    }, [dataTitle]);
 
     const fields = [
-        { name: 'name', type: 'input', placeholder: 'Job Sub Category Name' },
+        { name: 'sub_title_name', type: 'input', placeholder: 'Job Sub Title Name' },
         {
-            name: 'job_category_id',
+            name: 'job_title_id',
             type: 'select',
-            placeholder: 'Select Job Category *',
-            options: categories,
+            placeholder: 'Select Job Title *',
+            options: titles,
         }
 
     ];
@@ -58,8 +58,8 @@ const AddJobSubCategory = ({ lang = 'en' }) => {
         if (initialItemData) {
             setValues({
                 id: initialItemData.id || '',
-                name: initialItemData.name || '',
-                job_category_id: initialItemData.job_category_id?.toString() || '',
+                sub_title_name: initialItemData.sub_title_name || '',
+                job_title_id: initialItemData.job_title_id?.toString() || '',
             });
             // setImageChanged(false); // Reset image changed flag when loading initial data
         }
@@ -71,8 +71,8 @@ const AddJobSubCategory = ({ lang = 'en' }) => {
 
     const handleSubmit = async () => {
         if (
-            !values.name ||
-            !values.job_category_id
+            !values.sub_title_name ||
+            !values.job_title_id
         ) {
             toast.error('Please fill in all required fields');
             return;
@@ -82,20 +82,20 @@ const AddJobSubCategory = ({ lang = 'en' }) => {
             if (isEditMode) {
                 const data = {
                     id: values.id,
-                    name: values.name ,
-                    job_category_id: parseInt(values.job_category_id),
+                    sub_title_name: values.sub_title_name ,
+                    job_title_id: parseInt(values.job_title_id),
                 };
                 await changeState(
-                    `${apiUrl}/admin/edit-job-sub-category/${values.id}`,
-                    'Job Sub Category Updated Successfully!',
+                    `${apiUrl}/admin/edit-job-sub-title/${values.id}`,
+                    'Job Sub Title Updated Successfully!',
                     data
                 );
             } else {
                 const body = new FormData();
-                body.append('name', values.name);
-                body.append('job_category_id', values.job_category_id);
+                body.append('sub_title_name', values.sub_title_name);
+                body.append('job_title_id', values.job_title_id);
 
-                await postData(body, 'Job Sub Category Added Successfully!');
+                await postData(body, 'Job Sub Title Added Successfully!');
             }
         } catch (error) {
             toast.error('Failed to submit job: ' + error.message);
@@ -103,7 +103,7 @@ const AddJobSubCategory = ({ lang = 'en' }) => {
     };
 
     useEffect(() => {
-        if ((!loadingChange && responseChange) || (!loadingPost && postResponse)) {
+        if ((!loadingChange && responseChange?.status === 200) || (!loadingPost && postResponse?.status === 200)) {
             navigate(-1);
         }
     }, [responseChange, postResponse, navigate]);
@@ -111,11 +111,11 @@ const AddJobSubCategory = ({ lang = 'en' }) => {
     const handleReset = () => {
         setValues(initialItemData ? {
             id: initialItemData.id || '',
-            name: initialItemData.name || '',
-            job_category_id: initialItemData.job_category_id?.toString() || '',
+            sub_title_name: initialItemData.sub_title_name || '',
+            job_title_id: initialItemData.job_title_id?.toString() || '',
         } : {
-            name: '',
-            job_category_id: '',
+            sub_title_name: '',
+            job_title_id: '',
         });
     };
 
@@ -123,7 +123,7 @@ const AddJobSubCategory = ({ lang = 'en' }) => {
         navigate(-1);
     };
 
-    if (loadingCategory) {
+    if (loadingTitle) {
         return <FullPageLoader />;
     }
 
@@ -171,4 +171,4 @@ const AddJobSubCategory = ({ lang = 'en' }) => {
     );
 };
 
-export default AddJobSubCategory;
+export default AddJobSubTitle;

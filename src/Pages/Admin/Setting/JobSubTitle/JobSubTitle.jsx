@@ -7,34 +7,34 @@ import { useDelete } from '@/Hooks/useDelete';
 import DeleteDialog from '@/components/DeleteDialog';
 import FullPageLoader from "@/components/Loading";
 
-const JobSubCategory = () => {
+const JobSubTitle = () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
-    const { refetch: refetchJobSubCategory, loading: loadingJobSubCategory, data: dataJobSubCategory } = useGet({ url: `${apiUrl}/admin/get-job-sub-categories` });
+    const { refetch: refetchJobSubTitle, loading: loadingJobSubTitle, data: dataJobSubTitle } = useGet({ url: `${apiUrl}/admin/get-job-sub-titles` });
     const { deleteData, loadingDelete } = useDelete();
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
-    const [JobSubCategory, setJobSubCategory] = useState([]);
+    const [JobSubTitle, setJobSubTitle] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        refetchJobSubCategory();
-    }, [refetchJobSubCategory]);
+        refetchJobSubTitle();
+    }, [refetchJobSubTitle]);
 
     useEffect(() => {
-        if (dataJobSubCategory && dataJobSubCategory.sub_categories) {
-            const formatted = dataJobSubCategory.sub_categories.map((j) => ({
+        if (dataJobSubTitle && dataJobSubTitle.job_sub_titles) {
+            const formatted = dataJobSubTitle.job_sub_titles.map((j) => ({
                 id: j.id || "—",
-                name: j.name || "—",
-                job_category: j.job_category?.name || "—",
-                job_category_id: j.job_category_id || "—",
+                sub_title_name: j.sub_title_name || "—",
+                job_title: j.job_title?.name || "—",
+                job_title_id: j.job_title_id || "—",
             }));
-            setJobSubCategory(formatted);
+            setJobSubTitle(formatted);
         }
-    }, [dataJobSubCategory]);
+    }, [dataJobSubTitle]);
 
     const Columns = [
-        { key: "name", label: "Job Sub Category" },
-        { key: "job_category", label: "Category" },
+        { key: "sub_title_name", label: "Job Sub Title" },
+        { key: "job_title", label: "Title" },
     ];
 
     const handleEdit = (item) => navigate(`add`, { state: { itemData: item } });
@@ -48,13 +48,13 @@ const JobSubCategory = () => {
         if (!selectedRow) return;
 
         const success = await deleteData(
-            `${apiUrl}/admin/delete-job-sub-category/${selectedRow.id}`,
-            `${selectedRow.name} Deleted Successfully.`
+            `${apiUrl}/admin/delete-job-sub-title/${selectedRow.id}`,
+            `${selectedRow.sub_title_name} Deleted Successfully.`
         );
 
         if (success) {
             setIsDeleteOpen(false);
-            setJobSubCategory((prev) => prev.filter((item) => item.id !== selectedRow.id));
+            setJobSubTitle((prev) => prev.filter((item) => item.id !== selectedRow.id));
             setSelectedRow(null);
         }
     };
@@ -62,22 +62,22 @@ const JobSubCategory = () => {
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl text-bg-primary font-bold">Job Sub Category</h2>
+                <h2 className="text-2xl text-bg-primary font-bold">Job Sub Title</h2>
                 <Link
                     to="add"
                     className="flex justify-center items-center px-4 py-1 rounded-md text-base bg-bg-secondary font-semibold text-white hover:bg-bg-secondary/90"
                 >
-                    <Plus className="mr-2 h-4 w-4 text-white" /> Add Job Sub Category
+                    <Plus className="mr-2 h-4 w-4 text-white" /> Add Job Sub Title
                 </Link>
             </div>
-            {loadingJobSubCategory || loadingDelete ? (
+            {loadingJobSubTitle || loadingDelete ? (
                 <FullPageLoader />
             ) : (
                 <Table
-                    data={JobSubCategory}
+                    data={JobSubTitle}
                     columns={Columns}
                     statusKey="status"
-                    // filterKeys={["title", "company", "job_category"]}
+                    // filterKeys={["title", "company", "job_Title"]}
                     // titles={{ title: "Job Title" }}
                     onEdit={(item) => handleEdit({ ...item })}
                     onDelete={handleDelete}
@@ -88,11 +88,11 @@ const JobSubCategory = () => {
                 open={isDeleteOpen}
                 onOpenChange={setIsDeleteOpen}
                 onDelete={handleDeleteConfirm}
-                name={selectedRow?.name}
+                name={selectedRow?.sub_title_name}
                 isLoading={loadingDelete}
             />
         </div>
     );
 };
 
-export default JobSubCategory;
+export default JobSubTitle;

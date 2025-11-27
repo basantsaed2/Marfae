@@ -33,14 +33,9 @@ const Doctors = () => {
                 clinic_name: doctor.clinic_name || "—",
                 phone: doctor.phone || "—",
                 email: doctor.email || "—",
-                country: doctor.country?.name || "—",
-                city: doctor.city?.name || "—",
-                zone: doctor.zone?.name || "—",
+                address: doctor.address || "—", // Use address field instead of country/city/zone
                 specialization: doctor.specialization?.name || "—",
                 specialization_id: doctor.specialization_id,
-                country_id: doctor.country_id,
-                city_id: doctor.city_id,
-                zone_id: doctor.zone_id,
                 availability_days: Array.isArray(doctor.availability_days) ? doctor.availability_days : [],
                 available_start_time: doctor.available_start_time || "—",
                 available_end_time: doctor.available_end_time || "—",
@@ -57,7 +52,7 @@ const Doctors = () => {
         { key: "doctor_name", label: "Doctor Name" },
         { key: "specialization", label: "Specialization" },
         { key: "clinic_name", label: "Clinic" },
-        { key: "city", label: "City" },
+        { key: "address", label: "Address" }, // Show address instead of city
         { key: "available_start_time", label: "Start Time" },
         { key: "available_end_time", label: "End Time" },
         // { key: "status", label: "Status" },
@@ -137,9 +132,6 @@ const Doctors = () => {
                 <Table
                     data={doctors}
                     columns={columns}
-                    //   statusKey="status"
-                    //   filterKeys={["status", "specialization", "city"]}
-                    //   titles={{ status: "status" }}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     onView={handleOpenDetails}
@@ -191,10 +183,6 @@ const Doctors = () => {
                                     <p className="text-lg text-gray-700 font-medium mb-2">{selectedRow.specialization}</p>
 
                                     <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center sm:justify-start gap-2">
-                                        {/* <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(selectedRow.status)}`}>
-                                            <Circle className="h-2 w-2 mr-1 fill-current" />
-                                            {selectedRow.status}
-                                        </span> */}
                                         {selectedRow.clinic_name && selectedRow.clinic_name !== "—" && (
                                             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                                                 <Building className="h-3 w-3 mr-1" />
@@ -208,60 +196,21 @@ const Doctors = () => {
                             {/* Doctor Details Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                 <div className="space-y-6">
-                                    {/* Contact Information */}
-                                    {(selectedRow.email || selectedRow.phone) && (
-                                        <div className="p-4 bg-gray-50 rounded-lg">
-                                            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Contact Information</h3>
-                                            <div className="space-y-4">
-                                                {selectedRow.email && selectedRow.email !== "—" && (
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-500 flex items-center gap-2">
-                                                            <Mail className="h-4 w-4" />
-                                                            Email
-                                                        </p>
-                                                        <p className="text-gray-900 font-medium mt-1">{selectedRow.email}</p>
-                                                    </div>
-                                                )}
-                                                {selectedRow.phone && selectedRow.phone !== "—" && (
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-500 flex items-center gap-2">
-                                                            <Phone className="h-4 w-4" />
-                                                            Phone
-                                                        </p>
-                                                        <p className="text-gray-900 font-medium mt-1">{selectedRow.phone}</p>
-                                                    </div>
-                                                )}
+
+                                    {/* Location Information */}
+                                    {selectedRow.address && selectedRow.address !== "—" && (
+                                        <div className="p-4 bg-blue-50 rounded-lg">
+                                            <h3 className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                                <MapPin className="h-4 w-4" />
+                                                Address
+                                            </h3>
+                                            <div className="space-y-3">
+                                                <div>
+                                                    <p className="text-gray-900 font-medium">{selectedRow.address}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
-
-                                    {/* Location Information */}
-                                    <div className="p-4 bg-blue-50 rounded-lg">
-                                        <h3 className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                            <MapPin className="h-4 w-4" />
-                                            Location
-                                        </h3>
-                                        <div className="space-y-3">
-                                            {selectedRow.country && selectedRow.country !== "—" && (
-                                                <div>
-                                                    <p className="text-sm font-medium text-blue-600">Country</p>
-                                                    <p className="text-gray-900 font-medium">{selectedRow.country}</p>
-                                                </div>
-                                            )}
-                                            {selectedRow.city && selectedRow.city !== "—" && (
-                                                <div>
-                                                    <p className="text-sm font-medium text-blue-600">City</p>
-                                                    <p className="text-gray-900 font-medium">{selectedRow.city}</p>
-                                                </div>
-                                            )}
-                                            {selectedRow.zone && selectedRow.zone !== "—" && (
-                                                <div>
-                                                    <p className="text-sm font-medium text-blue-600">Zone</p>
-                                                    <p className="text-gray-900 font-medium">{selectedRow.zone}</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div className="space-y-6">

@@ -50,8 +50,8 @@ const navItems = [
             { label: "Jobs", to: "/job_management/jobs", icon: <MonitorCog size={20} /> },
             { label: "Add Job", to: "/job_management/add_job", icon: <MdOutlineAddToQueue size={20} /> },
             { label: "Job Category", to: "/job_management/job_category", icon: <BiCategory size={20} /> },
-            { label: "Job Sub Category", to: "/job_management/job_sub_category", icon: <TbCategoryPlus size={20} /> },
             { label: "Job Title", to: "/job_management/job_title", icon: <PiSubtitlesLight className="stroke-1" size={20} /> },
+            { label: "Job Sub Title", to: "/job_management/job_sub_title", icon: <TbCategoryPlus size={20} /> },
         ],
     },
     {

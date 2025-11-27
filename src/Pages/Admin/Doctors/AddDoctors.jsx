@@ -13,26 +13,17 @@ const AddDoctors = ({ lang = 'en' }) => {
     const { postData, loadingPost, response: postResponse } = usePost({ url: `${apiUrl}/admin/create-doctor` });
     const { changeState, loadingChange, responseChange } = useChangeState();
     const { refetch: refetchSpecialization, loading: loadingSpecialization, data: dataSpecialization } = useGet({ url: `${apiUrl}/admin/getSpecializations` });
-    const { refetch: refetchCountry, loading: loadingCountry, data: dataCountry } = useGet({ url: `${apiUrl}/admin/getCountries` });
-    const { refetch: refetchCity, loading: loadingCity, data: dataCity } = useGet({ url: `${apiUrl}/admin/getCities` });
-    const { refetch: refetchZone, loading: loadingZone, data: dataZone } = useGet({ url: `${apiUrl}/admin/getZones` });
-
+    
     const [specializations, setSpecializations] = useState([]);
-    const [countries, setCountries] = useState([]);
-    const [cities, setCities] = useState([]);
-    const [filteredCities, setFilteredCities] = useState([]);
-    const [zones, setZones] = useState([]);
     const [imageChanged, setImageChanged] = useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-    // Initialize values with default structure
+    // Initialize values with simplified structure
     const [values, setValues] = useState({
         availability_days: [],
         doctor_name: '',
         clinic_name: '',
-        country_id: '',
-        city_id: '',
-        zone_id: '',
+        address: '', // Single address field instead of country/city/zone
         specialization_id: '',
         available_start_time: '',
         available_end_time: '',
@@ -60,10 +51,7 @@ const AddDoctors = ({ lang = 'en' }) => {
 
     useEffect(() => {
         refetchSpecialization();
-        refetchCountry();
-        refetchCity();
-        refetchZone();
-    }, [refetchSpecialization, refetchCountry, refetchCity, refetchZone]);
+    }, [refetchSpecialization]);
 
     useEffect(() => {
         if (dataSpecialization && dataSpecialization.specializations) {
@@ -74,66 +62,6 @@ const AddDoctors = ({ lang = 'en' }) => {
             setSpecializations(formatted);
         }
     }, [dataSpecialization]);
-
-    useEffect(() => {
-        if (dataCountry && dataCountry.countries) {
-            const formatted = dataCountry?.countries?.map((u) => ({
-                label: u.name || "—",
-                value: u.id.toString() || "",
-            }));
-            setCountries(formatted);
-        }
-    }, [dataCountry]);
-
-    useEffect(() => {
-        if (dataCity && dataCity.cities) {
-            const formatted = dataCity?.cities?.map((u) => ({
-                label: u.name || "—",
-                value: u.id.toString() || "",
-                country_id: u.country_id.toString(),
-            }));
-            setCities(formatted);
-        }
-    }, [dataCity]);
-
-    // This effect should run after initial data is set and when country_id changes
-    useEffect(() => {
-        if (cities.length > 0 && values.country_id) {
-            const filtered = cities.filter(city => city.country_id === values.country_id);
-            setFilteredCities(filtered);
-            
-            // If current city_id is not in filtered cities, reset it
-            if (values.city_id && !filtered.some(city => city.value === values.city_id)) {
-                setValues(prev => ({ ...prev, city_id: '' }));
-            }
-        } else if (cities.length > 0) {
-            setFilteredCities(cities);
-        }
-    }, [cities, values.country_id, values.city_id]);
-
-    useEffect(() => {
-        if (values.country_id) {
-            setValues((prev) => ({
-                ...prev,
-                city_id: '',
-                zone_id: ''
-            }));
-        }
-    }, [values.country_id]);
-
-    useEffect(() => {
-        if (dataZone && dataZone.zones && values.city_id) {
-            const formatted = dataZone.zones
-                .filter((zone) => zone.city_id.toString() === values.city_id)
-                .map((u) => ({
-                    label: u.name || "—",
-                    value: u.id.toString(),
-                }));
-            setZones(formatted);
-        } else {
-            setZones([]);
-        }
-    }, [dataZone, values.city_id]);
 
     // Function to convert time format to H:i (24-hour format)
     const formatTimeToH_i = (timeString) => {
@@ -150,27 +78,15 @@ const AddDoctors = ({ lang = 'en' }) => {
         return timeString;
     };
 
-    // Updated fields according to API requirements
+    // Updated fields with address instead of country/city/zone
     const baseFields = [
         { name: 'doctor_name', type: 'input', placeholder: 'Doctor Name *' },
         { name: 'clinic_name', type: 'input', placeholder: 'Clinic Name' },
         { 
-            name: 'country_id', 
-            type: 'select', 
-            placeholder: 'Select Country *', 
-            options: countries 
-        },
-        { 
-            name: 'city_id', 
-            type: 'select', 
-            placeholder: 'Select City *', 
-            options: filteredCities 
-        },
-        { 
-            name: 'zone_id', 
-            type: 'select', 
-            placeholder: 'Select Zone', 
-            options: zones 
+            name: 'address', 
+            type: 'textarea', 
+            placeholder: 'Address *',
+            rows: 3 
         },
         { 
             name: 'specialization_id', 
@@ -201,15 +117,13 @@ const AddDoctors = ({ lang = 'en' }) => {
     ];
 
     useEffect(() => {
-        if (initialItemData && countries.length > 0 && cities.length > 0 && specializations.length > 0) {
+        if (initialItemData && specializations.length > 0) {
             
             const initialValues = {
                 id: initialItemData.id || '',
                 doctor_name: initialItemData.doctor_name || '',
                 clinic_name: initialItemData.clinic_name || '',
-                country_id: initialItemData.country_id?.toString() || '',
-                city_id: initialItemData.city_id?.toString() || '',
-                zone_id: initialItemData.zone_id?.toString() || '',
+                address: initialItemData.address || '', // Use address field
                 specialization_id: initialItemData.specialization_id?.toString() || '',
                 availability_days: Array.isArray(initialItemData.availability_days) 
                     ? initialItemData.availability_days 
@@ -222,7 +136,7 @@ const AddDoctors = ({ lang = 'en' }) => {
             setValues(initialValues);
             setIsDataLoaded(true);
         }
-    }, [initialItemData, countries, cities, specializations]);
+    }, [initialItemData, specializations]);
 
     const handleChange = (lang, name, value) => {
         if (name === 'image') {
@@ -238,7 +152,7 @@ const AddDoctors = ({ lang = 'en' }) => {
     };
 
     useEffect(() => {
-        if ((!loadingChange && responseChange) || (!loadingPost && postResponse)) {
+        if ((!loadingChange && responseChange?.status === 200) || (!loadingPost && postResponse?.status === 200)) {
             navigate(-1);
         }
     }, [responseChange, postResponse, navigate]);
@@ -247,8 +161,7 @@ const AddDoctors = ({ lang = 'en' }) => {
         // Validate required fields
         if (
             !values.doctor_name ||
-            !values.country_id ||
-            !values.city_id ||
+            !values.address ||
             !values.specialization_id ||
             !values.availability_days || values.availability_days.length === 0 ||
             !values.available_start_time ||
@@ -284,18 +197,12 @@ const AddDoctors = ({ lang = 'en' }) => {
                 id: values.id,
                 doctor_name: values.doctor_name || '',
                 clinic_name: values.clinic_name || '',
-                country_id: parseInt(values.country_id),
-                city_id: parseInt(values.city_id),
+                address: values.address || '', // Use address field
                 specialization_id: parseInt(values.specialization_id),
                 availability_days: values.availability_days,
                 available_start_time: values.available_start_time,
                 available_end_time: values.available_end_time,
             };
-
-            // Add optional fields if they exist
-            if (values.zone_id) {
-                data.zone_id = parseInt(values.zone_id);
-            }
 
             // Only include image if it has been changed
             if (imageChanged && values.image) {
@@ -312,8 +219,7 @@ const AddDoctors = ({ lang = 'en' }) => {
             const body = new FormData();
             body.append('doctor_name', values.doctor_name || '');
             body.append('clinic_name', values.clinic_name || '');
-            body.append('country_id', parseInt(values.country_id));
-            body.append('city_id', parseInt(values.city_id));
+            body.append('address', values.address || ''); // Use address field
             body.append('specialization_id', parseInt(values.specialization_id));
             body.append('available_start_time', values.available_start_time);
             body.append('available_end_time', values.available_end_time);
@@ -322,11 +228,6 @@ const AddDoctors = ({ lang = 'en' }) => {
             values.availability_days.forEach(day => {
                 body.append('availability_days[]', day);
             });
-
-            // Add optional fields if they exist
-            if (values.zone_id) {
-                body.append('zone_id', parseInt(values.zone_id));
-            }
 
             // Only append image if it exists
             if (values.image) {
@@ -344,9 +245,7 @@ const AddDoctors = ({ lang = 'en' }) => {
                 id: initialItemData.id || '',
                 doctor_name: initialItemData.doctor_name || '',
                 clinic_name: initialItemData.clinic_name || '',
-                country_id: initialItemData.country_id?.toString() || '',
-                city_id: initialItemData.city_id?.toString() || '',
-                zone_id: initialItemData.zone_id?.toString() || '',
+                address: initialItemData.address || '', // Use address field
                 specialization_id: initialItemData.specialization_id?.toString() || '',
                 availability_days: Array.isArray(initialItemData.availability_days) 
                     ? initialItemData.availability_days 
@@ -362,9 +261,7 @@ const AddDoctors = ({ lang = 'en' }) => {
                 availability_days: [],
                 doctor_name: '',
                 clinic_name: '',
-                country_id: '',
-                city_id: '',
-                zone_id: '',
+                address: '', // Reset address field
                 specialization_id: '',
                 available_start_time: '',
                 available_end_time: '',
@@ -377,7 +274,7 @@ const AddDoctors = ({ lang = 'en' }) => {
         navigate(-1);
     };
 
-    if (loadingSpecialization || loadingCountry || loadingCity) {
+    if (loadingSpecialization) {
         return <FullPageLoader />;
     }
 

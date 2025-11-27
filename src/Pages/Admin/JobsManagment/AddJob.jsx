@@ -12,7 +12,7 @@ const AddJob = ({ lang = 'en' }) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const { refetch: refetchCompanies, loading: loadingCompanies, data: dataCompanies } = useGet({ url: `${apiUrl}/admin/getCompanies` });
     const { refetch: refetchCategory, loading: loadingCategory, data: dataCategory } = useGet({ url: `${apiUrl}/admin/getJobCategories` });
-    const { refetch: refetchJobSubCategory, loading: loadingJobSubCategory, data: dataJobSubCategory } = useGet({ url: `${apiUrl}/admin/get-job-sub-categories` });
+    const { refetch: refetchJobSubTitle, loading: loadingJobSubTitle, data: dataJobSubTitle } = useGet({ url: `${apiUrl}/admin/get-job-sub-titles` });
     const { refetch: refetchJobTitle, loading: loadingJobTitle, data: dataJobTitle } = useGet({ url: `${apiUrl}/admin/getActiveJobTittles` });
     const { refetch: refetchCity, loading: loadingCity, data: dataCity } = useGet({ url: `${apiUrl}/admin/getCities` });
     const { refetch: refetchZone, loading: loadingZone, data: dataZone } = useGet({ url: `${apiUrl}/admin/getZones` });
@@ -31,7 +31,7 @@ const AddJob = ({ lang = 'en' }) => {
     const [values, setValues] = useState({
         company_id: '',
         job_category_id: '',
-        job_sub_category_id: '',
+        job_sub_title_id: '',
         city_id: '',
         zone_id: '',
         jobTitle: '',
@@ -49,8 +49,8 @@ const AddJob = ({ lang = 'en' }) => {
     // const [imageChanged, setImageChanged] = useState(false); // Track if image was changed
     const [companies, setCompanies] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [subCategories, setSubCategories] = useState([]);
     const [jobTitles, setJobTitles] = useState([]);
+        const [jobSubTitles, setJobSubTitles] = useState([]);
     const [cities, setCities] = useState([]);
     const [zones, setZones] = useState([]);
     const [qualifications, setQualifications] = useState([]);
@@ -58,12 +58,12 @@ const AddJob = ({ lang = 'en' }) => {
     useEffect(() => {
         refetchCompanies();
         refetchCategory();
-        refetchJobSubCategory();
+        refetchJobSubTitle();
         refetchJobTitle();
         refetchCity();
         refetchZone();
         refetchQualifications();
-    }, [refetchCompanies, refetchCategory, refetchJobSubCategory, refetchJobTitle, refetchCity, refetchZone, refetchQualifications]);
+    }, [refetchCompanies, refetchCategory, refetchJobSubTitle, refetchJobTitle, refetchCity, refetchZone, refetchQualifications]);
 
     useEffect(() => {
         if (dataCompanies && dataCompanies.companies) {
@@ -86,21 +86,6 @@ const AddJob = ({ lang = 'en' }) => {
     }, [dataCategory]);
 
     useEffect(() => {
-        if (dataJobSubCategory && dataJobSubCategory.sub_categories && values.job_category_id) {
-            const formatted = dataJobSubCategory.sub_categories
-                .filter((category) => category.job_category_id.toString() === values.job_category_id)
-                .map((u) => ({
-                    label: u.name || "—",
-                    value: u.id.toString(),
-                }));
-            setSubCategories(formatted);
-
-        } else {
-            setSubCategories([]);
-        }
-    }, [dataJobSubCategory, values.job_category_id]);
-
-    useEffect(() => {
         if (dataJobTitle && dataJobTitle.job_tittles) {
             const formatted = dataJobTitle.job_tittles.map((u) => ({
                 label: u.name || "—",
@@ -109,6 +94,21 @@ const AddJob = ({ lang = 'en' }) => {
             setJobTitles(formatted);
         }
     }, [dataJobTitle]);
+
+    useEffect(() => {
+        if (dataJobSubTitle && dataJobSubTitle.job_sub_titles && values.jobTitle) {
+            const formatted = dataJobSubTitle.job_sub_titles
+                .filter((title) => title.id.toString() === values.jobTitle)
+                .map((u) => ({
+                    label: u.sub_title_name || "—",
+                    value: u.id.toString(),
+                }));
+            setJobSubTitles(formatted);
+
+        } else {
+            setJobSubTitles([]);
+        }
+    }, [dataJobSubTitle, values.jobTitle]);
 
     useEffect(() => {
         if (dataCity && dataCity.cities) {
@@ -175,17 +175,17 @@ const AddJob = ({ lang = 'en' }) => {
             options: categories,
         },
         {
-            name: 'job_sub_category_id',
-            type: 'select',
-            placeholder: 'Select Job Sub Category *',
-            options: subCategories,
-            disabled: !values.job_category_id || subCategories.length === 0,
-        },
-        {
             name: 'jobTitle',
             type: 'select',
             placeholder: 'Select Job Title *',
             options: jobTitles,
+        },
+                {
+            name: 'job_sub_title_id',
+            type: 'select',
+            placeholder: 'Select Job Sub Title',
+            options: jobSubTitles,
+            disabled: !values.jobTitle || jobSubTitles.length === 0,
         },
 
         // 3️⃣ Qualification
@@ -262,7 +262,7 @@ const AddJob = ({ lang = 'en' }) => {
                 id: initialItemData.id || '',
                 company_id: initialItemData.company_id?.toString() || '',
                 job_category_id: initialItemData.job_category_id?.toString() || '',
-                job_sub_category_id: initialItemData.job_sub_category_id?.toString() || '',
+                job_sub_title_id: initialItemData.job_sub_title_id?.toString() || '',
                 city_id: initialItemData.city_id?.toString() || '',
                 zone_id: initialItemData.zone_id?.toString() || '',
                 jobTitle: initialItemData.job_titel_id?.toString() || '',
@@ -318,7 +318,7 @@ const AddJob = ({ lang = 'en' }) => {
                     id: values.id,
                     company_id: parseInt(values.company_id),
                     job_category_id: parseInt(values.job_category_id),
-                    job_sub_category_id: parseInt(values.job_sub_category_id),
+                    job_sub_title_id: parseInt(values.job_sub_title_id),
                     city_id: parseInt(values.city_id),
                     zone_id: parseInt(values.zone_id),
                     job_titel_id: values.jobTitle,
@@ -344,7 +344,7 @@ const AddJob = ({ lang = 'en' }) => {
                 const body = new FormData();
                 body.append('company_id', values.company_id);
                 body.append('job_category_id', values.job_category_id);
-                body.append('job_sub_category_id', values.job_sub_category_id);
+                body.append('job_sub_title_id', values.job_sub_title_id);
                 body.append('city_id', values.city_id);
                 body.append('zone_id', values.zone_id);
                 body.append('job_titel_id', values.jobTitle);
@@ -368,7 +368,7 @@ const AddJob = ({ lang = 'en' }) => {
     };
 
     useEffect(() => {
-        if ((!loadingChange && responseChange) || (!loadingPost && postResponse)) {
+        if ((!loadingChange && responseChange?.status === 200) || (!loadingPost && postResponse?.status === 200)) {
             navigate('/job_management/jobs');
         }
     }, [responseChange, postResponse, navigate]);
@@ -378,7 +378,7 @@ const AddJob = ({ lang = 'en' }) => {
             id: initialItemData.id || '',
             company_id: initialItemData.company_id?.toString() || '',
             job_category_id: initialItemData.job_category_id?.toString() || '',
-            job_sub_category_id: initialItemData.job_sub_category_id?.toString() || '',
+            job_sub_title_id: initialItemData.job_sub_title_id?.toString() || '',
             city_id: initialItemData.city_id?.toString() || '',
             zone_id: initialItemData.zone_id?.toString() || '',
             jobTitle: initialItemData.job_titel_id?.toString() || '',
@@ -394,7 +394,7 @@ const AddJob = ({ lang = 'en' }) => {
         } : {
             company_id: '',
             job_category_id: '',
-            job_sub_category_id: '',
+            job_sub_title_id: '',
             city_id: '',
             zone_id: '',
             jobTitle: '',
@@ -415,7 +415,7 @@ const AddJob = ({ lang = 'en' }) => {
         navigate(-1);
     };
 
-    if (loadingCompanies || loadingJobTitle || loadingCategory || loadingJobSubCategory || loadingCity || loadingZone) {
+    if (loadingCompanies || loadingJobTitle || loadingCategory || loadingJobSubTitle || loadingCity || loadingZone) {
         return <FullPageLoader />;
     }
 

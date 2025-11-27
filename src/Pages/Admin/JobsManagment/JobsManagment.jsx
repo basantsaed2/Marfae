@@ -30,6 +30,8 @@ const JobManagement = () => {
                 id: j.id || "—",
                 title: j.job_titel?.name || "—",
                 job_titel_id: j.job_titel_id?.toString() || "—",
+                job_sub_title: j.job_sub_title?.sub_title_name || "—",
+                job_sub_title_id: j.job_sub_title_id?.toString() || "—",
                 company: j.company?.name || "—",
                 job_category: j.job_category?.name || "—",
                 city: j.city?.name || "—",
@@ -38,7 +40,7 @@ const JobManagement = () => {
                 experience: j.experience || "—",
                 description: j.description || "—",
                 job_qualification_id: j.job_qualification_id || "—",
-                qualifications: j.job_qualification?.name || "—",    
+                qualifications: j.job_qualification?.name || "—",
                 expected_salary: j.expected_salary || "—",
                 expire_date: j.expire_date || "—",
                 location_link: j.location_link || "—",
@@ -193,6 +195,10 @@ const JobManagement = () => {
                                             <div>
                                                 <p className="text-sm font-medium text-gray-500">Category</p>
                                                 <p className="text-gray-900 font-medium">{selectedRow.job_category}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-500">Sub Title</p>
+                                                <p className="text-gray-900 font-medium">{selectedRow.job_sub_title}</p>
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-gray-500">Experience Level</p>
