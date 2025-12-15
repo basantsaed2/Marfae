@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 import { HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineUserCircle } from "react-icons/hi";
 import { CiLocationOn } from "react-icons/ci";
-import { BriefcaseBusiness, Cog, ChevronDown, ChevronRight, SquareChartGantt, MonitorCog, FileCog } from "lucide-react";
+import { BriefcaseBusiness, Newspaper, Cog, ChevronDown, ChevronRight, SquareChartGantt, MonitorCog, FileCog } from "lucide-react";
 import { BiCategory } from "react-icons/bi";
 import { GiPill } from "react-icons/gi";
 import {
@@ -42,6 +42,7 @@ const navItems = [
     { label: "Pending Payment", to: "/pending_payment", icon: <MdPendingActions size={20} /> },
     { label: "CV List", to: "/all_cv", icon: <PiReadCvLogo size={20} /> },
     { label: "Reviews", to: "/reviews", icon: <MdStarRate size={20} /> },
+    { label: "Articles", to: "/articles", icon: <Newspaper size={20} /> },
     { label: "Governorates and Regions", to: "/regions", icon: <CiLocationOn className="stroke-1" size={20} /> },
     {
         label: "Job Management",

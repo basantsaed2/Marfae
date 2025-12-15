@@ -89,9 +89,9 @@ const LoginAdmin = () => {
         localStorage.removeItem("admin");
         localStorage.removeItem("token");
       }
-      else {
-        toast.error(response.data.message || "Invalid Credentials");
-      }
+      // else {
+      //   toast.error(response.data.message || "Invalid Credentials");
+      // }
     }
   }, [response, loadingPost]);
 
@@ -100,7 +100,7 @@ const LoginAdmin = () => {
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 via-bg-primary/40 to-white bg-cover bg-center relative overflow-hidden">
+    <div className="w-full p-4 h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 via-bg-primary/40 to-white bg-cover bg-center relative overflow-hidden">
       {/* Doctor-themed background image */}
       <div className="absolute inset-0 bg-[url('https://i.pinimg.com/1200x/0e/82/d4/0e82d4cbbfd783d3d7245fcb927dd358.jpg')] bg-cover bg-center opacity-40"></div>
 
@@ -119,10 +119,10 @@ const LoginAdmin = () => {
       </div> */}
 
       <div
-        className="relative z-10 max-w-md w-full"
+        className="relative z-10 max-w-xl w-full"
       >
         <Card className="bg-white/90 backdrop-blur-xl shadow-2xl rounded-3xl border border-bg-primary/50 overflow-hidden ring-1 ring-bg-primary/30">
-          <CardContent className="p-12">
+          <CardContent className="p-6 md:p-8 lg:p-12">
             <div
               className="text-center mb-10"
             >
@@ -176,7 +176,7 @@ const LoginAdmin = () => {
               >
                 <Button
                   type="submit"
-                  className="w-full p-4 text-lg bg-gradient-to-r from-bg-primary to-blue-300 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-500 transition-all duration-300 disabled:opacity-50 shadow-lg"
+                  className="w-full p-4 py-6 text-lg bg-gradient-to-r from-bg-primary to-blue-300 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-500 transition-all duration-300 disabled:opacity-50 shadow-lg"
                   disabled={loadingPost}
                 >
                   {loadingPost ? "Logging in..." : "Login Mrfae"}

@@ -45,6 +45,8 @@ import Doctors from "./Pages/Admin/Doctors/Doctors";
 import AddDoctors from "./Pages/Admin/Doctors/AddDoctors";
 import JobSubTitle from "./Pages/Admin/Setting/JobSubTitle/JobSubTitle";
 import AddJobSubTitle from "./Pages/Admin/Setting/JobSubTitle/AddJobSubCategory";
+import Articles from "./Pages/Admin/Articles/Articles";
+import AddArticles from "./Pages/Admin/Articles/AddArticles";
 
 const router = createBrowserRouter([
   {
@@ -157,7 +159,7 @@ const router = createBrowserRouter([
             ],
           },
           {
-             path: "job_sub_title",
+            path: "job_sub_title",
             children: [
               { index: true, element: <JobSubTitle /> },
               { path: "add", element: <AddJobSubTitle /> },
@@ -235,6 +237,13 @@ const router = createBrowserRouter([
               { path: "add", element: <AddQualifications /> },
             ],
           },
+        ],
+      },
+      {
+        path: "articles",
+        children: [
+          { index: true, element: <Articles /> },
+          { path: "add", element: <AddArticles /> },
         ],
       },
       {
