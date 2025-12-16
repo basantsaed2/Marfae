@@ -4,7 +4,7 @@ import { SidebarProvider } from "./components/ui/sidebar";
 import ProtAuth from "./Auth/ProtAuth";
 import LoginAdmin from "./Pages/Autherzation/LoginAdmin";
 import NotFound from "./Pages/NotFound";
-import ProtectedRoute from "./Auth/ProtectedRoute";
+import ProtectedRoute from "./Auth/ProtectedRoute"; // Ensure this import is correct
 import AuthLayout from "./Layout/AuthLayout";
 import ControlPanel from "./Pages/Admin/ControlPanel/ControlPanel";
 import UserManagement from "./Pages/Admin/UserManagment/UserManagment";
@@ -47,6 +47,10 @@ import JobSubTitle from "./Pages/Admin/Setting/JobSubTitle/JobSubTitle";
 import AddJobSubTitle from "./Pages/Admin/Setting/JobSubTitle/AddJobSubCategory";
 import Articles from "./Pages/Admin/Articles/Articles";
 import AddArticles from "./Pages/Admin/Articles/AddArticles";
+import Roles from "./Pages/Admin/Roles/Roles";
+import AddRoles from "./Pages/Admin/Roles/AddRoles";
+import AdminUsers from "./Pages/Admin/Setting/AdminsUsers/AdminUsers";
+import AddAdminUsers from "./Pages/Admin/Setting/AdminsUsers/AddAdminUsers";
 
 const router = createBrowserRouter([
   {
@@ -74,58 +78,59 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <ControlPanel />,
+        handle: { permission: "" } // Dashboard, no permission needed
       },
       {
         path: "users",
         children: [
-          { index: true, element: <UserManagement /> },
-          { path: "add", element: <AddUser /> },
+          { index: true, element: <UserManagement />, handle: { permission: "users" } },
+          { path: "add", element: <AddUser />, handle: { permission: "users" } },
         ],
       },
       {
         path: "requests",
         children: [
-          { index: true, element: <Requests /> },
+          { index: true, element: <Requests />, handle: { permission: "Pending Employeer" } },
         ],
       },
       {
         path: "contact_request",
         children: [
-          { index: true, element: <ContactRequest /> },
+          { index: true, element: <ContactRequest />, handle: { permission: "ContactsRequest" } },
         ],
       },
       {
         path: "pending_payment",
         children: [
-          { index: true, element: <PendingPayment /> },
+          { index: true, element: <PendingPayment />, handle: { permission: "pendingPyament" } },
         ],
       },
       {
         path: "all_cv",
         children: [
-          { index: true, element: <AllCV /> },
+          { index: true, element: <AllCV />, handle: { permission: "AllCvs" } },
         ],
       },
       {
         path: "reviews",
         children: [
-          { index: true, element: <Reviews /> },
+          { index: true, element: <Reviews />, handle: { permission: "Reviews" } },
         ],
       },
       {
         path: "regions",
         children: [
-          { index: true, element: <Regions /> },
-          { path: "add_country", element: <AddCountry /> },
-          { path: "add_city", element: <AddCity /> },
-          { path: "add_zone", element: <AddZone /> },
+          { index: true, element: <Regions />, handle: { permission: ["country", "city", "zone"] } }, // Any of these
+          { path: "add_country", element: <AddCountry />, handle: { permission: "country" } },
+          { path: "add_city", element: <AddCity />, handle: { permission: "city" } },
+          { path: "add_zone", element: <AddZone />, handle: { permission: "zone" } },
         ],
       },
       {
         path: "plans",
         children: [
-          { index: true, element: <Plans /> },
-          { path: "add", element: <AddPlans /> },
+          { index: true, element: <Plans />, handle: { permission: "Plans" } },
+          { path: "add", element: <AddPlans />, handle: { permission: "Plans" } },
         ],
       },
       {
@@ -134,35 +139,35 @@ const router = createBrowserRouter([
           {
             path: "jobs",
             children: [
-              { index: true, element: <JobsManagment /> },
-              { path: "add", element: <AddJob /> },
+              { index: true, element: <JobsManagment />, handle: { permission: "JobOffer" } },
+              { path: "add", element: <AddJob />, handle: { permission: "JobOffer" } },
             ],
           },
           {
             path: "add_job",
             children: [
-              { index: true, element: <AddJob /> },
+              { index: true, element: <AddJob />, handle: { permission: "JobOffer" } },
             ],
           },
           {
             path: "job_category",
             children: [
-              { index: true, element: <JobCategory /> },
-              { path: "add", element: <AddJobCategory /> },
+              { index: true, element: <JobCategory />, handle: { permission: "jobCategory" } },
+              { path: "add", element: <AddJobCategory />, handle: { permission: "jobCategory" } },
             ],
           },
           {
             path: "job_title",
             children: [
-              { index: true, element: <JobTitle /> },
-              { path: "add", element: <AddJobTitle /> },
+              { index: true, element: <JobTitle />, handle: { permission: "JobTittle" } },
+              { path: "add", element: <AddJobTitle />, handle: { permission: "JobTittle" } },
             ],
           },
           {
             path: "job_sub_title",
             children: [
-              { index: true, element: <JobSubTitle /> },
-              { path: "add", element: <AddJobSubTitle /> },
+              { index: true, element: <JobSubTitle />, handle: { permission: "jobSubTitle" } },
+              { path: "add", element: <AddJobSubTitle />, handle: { permission: "jobSubTitle" } },
             ],
           }
         ],
@@ -173,16 +178,16 @@ const router = createBrowserRouter([
           {
             path: "organizations",
             children: [
-              { index: true, element: <CorporateManagement /> },
-              { path: "add", element: <AddCorporate /> },
-              { path: "employers/:id", element: <CompanyEmployers /> }, // Add this route
+              { index: true, element: <CorporateManagement />, handle: { permission: "company" } },
+              { path: "add", element: <AddCorporate />, handle: { permission: "company" } },
+              { path: "employers/:id", element: <CompanyEmployers />, handle: { permission: "Admin For Company" } },
             ],
           },
           {
             path: "organization_type",
             children: [
-              { index: true, element: <CompanyType /> },
-              { path: "add", element: <AddCompanyType /> },
+              { index: true, element: <CompanyType />, handle: { permission: "CompanyType" } },
+              { path: "add", element: <AddCompanyType />, handle: { permission: "CompanyType" } },
             ],
           },
         ],
@@ -193,15 +198,15 @@ const router = createBrowserRouter([
           {
             path: "drugs",
             children: [
-              { index: true, element: <Drug /> },
-              { path: "add", element: <AddDrug /> },
+              { index: true, element: <Drug />, handle: { permission: "Drugs" } },
+              { path: "add", element: <AddDrug />, handle: { permission: "Drugs" } },
             ],
           },
           {
             path: "drug_category",
             children: [
-              { index: true, element: <DrugCategory /> },
-              { path: "add", element: <AddDrugCategory /> },
+              { index: true, element: <DrugCategory />, handle: { permission: "Drug Category" } },
+              { path: "add", element: <AddDrugCategory />, handle: { permission: "Drug Category" } },
             ],
           },
         ],
@@ -209,8 +214,8 @@ const router = createBrowserRouter([
       {
         path: "doctors",
         children: [
-          { index: true, element: <Doctors /> },
-          { path: "add", element: <AddDoctors /> },
+          { index: true, element: <Doctors />, handle: { permission: "Doctor List" } },
+          { path: "add", element: <AddDoctors />, handle: { permission: "Doctor List" } },
         ],
       },
       {
@@ -219,22 +224,36 @@ const router = createBrowserRouter([
           {
             path: "payment_method",
             children: [
-              { index: true, element: <PaymentMethod /> },
-              { path: "add", element: <AddPaymentMethod /> },
+              { index: true, element: <PaymentMethod />, handle: { permission: "PaymentMethods" } },
+              { path: "add", element: <AddPaymentMethod />, handle: { permission: "PaymentMethods" } },
             ],
           },
           {
             path: "specialization",
             children: [
-              { index: true, element: <JobSpecialization /> },
-              { path: "add", element: <AddJobSpecialization /> },
+              { index: true, element: <JobSpecialization />, handle: { permission: "specialization" } },
+              { path: "add", element: <AddJobSpecialization />, handle: { permission: "specialization" } },
             ],
           },
           {
             path: "qualifications",
             children: [
-              { index: true, element: <Qualifications /> },
-              { path: "add", element: <AddQualifications /> },
+              { index: true, element: <Qualifications />, handle: { permission: "JobQualification" } },
+              { path: "add", element: <AddQualifications />, handle: { permission: "JobQualification" } },
+            ],
+          },
+          {
+            path: "roles",
+            children: [
+              { index: true, element: <Roles />, handle: { permission: "Admin roles" } },
+              { path: "add", element: <AddRoles />, handle: { permission: "Admin roles" } },
+            ],
+          },
+          {
+            path: "admins_users",
+            children: [
+              { index: true, element: <AdminUsers />, handle: { permission: "Admin roles" } }, // Using "Admin roles" permission as placeholder/safe default
+              { path: "add", element: <AddAdminUsers />, handle: { permission: "Admin roles" } },
             ],
           },
         ],
@@ -242,8 +261,8 @@ const router = createBrowserRouter([
       {
         path: "articles",
         children: [
-          { index: true, element: <Articles /> },
-          { path: "add", element: <AddArticles /> },
+          { index: true, element: <Articles />, handle: { permission: "Articles" } },
+          { path: "add", element: <AddArticles />, handle: { permission: "Articles" } },
         ],
       },
       {
