@@ -127,7 +127,7 @@ const LoginAdmin = () => {
               className="text-center mb-10"
             >
               <h2 className="text-5xl font-extrabold text-bg-primary tracking-tight bg-clip-text bg-gradient-to-r from-bg-primary to-blue-300">
-                Login Mrfae
+                Login Medilinky
               </h2>
             </div>
 
@@ -179,7 +179,7 @@ const LoginAdmin = () => {
                   className="w-full p-4 py-6 text-lg bg-gradient-to-r from-bg-primary to-blue-300 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-500 transition-all duration-300 disabled:opacity-50 shadow-lg"
                   disabled={loadingPost}
                 >
-                  {loadingPost ? "Logging in..." : "Login Mrfae"}
+                  {loadingPost ? "Logging in..." : "Login Medilinky"}
                 </Button>
               </div>
             </form>

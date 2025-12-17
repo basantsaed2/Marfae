@@ -166,11 +166,14 @@ export function AdminSidebar() {
             >
                 <SidebarGroup>
                     <SidebarGroupLabel className="p-2 text-white flex items-center justify-center gap-3">
-                        <img
+                        {/* <img
                             src={logo}
                             alt={logo || "Marfae"}
                             className="w-dull h-24 object-cover border-2 border-white/30 hover:scale-105 transition-transform duration-200"
-                        />
+                        /> */}
+                        <h2 className="text-4xl font-bold text-bg-primary p-2 flex items-center gap-3">
+                            Medilinky
+                        </h2>
                     </SidebarGroupLabel>
                     <hr className="w-full border-white !mb-3" />
 

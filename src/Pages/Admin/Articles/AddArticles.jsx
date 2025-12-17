@@ -27,8 +27,8 @@ const AddArticles = ({ lang = 'en' }) => {
     const [values, setValues] = useState({
         id: '',
         title: '',
-        body: '',
-        img: '',
+        description: '',
+        image: '',
     });
 
     useEffect(() => {
@@ -36,14 +36,14 @@ const AddArticles = ({ lang = 'en' }) => {
             setValues({
                 id: initialItemData.id || '',
                 title: initialItemData.title || '',
-                body: initialItemData.body || '',
-                img: initialItemData.img || '',
+                description: initialItemData.description || '',
+                image: initialItemData.image || '',
             });
         }
     }, [initialItemData]);
 
     const handleChange = (lang, name, value) => {
-        if (name === 'img') {
+        if (name === 'image') {
             setImageChanged(true); // Mark image as changed
         }
         setValues((prev) => ({ ...prev, [name]: value }));
@@ -54,13 +54,12 @@ const AddArticles = ({ lang = 'en' }) => {
             const data = {
                 id: values.id,
                 title: values.title,
-                body: values.body,
-                image: values.img,
+                description: values.description,
             };
 
-            // Only include img if it has been changed
-            if (imageChanged && values.img) {
-                data.img = values.img;
+            // Only include image if it has been changed
+            if (imageChanged && values.image) {
+                data.image = values.image;
             }
 
             await changeState(
@@ -71,17 +70,15 @@ const AddArticles = ({ lang = 'en' }) => {
         } else {
             const body = new FormData();
             body.append('title', values.title || '');
-            body.append('body', values.body || '');
-            body.append('image', values.img || '');
-            if (imageChanged && values.img && typeof values.img !== 'string') {
-                body.append('image', values.img);
-            }
+            body.append('body', values.description || '');
+            body.append('image', values.image || '');
+
             await postData(body, 'Article Added Successfully!');
         }
     };
 
     useEffect(() => {
-        if ((!loadingChange && responseChange) || (!loadingPost && postResponse)) {
+        if ((!loadingChange && responseChange && responseChange.status === 200) || (!loadingPost && postResponse && postResponse.status === 200)) {
             navigate(-1);
         }
     }, [responseChange, postResponse, navigate]);
@@ -93,13 +90,13 @@ const AddArticles = ({ lang = 'en' }) => {
                 ? {
                     id: initialItemData.id || '',
                     title: initialItemData.title || '',
-                    body: initialItemData.body || '',
-                    img: initialItemData.img || '',
+                    description: initialItemData.description || '',
+                    image: initialItemData.image || '',
                 } : {
                     id: '',
                     title: '',
-                    body: '',
-                    img: '',
+                    description: '',
+                    image: '',
                 });
     };
 
@@ -113,8 +110,8 @@ const AddArticles = ({ lang = 'en' }) => {
 
     const fields = [
         { name: 'title', type: 'input', placeholder: 'Article Title *' },
-        { name: 'body', type: 'textarea', rows: 5, placeholder: 'Article Body *' },
-        { name: 'img', type: 'file', placeholder: 'Article Image *' },
+        { type: 'file', placeholder: 'Article Image *', name: 'image', accept: 'image/*' },
+        { name: 'description', type: 'textarea', placeholder: 'Article Description *' },
     ];
 
     return (
