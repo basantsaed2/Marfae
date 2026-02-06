@@ -22,6 +22,16 @@ const AddJobTitle = ({ lang = 'en' }) => {
     // Define the fields for the form
     const fields = [
         { name: 'JobTitle', type: 'input', placeholder: 'Job Title' },
+        {
+            name: 'type',
+            type: 'select',
+            placeholder: 'Select Type *',
+            options: [
+                { label: 'User', value: 'user' },
+                { label: 'Employer', value: 'employer' },
+                { label: 'Both', value: 'both' },
+            ],
+        },
         { name: 'description', type: 'input', placeholder: 'Job Description' },
         {
             type: "switch",
@@ -34,7 +44,12 @@ const AddJobTitle = ({ lang = 'en' }) => {
     ];
 
     // State to manage form values
-    const [values, setValues] = useState({});
+    const [values, setValues] = useState({
+        JobTitle: '',
+        type: '',
+        description: '',
+        status: 'inactive',
+    });
 
     // Set initial values when itemData is provided
     useEffect(() => {
@@ -45,6 +60,7 @@ const AddJobTitle = ({ lang = 'en' }) => {
                 JobTitle: initialItemData.JobTitle || '',
                 description: initialItemData.description || '',
                 status: initialItemData.status === "Active" ? "active" : "inactive",
+                type: initialItemData.type || '',
             });
         }
     }, [initialItemData]);
@@ -61,6 +77,7 @@ const AddJobTitle = ({ lang = 'en' }) => {
                 name: values.JobTitle || "",
                 description: values.description || "",
                 status: values.status || "inactive",
+                type: values.type || "",
             };
             await changeState(
                 `${apiUrl}/admin/editJobTittle/${values.id}`,
@@ -73,6 +90,7 @@ const AddJobTitle = ({ lang = 'en' }) => {
             body.append("name", values.JobTitle || "");
             body.append("description", values.description || "");
             body.append("status", values.status || "inactive");
+            body.append("type", values.type || "");
             await postData(body, "Job Title Added Successfully!");
         }
     };
@@ -89,7 +107,13 @@ const AddJobTitle = ({ lang = 'en' }) => {
             JobTitle: initialItemData.JobTitle || '',
             description: initialItemData.description || '',
             status: initialItemData.status === "Active" ? "active" : "inactive",
-        } : {});
+            type: initialItemData.type || '',
+        } : {
+            JobTitle: '',
+            type: '',
+            description: '',
+            status: 'inactive',
+        });
     };
 
     const handleBack = () => {

@@ -29,6 +29,7 @@ const JobTitle = () => {
                 JobTitle: u.name || "—",
                 description: u.description || "—",
                 status: u.status === "active" ? "Active" : "Inactive",
+                type: u.type || "—",
             }));
             setCountries(formatted);
         }
@@ -38,6 +39,7 @@ const JobTitle = () => {
         { key: "JobTitle", label: "Job Title" },
         { key: "description", label: "Job Description" },
         { key: "status", label: "Status" },
+        { key: "type", label: "Type" },
     ];
 
     const handleEdit = (item) => navigate(`add`, { state: { itemData: item } });
@@ -82,7 +84,7 @@ const JobTitle = () => {
                     statusKey="status"
                     filterKeys={["status"]}
                     // titles={{ JobTitle: "Job Title" }}
-                    onEdit={(item) => handleEdit({ ...item, type: 'JobTitle' })}
+                    onEdit={(item) => handleEdit({ ...item })}
                     onDelete={handleDelete}
                     className="w-full bg-white rounded-lg shadow-md p-6"
                 />
