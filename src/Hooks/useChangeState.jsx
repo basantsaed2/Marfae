@@ -19,10 +19,10 @@ export const useChangeState = () => {
       };
       const response = await axios.put(url, data || {}, config);
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         toast.success(name);
         setResponseChange(response);
-        // return true; // Return true on success
+        return true; // Return true on success
       }
     } catch (error) {
       console.error('Error post JSON:', error);

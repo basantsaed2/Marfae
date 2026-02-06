@@ -255,131 +255,129 @@ const Requests = () => {
   };
 
   return (
-    <div className="p-4">
-      {loadingPending || loadingApproved || loadingRejected || loadingChange ? (
+    <div className="p-4 relative">
+      {(loadingPending || loadingApproved || loadingRejected || loadingChange) && (
         <FullPageLoader />
-      ) : (
-        <>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl text-bg-primary font-bold">{getTitleText()}</h2>
-          </div>
-
-          <Tabs defaultValue="pending" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger className="p-3 font-semibold text-base" value="pending">Pending</TabsTrigger>
-              <TabsTrigger className="p-3 font-semibold text-base" value="approved">Approved</TabsTrigger>
-              <TabsTrigger className="p-3 font-semibold text-base" value="rejected">Rejected</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="pending">
-              <Table
-                data={pendingRequests}
-                columns={PendingColumns}
-                filterKeys={filterKeys}
-                // titles={titles}
-                // statusKey="email_verified"
-                onEdit={handleEdit}
-                renderActionCell={(item) => renderActionCell(item, 'pending')}
-                actionsButtons={false} // unEnable action buttons for pending requests
-              />
-            </TabsContent>
-
-            <TabsContent value="approved">
-              <Table
-                data={approvedRequests}
-                columns={Columns}
-                filterKeys={filterKeys}
-                // titles={titles}
-                // statusKey="email_verified"
-                onEdit={handleEdit}
-                actionsButtons={false} // unEnable action buttons for pending requests
-              />
-            </TabsContent>
-
-            <TabsContent value="rejected">
-              <Table
-                data={rejectedRequests}
-                columns={RejectedColumns}
-                filterKeys={filterKeys}
-                // titles={titles}
-                // statusKey="email_verified"
-                renderActionCell={(item) => renderActionCell(item, 'rejected')}
-                renderReasonCell={renderReasonCell}
-                onEdit={handleEdit}
-                actionsButtons={false} // unEnable action buttons for pending requests
-              />
-            </TabsContent>
-          </Tabs>
-
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogContent className="bg-white">
-              <DialogHeader>
-                <DialogTitle>
-                  {modalAction === 'accept' ? 'Confirm Approve' : 'Confirm Reject'}
-                </DialogTitle>
-              </DialogHeader>
-              <div>
-                <p>
-                  Are you sure you want to {modalAction === 'accept' ? 'approve' : 'reject'} this payment request?
-                </p>
-                {modalAction === 'reject' && (
-                  <div className="mt-4">
-                    <label htmlFor="rejectionReason" className="block text-sm font-medium text-gray-700">
-                      Reason for Rejection
-                    </label>
-                    <Input
-                      id="rejectionReason"
-                      value={rejectionReason}
-                      onChange={(e) => setRejectionReason(e.target.value)}
-                      placeholder="Enter reason for rejection"
-                      className="mt-1 p-2"
-                    />
-                  </div>
-                )}
-              </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={closeConfirmationModal}
-                  className="bg-gray-300 text-black hover:bg-gray-400"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleAction}
-                  className={`${modalAction === 'accept'
-                    ? 'bg-green-500 hover:bg-green-600'
-                    : 'bg-red-500 hover:bg-red-600'
-                    } text-white`}
-                  disabled={modalAction === 'reject' && !rejectionReason.trim()}
-                >
-                  Confirm
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={isReasonModalOpen} onOpenChange={setIsReasonModalOpen}>
-            <DialogContent className="bg-white">
-              <DialogHeader>
-                <DialogTitle>Rejection Reason</DialogTitle>
-              </DialogHeader>
-              <div>
-                <p className="text-gray-700">{selectedReason || "No reason provided"}</p>
-              </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={closeReasonModal}
-                  className="bg-gray-300 text-black hover:bg-gray-400"
-                >
-                  Close
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </>
       )}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl text-bg-primary font-bold">{getTitleText()}</h2>
+      </div>
+
+      <Tabs defaultValue="pending" className="w-full" onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger className="p-3 font-semibold text-base" value="pending">Pending</TabsTrigger>
+          <TabsTrigger className="p-3 font-semibold text-base" value="approved">Approved</TabsTrigger>
+          <TabsTrigger className="p-3 font-semibold text-base" value="rejected">Rejected</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="pending">
+          <Table
+            data={pendingRequests}
+            columns={PendingColumns}
+            filterKeys={filterKeys}
+            // titles={titles}
+            // statusKey="email_verified"
+            onEdit={handleEdit}
+            renderActionCell={(item) => renderActionCell(item, 'pending')}
+            actionsButtons={false} // unEnable action buttons for pending requests
+          />
+        </TabsContent>
+
+        <TabsContent value="approved">
+          <Table
+            data={approvedRequests}
+            columns={Columns}
+            filterKeys={filterKeys}
+            // titles={titles}
+            // statusKey="email_verified"
+            onEdit={handleEdit}
+            actionsButtons={false} // unEnable action buttons for pending requests
+          />
+        </TabsContent>
+
+        <TabsContent value="rejected">
+          <Table
+            data={rejectedRequests}
+            columns={RejectedColumns}
+            filterKeys={filterKeys}
+            // titles={titles}
+            // statusKey="email_verified"
+            renderActionCell={(item) => renderActionCell(item, 'rejected')}
+            renderReasonCell={renderReasonCell}
+            onEdit={handleEdit}
+            actionsButtons={false} // unEnable action buttons for pending requests
+          />
+        </TabsContent>
+      </Tabs>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>
+              {modalAction === 'accept' ? 'Confirm Approve' : 'Confirm Reject'}
+            </DialogTitle>
+          </DialogHeader>
+          <div>
+            <p>
+              Are you sure you want to {modalAction === 'accept' ? 'approve' : 'reject'} this payment request?
+            </p>
+            {modalAction === 'reject' && (
+              <div className="mt-4">
+                <label htmlFor="rejectionReason" className="block text-sm font-medium text-gray-700">
+                  Reason for Rejection
+                </label>
+                <Input
+                  id="rejectionReason"
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  placeholder="Enter reason for rejection"
+                  className="mt-1 p-2"
+                />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={closeConfirmationModal}
+              className="bg-gray-300 text-black hover:bg-gray-400"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAction}
+              className={`${modalAction === 'accept'
+                ? 'bg-green-500 hover:bg-green-600'
+                : 'bg-red-500 hover:bg-red-600'
+                } text-white`}
+              disabled={modalAction === 'reject' && !rejectionReason.trim()}
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isReasonModalOpen} onOpenChange={setIsReasonModalOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>Rejection Reason</DialogTitle>
+          </DialogHeader>
+          <div>
+            <p className="text-gray-700">{selectedReason || "No reason provided"}</p>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={closeReasonModal}
+              className="bg-gray-300 text-black hover:bg-gray-400"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };
