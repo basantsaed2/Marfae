@@ -319,7 +319,7 @@ const Requests = () => {
           </DialogHeader>
           <div>
             <p>
-              Are you sure you want to {modalAction === 'accept' ? 'approve' : 'reject'} this payment request?
+              Are you sure you want to {modalAction === 'accept' ? 'approve' : 'reject'} this request?
             </p>
             {modalAction === 'reject' && (
               <div className="mt-4">

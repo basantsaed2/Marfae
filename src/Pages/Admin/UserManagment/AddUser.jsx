@@ -61,7 +61,7 @@ const AddUser = ({ lang = 'en' }) => {
         { name: 'phone', type: 'input', placeholder: 'Phone *' },
         { name: 'email', type: 'input', placeholder: 'Email *' },
         { name: 'password', type: 'input', placeholder: 'Password *', disabled: isEditMode },
-        {
+        ...(!isEditMode ? [{
             name: 'role',
             type: 'select',
             placeholder: 'Select Role *',
@@ -69,7 +69,7 @@ const AddUser = ({ lang = 'en' }) => {
                 { label: 'User', value: 'user' },
                 { label: 'Employer', value: 'employeer' },
             ],
-        },
+        }] : []),
         { type: 'file', placeholder: 'Image', name: 'image', accept: 'image/*' },
         {
             type: 'switch',
@@ -81,10 +81,11 @@ const AddUser = ({ lang = 'en' }) => {
         },
     ];
 
+
     // Conditionally add fields based on role
     const getFields = () => {
         const fields = [...baseFields];
-        
+
         // Add company selection for employeers
         if (selectedRole === 'employeer') {
             fields.splice(6, 0, {
@@ -93,7 +94,7 @@ const AddUser = ({ lang = 'en' }) => {
                 placeholder: 'Select Organization *',
                 options: companies,
             });
-        } 
+        }
         // Add specialization selection for users
         else if (selectedRole === 'user') {
             fields.splice(6, 0, {
@@ -104,7 +105,7 @@ const AddUser = ({ lang = 'en' }) => {
                 multiple: true,
             });
         }
-        
+
         return fields;
     };
 
@@ -121,12 +122,12 @@ const AddUser = ({ lang = 'en' }) => {
                 status: initialItemData.status === 'Active' ? 'active' : 'inactive',
                 image: initialItemData.image || '',
             };
-            
+
             // Set role and role-specific fields
             if (initialItemData.role) {
                 initialValues.role = initialItemData.role;
                 setSelectedRole(initialItemData.role);
-                
+
                 if (initialItemData.role === 'user') {
                     initialValues.specializations = Array.isArray(initialItemData.specializations)
                         ? initialItemData.specializations
@@ -134,12 +135,12 @@ const AddUser = ({ lang = 'en' }) => {
                             .map((s) => s.id.toString())
                         : [];
                 } else if (initialItemData.role === 'employeer') {
-                    initialValues.companies = initialItemData.company_id 
-                        ? initialItemData.company_id.toString() 
+                    initialValues.companies = initialItemData.company_id
+                        ? initialItemData.company_id.toString()
                         : '';
                 }
             }
-            
+
             setValues(initialValues);
         }
     }, [initialItemData]);
@@ -148,30 +149,30 @@ const AddUser = ({ lang = 'en' }) => {
         if (name === 'image') {
             setImageChanged(true);
         }
-        
+
         // Track password changes in edit mode
         if (name === 'password' && isEditMode) {
             setPasswordChanged(true);
         }
-        
+
         if (name === 'role') {
             setSelectedRole(value);
-            
+
             // Clear role-specific fields when role changes
             if (value === 'user') {
                 setValues(prev => {
-                    const newValues = {...prev, [name]: value};
+                    const newValues = { ...prev, [name]: value };
                     delete newValues.companies;
                     return newValues;
                 });
             } else if (value === 'employeer') {
                 setValues(prev => {
-                    const newValues = {...prev, [name]: value};
+                    const newValues = { ...prev, [name]: value };
                     delete newValues.specializations;
                     return newValues;
                 });
             } else {
-                setValues(prev => ({...prev, [name]: value}));
+                setValues(prev => ({ ...prev, [name]: value }));
             }
         } else {
             setValues((prev) => ({ ...prev, [name]: value }));
@@ -195,19 +196,19 @@ const AddUser = ({ lang = 'en' }) => {
             toast.error('Please fill in all required fields');
             return;
         }
-        
+
         // For new users, password is required
         if (!isEditMode && !values.password) {
             toast.error('Password is required for new users');
             return;
         }
-        
+
         // Role-specific validation
         if (values.role === 'user' && (!values.specializations || values.specializations.length === 0)) {
             toast.error('Please select at least one specialization');
             return;
         }
-        
+
         if (values.role === 'employeer' && !values.companies) {
             toast.error('Please select a Organization');
             return;
@@ -288,11 +289,11 @@ const AddUser = ({ lang = 'en' }) => {
                 status: initialItemData.status === 'Active' ? 'active' : 'inactive',
                 image: initialItemData.image || '',
             };
-            
+
             if (initialItemData.role) {
                 resetValues.role = initialItemData.role;
                 setSelectedRole(initialItemData.role);
-                
+
                 if (initialItemData.role === 'user') {
                     resetValues.specializations = Array.isArray(initialItemData.specializations)
                         ? initialItemData.specializations
@@ -300,12 +301,12 @@ const AddUser = ({ lang = 'en' }) => {
                             .map((s) => s.id.toString())
                         : [];
                 } else if (initialItemData.role === 'employeer') {
-                    resetValues.companies = initialItemData.company_id 
-                        ? initialItemData.company_id.toString() 
+                    resetValues.companies = initialItemData.company_id
+                        ? initialItemData.company_id.toString()
                         : '';
                 }
             }
-            
+
             setValues(resetValues);
         } else {
             setSelectedRole('');
